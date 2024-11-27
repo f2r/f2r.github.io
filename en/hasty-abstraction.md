@@ -1,5 +1,5 @@
 ## DRY at all costs: The trap of premature abstraction
-(Published on Nov 27, 2024)
+(Published on Nov 27, 2024 - [Version française](/fr/abstraction-hative.md))
 
 The 'DRY' (Don't Repeat Yourself) principle is a software development practice that aims to reduce code duplication by encouraging reuse and abstraction.
 However, it’s a principle that can lead developers to create hasty abstractions too early, before fully understanding a project’s needs.
