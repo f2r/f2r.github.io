@@ -28,8 +28,8 @@ $data = $this->serializer->normalize($entities, 'json', $context);
 foreach ($data as $key => $values) {
     $data[$key]['slug'] = null;
     if (isset($values['label']) && trim($values['label']) !== '') {
-        $data[$key]['slug'] = $this->slugger-
-            >slug($values['label'])
+        $data[$key]['slug'] = $this->slugger
+            ->slug($values['label'])
             ->lower()
         ;
     }
