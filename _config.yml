@@ -20,3 +20,9 @@ collections:
     output: true
   en:
     output: true
+
+feed:
+  collections:
+    - fr
+    - en
+

@@ -5,12 +5,7 @@ title: "Bienvenue sur F2R Articles"
 
 # Bienvenue sur F2R Articles
 
-Choisissez une langue / Choose your language :
-
-- [Articles en français](/fr/)
-- [English posts](/en/)
-
-## Derniers articles
+## Derniers articles / Last posts
 
 ### Français
 {% for post in site.fr limit: 3 %}
