@@ -3,16 +3,11 @@ description: "All articles wrote by F2R: PHP, methodology, web, architecture, de
 author: "Frederic Bouchery"
 url: https://f2r.github.io
 baseurl: /
-lsi: false
-safe: true
-incremental: false
 highlighter: rouge
-gist:
-  noscript: false
 kramdown:
-  math_engine: mathjax
-  syntax_highlighter: rouge
-
+  smart_quotes:               apos,apos,quot,quot
+  typographic_symbols:        {hellip: ...}
+  
 remote_theme: pages-themes/hacker@v0.2.0
 plugins:
   - jekyll-remote-theme
@@ -20,5 +15,12 @@ plugins:
 
 show_downloads: false
 feed:
-  categories:
-    - posts
+  collections:
+    posts_fr:
+      path: "/posts_fr.atom"
+      categories:
+        post_fr
+    posts_en:
+      path: "/posts_en.atom"
+      categories:
+        post_en
