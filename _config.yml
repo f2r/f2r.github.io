@@ -19,3 +19,7 @@ plugins:
   - jekyll-feed
 
 show_downloads: false
+feed:
+  collections:
+    - fr
+    - en
