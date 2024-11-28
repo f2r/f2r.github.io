@@ -14,3 +14,9 @@ plugins:
   - jekyll-feed
 
 show_downloads: false
+
+collections:
+  fr:
+    output: true
+  en:
+    output: true
