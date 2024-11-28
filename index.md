@@ -13,11 +13,11 @@ Choisissez une langue / Choose your language :
 ## Derniers articles
 
 ### Français
-{% for post in site.fr limit: 3 %}
+{% for post in site.categories.fr limit: 3 %}
 - [{{ post.title }}]({{ post.url }})
 {% endfor %}
 
 ### English
-{% for post in site.en limit: 3 %}
+{% for post in site.categories.en limit: 3 %}
 - [{{ post.title }}]({{ post.url }})
 {% endfor %}
