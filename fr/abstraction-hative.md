@@ -1,3 +1,10 @@
+---
+layout: default
+title: DRY à tout prix : Le piège de l’abstraction prématurée
+updated: 2024-11-27
+category: posts
+---
+
 ## DRY à tout prix : Le piège de l’abstraction prématurée
 (Publié le 27 nov 2024 - [English version](/en/hasty-abstraction))
 

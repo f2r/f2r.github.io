@@ -21,5 +21,4 @@ plugins:
 show_downloads: false
 feed:
   collections:
-    - fr
-    - en
+    - posts
