@@ -7,7 +7,7 @@ highlighter: rouge
 kramdown:
   smart_quotes:               apos,apos,quot,quot
   typographic_symbols:        {hellip: ...}
-  
+
 remote_theme: pages-themes/hacker@v0.2.0
 plugins:
   - jekyll-remote-theme
@@ -19,8 +19,8 @@ feed:
     posts_fr:
       path: "/posts_fr.atom"
       categories:
-        post_fr
+        - post_fr
     posts_en:
       path: "/posts_en.atom"
       categories:
-        post_en
+        - post_en
