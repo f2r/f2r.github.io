@@ -3,6 +3,7 @@ layout: default
 title: "DRY at all costs: The trap of premature abstraction"
 updated: 2024-11-27
 category: en
+lang: en
 ---
 
 ## DRY at all costs: The trap of premature abstraction
