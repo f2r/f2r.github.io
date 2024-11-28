@@ -14,13 +14,22 @@ plugins:
   - jekyll-feed
 
 show_downloads: false
+
+collections:
+  fr:
+    output: true
+    permalink: /fr/:title/
+  en:
+    output: true
+    permalink: /en/:title/
+
 feed:
   collections:
-    posts_fr:
-      path: "/posts_fr.atom"
+    fr:
+      path: "/fr/feed.xml"
       categories:
-        - post_fr
-    posts_en:
-      path: "/posts_en.atom"
+        - fr
+    en:
+      path: "/en/feed.xml"
       categories:
-        - post_en
+        - en
