@@ -20,5 +20,5 @@ plugins:
 
 show_downloads: false
 feed:
-  collections:
+  categories:
     - posts
