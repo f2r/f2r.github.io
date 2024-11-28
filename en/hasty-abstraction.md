@@ -1,5 +1,5 @@
 ## DRY at all costs: The trap of premature abstraction
-(Published on Nov 27, 2024 - [Version française](/fr/abstraction-hative.md))
+(Published on Nov 27, 2024 - [Version française](/fr/abstraction-hative))
 
 The 'DRY' (Don't Repeat Yourself) principle is a software development practice that aims to reduce code duplication by encouraging reuse and abstraction.
 However, it’s a principle that can lead developers to create hasty abstractions too early, before fully understanding a project’s needs.
@@ -7,7 +7,7 @@ Such **hasty** abstractions may fail to adapt to future requirements and can int
 
 ### Case Study
 Let's look at an example to better understand the problem: By running [PHPCPD](https://github.com/sebastianbergmann/phpcpd), the developer noticed that these lines appeared twice in the code, almost identically:
-```PHP
+```php
 $criteria = new ArticleCriteria()
     ->byId($id)
     ->isPublished()
@@ -40,7 +40,7 @@ In one case, `$data` was passed to build a JSON response, while in the other, it
 The only difference lay in the number of articles processed. In one case, it came from a user parameter, and in the other, it was a constant.
 
 He naturally moved this code into a private method like this:
-```PHP
+```php
 private function articlesAsArray(int $id, array $tags, int $limit = self::ARTICLES_PER_PAGE): array {
     /// ....
 }
@@ -51,7 +51,7 @@ However, this data, "`updatedAt`", is not present in the result array because it
 He would be tempted to add "`updatedAt`" to the public group, but that would mean this data would appear in the JSON response, which he doesn't want.
 So he creates a new group "`self::FULL_DATED_GROUP`", and then modifies the code like this:
 
-```PHP
+```php
 private function articlesAsArray(int $id, array $tags, int $limit = self::ARTICLES_PER_PAGE, bool $withFullDatedGroup = false): array {
 
     /// ....

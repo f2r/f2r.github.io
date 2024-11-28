@@ -1,5 +1,5 @@
 ## DRY à tout prix : Le piège de l’abstraction prématurée
-(Publié le 27 nov 2024 - [English version](/en/hasty-abstraction.md))
+(Publié le 27 nov 2024 - [English version](/en/hasty-abstraction))
 
 Le principe "DRY" (Don't Repeat Yourself) est une pratique de développement qui vise à réduire la duplication de code en favorisant la réutilisation et l'abstraction.
 Seulement, c'est une méthode qui peut conduire les développeurs à créer des abstractions trop tôt, avant même de comprendre pleinement les besoins et les exigences du projet.
@@ -7,7 +7,7 @@ Ces abstractions **hâtives** risquent donc de ne pas s'adapter aux besoins futu
 
 ### Étude de cas
 Voyons un exemple pour mieux comprendre le problème : En lançant [PHPCPD](https://github.com/sebastianbergmann/phpcpd). le développeur a constaté que ces lignes apparaissaient deux fois dans son code, de façon pratiquement identique : 
-```PHP
+```php
 $criteria = new ArticleCriteria()
     ->byId($id)
     ->isPublished()
@@ -40,7 +40,7 @@ Dans un premier cas, `$data` était passé à la construction d'une réponse jso
 Il y avait juste une petite différence dans la limite du nombre d'articles. Dans un cas, cela venait d'un paramètre utilisateur et dans l'autre, c'était la constante.
 
 Il a tout naturellement déplacé ce code dans une méthode privée comme cela :
-```PHP
+```php
 private function articlesAsArray(int $id, array $tags, int $limit = self::ARTICLES_PER_PAGE): array {
     /// ....
 }
@@ -51,7 +51,7 @@ Or, cette donnée, "`updatedAt`", n'est pas présente dans le tableau de résult
 Il serait tenté d'ajouter "`updatedAt`" au groupe public, mais cela voudrait dire que cette donnée se retrouverait dans la réponse Json, et il ne le souhaite pas.
 Il crée donc un nouveau groupe "`self::FULL_DATED_GROUP`", puis il va modifier le code comme cela : 
 
-```PHP
+```php
 private function articlesAsArray(int $id, array $tags, int $limit = self::ARTICLES_PER_PAGE, bool $withFullDatedGroup = false): array {
 
     /// ....

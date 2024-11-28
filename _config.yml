@@ -1,5 +1,5 @@
 title: "F2R Articles"
-description: "All articles wrote by F2R, PHP, methodology, web, architecture, development, programming, and so."
+description: "All articles wrote by F2R: PHP, methodology, web, architecture, development, programming, and so."
 url: https://f2r.github.io
 baseurl: /
 lsi: false
@@ -15,3 +15,5 @@ kramdown:
 remote_theme: pages-themes/hacker@v0.2.0
 plugins:
   - jekyll-remote-theme 
+
+show_downloads: false
