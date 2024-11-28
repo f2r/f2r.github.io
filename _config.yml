@@ -14,14 +14,3 @@ plugins:
   - jekyll-feed
 
 show_downloads: false
-
-feed:
-  collections:
-    fr:
-      path: "/fr/feed.xml"
-      categories:
-        - fr
-    en:
-      path: "/en/feed.xml"
-      categories:
-        - en
