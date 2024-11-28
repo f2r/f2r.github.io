@@ -15,16 +15,6 @@ plugins:
 
 show_downloads: false
 
-collections:
-  fr:
-    output: true
-    permalink: /fr/:title/
-    directory: /fr
-  en:
-    output: true
-    permalink: /en/:title/
-    directory: /en
-
 feed:
   collections:
     fr:

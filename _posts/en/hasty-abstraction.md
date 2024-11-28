@@ -4,7 +4,6 @@ title: "DRY at all costs: The trap of premature abstraction"
 date: 2024-11-27
 category: en
 lang: en
-collection: en
 ---
 
 ## DRY at all costs: The trap of premature abstraction
