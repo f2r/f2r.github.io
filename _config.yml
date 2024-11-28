@@ -22,6 +22,10 @@ collections:
     output: true
 
 feed:
+  categories:
+    - fr
+    - en
+  excerpt_only: true
   collections:
     - fr
     - en
