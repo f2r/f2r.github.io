@@ -4,6 +4,7 @@ title: "DRY à tout prix : Le piège de l’abstraction prématurée"
 updated: 2024-11-27
 category: fr
 lang: fr
+collection: fr
 ---
 
 ## DRY à tout prix : Le piège de l’abstraction prématurée
