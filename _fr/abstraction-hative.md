@@ -1,5 +1,5 @@
 ---
-layout: post-fr
+layout: default
 title: "DRY à tout prix : Le piège de l’abstraction prématurée"
 date: 2024-11-27
 category: fr

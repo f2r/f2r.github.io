@@ -1,5 +1,5 @@
 ---
-layout: post-fr
+layout: default
 title: "Comprendre l'injection de dépendances"
 date: 2024-12-16
 category: fr
