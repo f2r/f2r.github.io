@@ -221,3 +221,5 @@ In fact, you might even add the `@internal` tag or use a static analyzer like [D
 You need to strike a balance. While injection provides flexibility to evolve your code, excessive or inappropriate use can make it complex and harder to understand.
 
 Stay pragmatic!
+---
+Follow me on Bluesky: [@bouchery.fr](https://bsky.app/profile/bouchery.fr)

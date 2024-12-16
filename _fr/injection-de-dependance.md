@@ -211,3 +211,5 @@ Vous devez trouvez un équilibre.
 Si l'injection apporte de la flexibilité pour faire évoluer votre code, un usage excessif ou inadapté peut le rendre complexe et difficile à comprendre.
 
 Restez pragmatique !
+---
+Suivez-moi sur Bluesky: [@bouchery.fr](https://bsky.app/profile/bouchery.fr)

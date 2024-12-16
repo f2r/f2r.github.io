@@ -121,3 +121,5 @@ The true value of code lies not only in its conciseness or apparent elegance, bu
 Taking the time to reflect on responsibilities, decoupling logical blocks, and avoiding premature optimizations allows not only producing more robust code, but also improving its readability and understanding later.
 
 Ultimately, the key is to balance simplicity, readability, and scalability, keeping in mind that abstraction is a means, not an end.
+---
+Follow me on Bluesky: [@bouchery.fr](https://bsky.app/profile/bouchery.fr)
