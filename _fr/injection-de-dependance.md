@@ -7,7 +7,7 @@ lang: fr
 ---
 
 ## Comprendre l'injection de dépendances
-(Publié le 9 déc 2024 - [English version](/en/dependancy-injection))
+(Publié le 12 déc 2024 - [English version](/en/dependancy-injection))
 
 Dans le monde du développement, l'utilisation de frameworks modernes est devenue courante.
 Ces outils offrent des solutions pratiques et rapides pour créer des applications, en standardisant les approches de développement et en réduisant la complexité du code.

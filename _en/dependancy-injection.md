@@ -7,7 +7,7 @@ lang: en
 ---
 
 ### Understanding Dependency Injection  
-(Published on Dec 9, 2024 – [Version française](/fr/injection-de-dependances))  
+(Published on Dec 12, 2024 – [Version française](/fr/injection-de-dependances))  
 
 In the world of development, the use of modern frameworks has become commonplace.  
 These tools provide practical and efficient solutions for building applications, standardizing development approaches, and reducing code complexity.  
