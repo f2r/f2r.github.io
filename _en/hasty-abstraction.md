@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post-en
 title: "DRY at all costs: The trap of premature abstraction"
 date: 2024-11-27
 category: en

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post-en
 title: "Understanding Dependency Injection"
 date: 2024-12-16
 category: en
