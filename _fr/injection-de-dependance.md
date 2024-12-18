@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post-fr
 title: "Comprendre l'injection de dépendances"
 date: 2024-12-16
 category: fr
@@ -211,5 +211,3 @@ Vous devez trouvez un équilibre.
 Si l'injection apporte de la flexibilité pour faire évoluer votre code, un usage excessif ou inadapté peut le rendre complexe et difficile à comprendre.
 
 Restez pragmatique !
----
-Suivez-moi sur Bluesky: [@bouchery.fr](https://bsky.app/profile/bouchery.fr)

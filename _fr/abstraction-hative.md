@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post-fr
 title: "DRY à tout prix : Le piège de l’abstraction prématurée"
 date: 2024-11-27
 category: fr
@@ -121,5 +121,3 @@ La vraie valeur du code ne réside pas seulement dans sa concision ou son élég
 Prendre le temps de réfléchir aux responsabilités, découpler les blocs logiques et éviter les optimisations prématurées permet non seulement de produire un code plus robuste, mais aussi d'améliorer sa lisibilité et sa compréhension plus tard.
 
 En fin de compte, la clé est de savoir équilibrer simplicité, lisibilité et évolutivité, en gardant à l’esprit que l’abstraction est un moyen, et non une fin.
----
-Suivez-moi sur Bluesky: [@bouchery.fr](https://bsky.app/profile/bouchery.fr)
