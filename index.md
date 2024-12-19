@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: index
 title: "Bienvenue sur F2R Articles"
 ---
 
