@@ -5,11 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-    <link type="application/atom+xml" rel="related" href="https://f2r.github.io/feed/fr.xml" hreflang="fr" title="Flux Atom en français" />
-    <link type="application/atom+xml" rel="related" href="https://f2r.github.io/feed/en.xml" hreflang="en" title="Atom feed in english" />
+    <link rel="alternate" type="application/atom+xml" href="https://f2r.github.io/feed/fr.xml" hreflang="fr" title="Flux Atom en français" />
+    <link rel="alternate" type="application/atom+xml" href="https://f2r.github.io/feed/en.xml" hreflang="en" title="Atom feed in english" />
     {% include head-custom.html %}
 
 {% seo %}
+
   </head>
 
   <body>
@@ -28,6 +29,8 @@
         {{ content }}
         <hr>
         <p>Suivez-moi sur Bluesky: <a href="https://bsky.app/profile/bouchery.fr">@bouchery.fr</a></p>
+        <p><a href="https://f2r.github.io/feed/en.xml">Atom feed in english</a> <img src="../img/rss.svg" id="rss" style="height: 1.1em; vertical-align: sub;"></p>
+        <p><a href="https://f2r.github.io/feed/fr.xml">Flux Atom en français</a> <img src="../img/rss.svg" id="rss" style="height: 1.1em; vertical-align: sub;"></p>
       </section>
     </div>
   </body>
