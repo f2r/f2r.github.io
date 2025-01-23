@@ -89,7 +89,7 @@ echo (new ReflectionFunction('bar'))->getReturnType()->__toString();
 - PHP 8.1.0: `iterable, iterable|bool`
 - PHP 8.2.0: `iterable, Traversable|array|bool`
 
-This internal change was introduced by this pull request : [Convert iterable into an internal alias for Traversable|array](https://github.com/php/php-src/pull/7309).
+This internal change was introduced by this pull request : [Convert iterable into an internal alias for Traversable array](https://github.com/php/php-src/pull/7309).
 
 However, the `Traversable` interface is somewhat unique and could almost be considered a pseudo-type, as it is an interface that cannot be implemented directly but is extended by the `Iterator` and `IteratorAggregate` interfaces.  
 In fact, the `iterable` type should have been a union of types: `Iterator|IteratorAggregate|array`.
