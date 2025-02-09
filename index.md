@@ -8,11 +8,13 @@ title: "Bienvenue sur F2R Articles"
 ## Derniers articles / Last posts
 
 ### Français
-{% for post in site.fr limit: 3 %}
-- [{{ post.title }}]({{ post.url }})
+{% assign posts = site.fr | sort: 'published' | reverse %}
+{% for post in posts limit: 5 %}
+- {{post.date | date: "%d/%m/%Y"}}: [{{ post.title }}]({{ post.url }})
 {% endfor %}
 
 ### English
-{% for post in site.en limit: 3 %}
-- [{{ post.title }}]({{ post.url }})
+{% assign posts = site.en | sort: 'published' | reverse %}
+{% for post in posts limit: 5 %}
+- {{post.date | date: "%d/%m/%Y"}}: [{{ post.title }}]({{ post.url }})
 {% endfor %}
