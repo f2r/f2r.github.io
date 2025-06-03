@@ -6,7 +6,7 @@ category: fr
 lang: fr
 ---
 
-(Published on June 3, 2025 - [Version française](/en/asynchrone))
+(Published on June 3, 2025 - [English version](/en/asynchrone))
 
 ## La programmation asynchrone en PHP
 
