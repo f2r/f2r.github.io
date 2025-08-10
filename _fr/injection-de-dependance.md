@@ -204,7 +204,7 @@ L'un des grands intérêts de l'injection de dépendances, c'est de pouvoir subs
 Il existe toutefois des compositions de classes qui ont été conçues ainsi pour permettre de découper le code en plus petits morceaux afin de rendre l'ensemble moins lourds à lire et à maintenir.
 Quand vous avez une très longue méthode, vous allez la refactorer en un ensemble d'appels de sous méthodes privées pour la rendre plus digeste, et bien c'est la même chose avec les classes : 
 vous subdivisez votre longue classe en plusieurs plus petites classes dans lesquelles vous déplacez votre code. Ces classes n'ont pas d'intérêts en dehors de l'usage de la classe qui les agrège et l'injection de dépendances n'y apportera aucune valeur.
-D'ailleurs, vous allez peut-être même ajouter le tag `@internal` ou un analyseur statique comme [Deptrac](https://qossmic.github.io/deptrac/) pour limiter les interactions avec vos classes internes.
+D'ailleurs, vous allez peut-être même ajouter le tag `@internal` ou un analyseur statique comme [Deptrac](https://deptrac.github.io/deptrac/) pour limiter les interactions avec vos classes internes.
 Un jour, peut-être, PHP offrira la possibilité d'adapter la [visibilité des classes](https://wiki.php.net/rfc/namespace-visibility) ou introduira les [classes amies](https://wiki.php.net/rfc/friend-classes).
 
 Vous devez trouvez un équilibre.
