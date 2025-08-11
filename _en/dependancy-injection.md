@@ -216,7 +216,7 @@ One of the key benefits of dependency injection is the ability to substitute beh
 
 However, some class compositions are intentionally designed this way to break down the code into smaller pieces, making it easier to read and maintain. When you have a long method, you refactor it into a series of private sub-methods to make it more digestible. The same principle applies to classes: you subdivide your large class into several smaller classes and move parts of your code into them. These classes often have no purpose outside the context of the class they belong to, and dependency injection adds no value in these cases.
 
-In fact, you might even add the `@internal` tag or use a static analyzer like [Deptrac](https://qossmic.github.io/deptrac/) to limit interactions with your internal classes. One day, PHP might offer the ability to adapt [class visibility](https://wiki.php.net/rfc/namespace-visibility) or introduce [friend classes](https://wiki.php.net/rfc/friend-classes).
+In fact, you might even add the `@internal` tag or use a static analyzer like [Deptrac](https://deptrac.github.io/deptrac/) to limit interactions with your internal classes. One day, PHP might offer the ability to adapt [class visibility](https://wiki.php.net/rfc/namespace-visibility) or introduce [friend classes](https://wiki.php.net/rfc/friend-classes).
 
 You need to strike a balance. While injection provides flexibility to evolve your code, excessive or inappropriate use can make it complex and harder to understand.
 
