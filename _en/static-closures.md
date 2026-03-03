@@ -1,13 +1,13 @@
 ---
 layout: post-en
 title: "Why use static closures?"
-date: 2026-03-02
+date: 2026-03-03
 category: en
 lang: en
 ---
 
 ## Why use static closures?
-(Published on March 2, 2026 - [Version française](/fr/closures-statiques))
+(Published on March 3, 2026 - [Version française](/fr/closures-statiques))
 
 In PHP, we use [closures](https://www.php.net/closure) more and more, in dependency injection, middleware, collection callbacks, and also in asynchronous processing, as I wrote in my article "[Asynchronous Programming in PHP](/en/asynchrone)" as a callback tool.
 
