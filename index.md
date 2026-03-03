@@ -13,8 +13,12 @@ title: "Bienvenue sur F2R Articles"
 - {{post.date | date: "%d/%m/%Y"}}: [{{ post.title }}]({{ post.url }})
 {% endfor %}
 
+[Tous les articles](/articles-fr)
+
 ### English
 {% assign posts = site.en | sort: 'published' | reverse %}
 {% for post in posts limit: 5 %}
 - {{post.date | date: "%d/%m/%Y"}}: [{{ post.title }}]({{ post.url }})
 {% endfor %}
+
+[All articles](/articles-en)
