@@ -4,10 +4,11 @@ title: "Understanding Dependency Injection"
 date: 2024-12-16
 category: en
 lang: en
+description: "new is a coupling. A complete walkthrough of dependency injection — not the framework container recipe, but the fundamental reasoning: why we separate creation from execution, and where injection should stop."
 ---
 
-### Understanding Dependency Injection  
-(Published on Dec 12, 2024 – [Version française](/fr/injection-de-dependance))  
+# Understanding Dependency Injection
+(Published on December 12, 2024 - [Version française](/fr/injection-de-dependance))
 
 In the world of development, the use of modern frameworks has become commonplace.  
 These tools provide practical and efficient solutions for building applications, standardizing development approaches, and reducing code complexity.  

@@ -4,11 +4,11 @@ title: "La programmation asynchrone en PHP"
 date: 2025-05-25
 category: fr
 lang: fr
+description: "PHP asynchrone ? On vous a dit que ça n'existait pas — et on avait en partie tort depuis 2002. Un panorama complet : des streams aux Fibers, des generators aux Promises, ReactPHP contre Amp."
 ---
 
-(Published on June 3, 2025 - [English version](/en/asynchrone))
-
-## La programmation asynchrone en PHP
+# La programmation asynchrone en PHP
+(Publié le 3 juin 2025 - [English version](/en/asynchrone))
 
 Le modèle d'exécution traditionnel de PHP est **synchrone**, ce qui signifie que chaque instruction est exécutée dans l'**ordre** dans lequel elles apparaissent dans le code.
 Cela n'est pas en soi un problème, car il est souvent plus simple de penser de manière synchrone.

@@ -4,7 +4,12 @@ title: "I'm Becoming a Markdown Developer"
 date: 2026-05-27
 category: en
 lang: en
+image: /img/developpeur-markdown.jpg
+description: "I've been coding since 1983. Today, my primary tool isn't an IDE — it's a Markdown file. That's not surrender; it's moving up an abstraction level. And strangely, I've never felt more like I'm actually doing my job as a developer."
 ---
+
+# I'm Becoming a Markdown Developer
+(Published on May 27, 2026 - [Version française](/fr/developpeur-markdown))
 
 I've been coding since 1983. I've seen punch cards, text terminals, and the birth of the Web. Today I keep hearing two arguments that exhaust me. On one side, the vibe coding evangelists who tell you AI is going to replace the tech department. On the other, the purists who refuse to touch AI out of pride or fear that it'll produce garbage.
 

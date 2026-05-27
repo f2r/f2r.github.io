@@ -4,9 +4,10 @@ title: "Pourquoi utiliser des closures statiques ?"
 date: 2026-03-02
 category: fr
 lang: fr
+description: "Votre closure ne référence pas $this, et pourtant elle maintient l'objet en vie en mémoire. Un comportement PHP que personne ne vous explique, et pourquoi le mot-clé static peut changer la durée de vie de vos objets."
 ---
 
-## Pourquoi utiliser des closures statiques ?
+# Pourquoi utiliser des closures statiques ?
 (Publié le 3 mars 2026 - [English version](/en/static-closures))
 
 En PHP, Nous utilisons de plus en plus les [closures](https://www.php.net/closure), dans l'injection de dépendance, les middlewares, les callbacks de collections, et aussi dans le traitement de l'asynchronisme comme j'ai pu l'écrire dans mon article "[La programmation asynchrone en PHP](/fr/asynchrone)".

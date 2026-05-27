@@ -4,9 +4,12 @@ title: "LLM: From Probability to Orchestration"
 date: 2026-03-04
 category: en
 lang: en
+image: /img/llm-probabilite-orchestration.png
+description: "What you think you know about AI is half the picture. The real revolution isn't in the models — it's in how we orchestrate them. From tokens to multi-agent systems: how we went from word prediction to distributed systems engineering in two years."
 ---
 
-*(Translation of the [original French article](/fr/llm-probabilite-orchestration), published in French on [LinkedIn](https://www.linkedin.com/pulse/llm-de-la-probabilit%C3%A9-%C3%A0-lorchestration-frederic-bouchery-vdkie/) on March 4, 2026.)*
+# LLM: From Probability to Orchestration
+(Published on March 4, 2026 - [Version française](/fr/llm-probabilite-orchestration))
 
 > **Disclaimer:** Written in March 2026, this article covers the field of generative artificial intelligence, a constantly evolving sector. The concepts and architectures presented here are based on knowledge and developments at that date and are subject to rapid change. These reflections should be considered a temporary snapshot, not definitive conclusions.
 

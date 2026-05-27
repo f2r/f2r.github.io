@@ -4,9 +4,12 @@ title: "L'IA produit de la merde ?"
 date: 2026-05-03
 category: fr
 lang: fr
+image: /img/ia-produit-de-la-merde.png
+description: "Un collègue me dit que l'IA produit de la merde. Il a raison — et il a tort. Le problème n'est pas l'outil, c'est qu'on lui a rien dit de valable. Retour sur le vrai coût cognitif du développement assisté par IA."
 ---
 
-*(Publié sur [LinkedIn](https://www.linkedin.com/pulse/lia-produit-de-la-merde-frederic-bouchery-t5gbe/) le 3 mai 2026.)*
+# L'IA produit de la merde ?
+(Publié sur [LinkedIn](https://www.linkedin.com/pulse/lia-produit-de-la-merde-frederic-bouchery-t5gbe/) le 3 mai 2026 - [English version](/en/ai-produces-garbage))
 
 Un développeur avec qui j'ai partagé les bancs de plusieurs conférences et dont je respecte l'avis a récemment commenté [mon précédent article](/fr/honte-de-votre-code) : *"Quand j'utilise un LLM, c'est de la merde en barres. Ça me génère un truc, et finalement je passe plus de temps à tout reprendre de zéro. C'est insupportable."*
 

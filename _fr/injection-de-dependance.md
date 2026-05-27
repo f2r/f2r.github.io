@@ -4,10 +4,11 @@ title: "Comprendre l'injection de dépendances"
 date: 2024-12-16
 category: fr
 lang: fr
+description: "new, c'est un couplage. Un tour complet de l'injection de dépendance — pas la recette du container framework, mais le raisonnement fondamental : pourquoi on sépare la création de l'exécution, et où s'arrête l'injection."
 ---
 
-## Comprendre l'injection de dépendances
-(Publié le 12 déc 2024 - [English version](/en/dependancy-injection))
+# Comprendre l'injection de dépendances
+(Publié le 12 décembre 2024 - [English version](/en/dependancy-injection))
 
 Dans le monde du développement, l'utilisation de frameworks modernes est devenue courante.
 Ces outils offrent des solutions pratiques et rapides pour créer des applications, en standardisant les approches de développement et en réduisant la complexité du code.

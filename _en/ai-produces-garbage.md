@@ -4,9 +4,12 @@ title: "AI Produces Garbage?"
 date: 2026-05-03
 category: en
 lang: en
+image: /img/ia-produit-de-la-merde.png
+description: "A colleague tells me AI produces garbage. He's right — and he's wrong. The problem isn't the tool; it's that we handed it a vague spec and expected brilliance. On the real cognitive cost of AI-assisted development."
 ---
 
-*(Translation of the [original French article](/fr/ia-produit-de-la-merde), published in French on [LinkedIn](https://www.linkedin.com/pulse/lia-produit-de-la-merde-frederic-bouchery-t5gbe/) on May 3, 2026.)*
+# AI Produces Garbage?
+(Published on May 3, 2026 - [Version française](/fr/ia-produit-de-la-merde))
 
 A developer I've shared the floor with at several conferences, and whose opinion I respect, recently commented on [my previous article](/en/ashamed-of-your-code): *"When I use an LLM, it's total garbage. It generates something, and I end up spending more time starting from scratch. It's unbearable."*
 

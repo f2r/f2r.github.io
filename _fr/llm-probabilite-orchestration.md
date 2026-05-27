@@ -4,9 +4,12 @@ title: "LLM : De la probabilité à l'orchestration"
 date: 2026-03-04
 category: fr
 lang: fr
+image: /img/llm-probabilite-orchestration.png
+description: "Ce que vous croyez savoir sur l'IA, c'est la moitié du tableau. La vraie révolution n'est pas dans les modèles, c'est dans la façon dont on les orchestre. Du token au multi-agent, comment on est passé en deux ans de la prédiction de mots à l'architecture de systèmes distribués."
 ---
 
-*(Publié sur [LinkedIn](https://www.linkedin.com/pulse/llm-de-la-probabilit%C3%A9-%C3%A0-lorchestration-frederic-bouchery-vdkie/) le 4 mars 2026.)*
+# LLM : De la probabilité à l'orchestration
+(Publié sur [LinkedIn](https://www.linkedin.com/pulse/llm-de-la-probabilit%C3%A9-%C3%A0-lorchestration-frederic-bouchery-vdkie/) le 4 mars 2026 - [English version](/en/llm-probability-orchestration))
 
 > **Avertissement :** Rédigé en mars 2026, cet article aborde le domaine de l'intelligence artificielle générative, un secteur en mutation constante. Les concepts et architectures présentés ici sont basés sur les connaissances et les évolutions à cette date et sont susceptibles d'évoluer rapidement. Ces réflexions sont à considérer comme un état des lieux temporaire, et non comme des conclusions définitives.
 

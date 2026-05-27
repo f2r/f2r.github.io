@@ -4,10 +4,11 @@ title: "Exploring Concurrent Access Handling"
 date: 2025-02-09
 category: en
 lang: en
+description: "Two PHP workers, one task to process: how MySQL saves you — or betrays you. A walk from SELECT FOR UPDATE to SKIP LOCKED, with all the transaction traps in between."
 ---
 
 # Exploring Concurrent Access Handling
-(Published on Feb 9, 2025 - [Version française](/fr/acces-concurrents))
+(Published on February 9, 2025 - [Version française](/fr/acces-concurrents))
 
 In this article, I’ll discuss concurrent access and how to manage it using PHP and MySQL.
 

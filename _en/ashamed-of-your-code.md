@@ -4,9 +4,12 @@ title: "When Did You Start Being Ashamed of Your Code?"
 date: 2026-03-31
 category: en
 lang: en
+image: /img/honte-de-votre-code.png
+description: "There's a scene that keeps repeating in code reviews: a developer apologizing for using AI. That shame is both absurd and revealing. Here's what it says about our profession — and why you should still worry, just not about that."
 ---
 
-*(Translation of the [original French article](/fr/honte-de-votre-code), published in French on [LinkedIn](https://www.linkedin.com/pulse/depuis-quand-avez-vous-honte-de-votre-code-frederic-bouchery-oo8ce/) on March 31, 2026.)*
+# When Did You Start Being Ashamed of Your Code?
+(Published on March 31, 2026 - [Version française](/fr/honte-de-votre-code))
 
 There's a scene that keeps repeating itself in my code reviews. A developer presents their work. They explain the choices, the architecture, the trade-offs. And at some point, there's a hesitation. A slight faltering. Then the sentence comes out, in a low voice, almost apologetically: *"That part... I didn't write it. The AI did."*
 

@@ -4,10 +4,11 @@ title: "Jouons avec les accès concurrents"
 date: 2025-02-09
 category: fr
 lang: fr
+description: "Deux workers PHP, une seule tâche à traiter : comment MySQL vous sauve — ou vous trahit. Un voyage de SELECT FOR UPDATE à SKIP LOCKED, avec les pièges des transactions en prime."
 ---
 
 # Jouons avec les accès concurrents
-(Publié le 9 fév 2025 - [English version](/en/concurrent-access))
+(Publié le 9 février 2025 - [English version](/en/concurrent-access))
 
 Je voulais évoquer avec vous le problème des accès concurrents et comment résoudre cela avec PHP et MySQL.
 

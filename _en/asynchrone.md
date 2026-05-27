@@ -4,11 +4,11 @@ title: "Asynchronous Programming in PHP"
 date: 2025-05-25
 category: en
 lang: en
+description: "PHP asynchronous? You were told it doesn't exist — and that's been partially wrong since 2002. A complete walkthrough: from streams to Fibers, generators to Promises, ReactPHP versus Amp."
 ---
 
+# Asynchronous Programming in PHP
 (Published on June 3, 2025 - [Version française](/fr/asynchrone))
-
-## Asynchronous Programming in PHP
 
 PHP's traditional execution model is **synchronous**, which means that each instruction is executed in the **order** in which it appears in the code.
 This isn't a problem in itself, as it's often simpler to think synchronously.
