@@ -84,3 +84,5 @@ Except that resisting doesn't make the emptiness disappear, it only makes it ava
 The theory of constraints calls this elevating the constraint, and it's the answer to the objection about starving the bottleneck: the time I no longer spend working through questions goes into increasing the capacity of the only workstation in the shop that money can't buy.
 
 Whether I'll stick to it, or find myself a good reason to open a fifth terminal, remains to be seen.
+
+*Update, August 17, 2026: the follow-up is online, [Those Who Removed Code Review Are Right](/en/removed-code-review).*

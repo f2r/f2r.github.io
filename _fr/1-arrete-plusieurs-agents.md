@@ -84,3 +84,5 @@ Sauf que résister ne fait pas disparaître le vide, ça le rend seulement dispo
 La théorie des contraintes appelle ça élever la contrainte, et c'est la réponse à l'objection du goulot qu'on affame : le temps que je ne passe plus à dépiler des questions sert à augmenter la capacité du seul poste de l'atelier qui ne s'achète pas.
 
 Reste à savoir si je vais m'y tenir, ou si je vais me trouver une bonne raison d'ouvrir un cinquième terminal.
+
+*Mise à jour du 17 août 2026 : la suite est en ligne, [Ceux qui ont supprimé la revue de code ont raison](/fr/supprimer-revue-code).*
