@@ -8,9 +8,9 @@ description: "Votre closure ne référence pas $this, et pourtant elle maintient
 ---
 
 # Pourquoi utiliser des closures statiques ?
-(Publié le 3 mars 2026 - [English version](/en/static-closures))
+(Publié le 3 mars 2026 - [English version](/en/static-closures.html))
 
-En PHP, Nous utilisons de plus en plus les [closures](https://www.php.net/closure), dans l'injection de dépendance, les middlewares, les callbacks de collections, et aussi dans le traitement de l'asynchronisme comme j'ai pu l'écrire dans mon article "[La programmation asynchrone en PHP](/fr/asynchrone)".
+En PHP, Nous utilisons de plus en plus les [closures](https://www.php.net/closure), dans l'injection de dépendance, les middlewares, les callbacks de collections, et aussi dans le traitement de l'asynchronisme comme j'ai pu l'écrire dans mon article "[La programmation asynchrone en PHP](/fr/asynchrone.html)".
 
 Cependant, elles ont un comportement qui peut surprendre : toute closure créée dans une méthode d'instance embarque automatiquement une référence à l'objet courant, même si elle n'utilise **pas** `$this`.
 Ce comportement peut avoir des conséquences inattendues sur la durée de vie des objets et générer des fuites de mémoire si on n'y prend pas garde.

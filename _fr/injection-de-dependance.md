@@ -8,7 +8,7 @@ description: "new, c'est un couplage. Un tour complet de l'injection de dépenda
 ---
 
 # Comprendre l'injection de dépendances
-(Publié le 12 décembre 2024 - [English version](/en/dependancy-injection))
+(Publié le 12 décembre 2024 - [English version](/en/dependancy-injection.html))
 
 Dans le monde du développement, l'utilisation de frameworks modernes est devenue courante.
 Ces outils offrent des solutions pratiques et rapides pour créer des applications, en standardisant les approches de développement et en réduisant la complexité du code.

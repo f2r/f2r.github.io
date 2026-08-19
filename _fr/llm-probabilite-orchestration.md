@@ -9,7 +9,7 @@ description: "Ce que vous croyez savoir sur l'IA, c'est la moitié du tableau. L
 ---
 
 # LLM : De la probabilité à l'orchestration
-(Publié sur [LinkedIn](https://www.linkedin.com/pulse/llm-de-la-probabilit%C3%A9-%C3%A0-lorchestration-frederic-bouchery-vdkie/) le 4 mars 2026 - [English version](/en/llm-probability-orchestration))
+(Publié sur [LinkedIn](https://www.linkedin.com/pulse/llm-de-la-probabilit%C3%A9-%C3%A0-lorchestration-frederic-bouchery-vdkie/) le 4 mars 2026 - [English version](/en/llm-probability-orchestration.html))
 
 > **Avertissement :** Rédigé en mars 2026, cet article aborde le domaine de l'intelligence artificielle générative, un secteur en mutation constante. Les concepts et architectures présentés ici sont basés sur les connaissances et les évolutions à cette date et sont susceptibles d'évoluer rapidement. Ces réflexions sont à considérer comme un état des lieux temporaire, et non comme des conclusions définitives.
 

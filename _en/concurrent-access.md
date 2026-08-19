@@ -8,7 +8,7 @@ description: "Two PHP workers, one task to process: how MySQL saves you — or b
 ---
 
 # Exploring Concurrent Access Handling
-(Published on February 9, 2025 - [Version française](/fr/acces-concurrents))
+(Published on February 9, 2025 - [Version française](/fr/acces-concurrents.html))
 
 In this article, I’ll discuss concurrent access and how to manage it using PHP and MySQL.
 

@@ -9,7 +9,7 @@ description: "What you think you know about AI is half the picture. The real rev
 ---
 
 # LLM: From Probability to Orchestration
-(Published on March 4, 2026 - [Version française](/fr/llm-probabilite-orchestration))
+(Published on March 4, 2026 - [Version française](/fr/llm-probabilite-orchestration.html))
 
 > **Disclaimer:** Written in March 2026, this article covers the field of generative artificial intelligence, a constantly evolving sector. The concepts and architectures presented here are based on knowledge and developments at that date and are subject to rapid change. These reflections should be considered a temporary snapshot, not definitive conclusions.
 

@@ -8,7 +8,7 @@ description: "Deux workers PHP, une seule tâche à traiter : comment MySQL vous
 ---
 
 # Jouons avec les accès concurrents
-(Publié le 9 février 2025 - [English version](/en/concurrent-access))
+(Publié le 9 février 2025 - [English version](/en/concurrent-access.html))
 
 Je voulais évoquer avec vous le problème des accès concurrents et comment résoudre cela avec PHP et MySQL.
 

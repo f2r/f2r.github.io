@@ -9,7 +9,7 @@ description: "I've been coding since 1983. Today, my primary tool isn't an IDE �
 ---
 
 # I'm Becoming a Markdown Developer
-(Published on May 27, 2026 - [Version française](/fr/developpeur-markdown))
+(Published on May 27, 2026 - [Version française](/fr/developpeur-markdown.html))
 
 I've been coding since 1983. I've seen punch cards, text terminals, and the birth of the Web. Today I keep hearing two arguments that exhaust me. On one side, the vibe coding evangelists who tell you AI is going to replace the tech department. On the other, the purists who refuse to touch AI out of pride or fear that it'll produce garbage.
 

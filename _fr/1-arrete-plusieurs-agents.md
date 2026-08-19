@@ -9,11 +9,11 @@ description: "Attendre n'est pas gaspiller. Je comblais chaque seconde de géné
 ---
 
 # J'ai arrêté de lancer plusieurs agents
-(Publié le 2 août 2026 - [English version](/en/stopped-running-several-agents))
+(Publié le 2 août 2026 - [English version](/en/stopped-running-several-agents.html))
 
 Hier après-midi, j'avais quatre agents en train de travailler et je passais mon temps à répondre à leurs questions, jusqu'au moment où je n'ai plus su lequel attendait quoi.
 
-Ma façon de travailler avec l'IA n'a rien d'improvisé, et je l'ai décrite en détail le jour où [je suis devenu un développeur Markdown](/fr/developpeur-markdown). Je passe désormais l'essentiel de mon temps à spécifier, je fais écrire des tests d'acceptance raccords avec la spécification, et je ne lance l'implémentation en autonomie complète qu'une fois ces deux étapes tenues. L'agent part alors pour quelques minutes, parfois plusieurs dizaines, sans avoir besoin de moi, sauf que je me retrouve devant un terminal qui tourne, les bras croisés, et le réflexe qui suit est d'ouvrir un autre agent sur une autre tâche, puis un autre.
+Ma façon de travailler avec l'IA n'a rien d'improvisé, et je l'ai décrite en détail le jour où [je suis devenu un développeur Markdown](/fr/developpeur-markdown.html). Je passe désormais l'essentiel de mon temps à spécifier, je fais écrire des tests d'acceptance raccords avec la spécification, et je ne lance l'implémentation en autonomie complète qu'une fois ces deux étapes tenues. L'agent part alors pour quelques minutes, parfois plusieurs dizaines, sans avoir besoin de moi, sauf que je me retrouve devant un terminal qui tourne, les bras croisés, et le réflexe qui suit est d'ouvrir un autre agent sur une autre tâche, puis un autre.
 
 Personne ne m'a demandé de faire ça, et c'est bien ce qui me gêne, parce que cette dérive n'est pas le prix d'un mauvais cadrage : elle se nourrit du temps libre qu'un bon cadrage me rend.
 
@@ -35,7 +35,7 @@ Personne ne trébuche sur les planches. Toute ma vie, ma contrainte a été l'é
 
 Générer dix fois plus vite ne débloque donc rien, ça empile juste du stock devant moi : des branches ouvertes partout, des PR qui moisissent et une journée entière passée à arbitrer des propositions que je n'ai pas le temps de comprendre. J'ai fabriqué un embouteillage dont je suis le seul carrefour.
 
-Quand on gave un poste déjà saturé, on déclenche une panne : sur un serveur, les requêtes finissent en timeout, et sur un humain, ça s'appelle de la [fatigue décisionnelle](/fr/ia-produit-de-la-merde). J'en parlais déjà en constatant que lire du code produit par une machine est la tâche la plus épuisante du métier, et ça finit en bugs qu'on ne voit plus passer.
+Quand on gave un poste déjà saturé, on déclenche une panne : sur un serveur, les requêtes finissent en timeout, et sur un humain, ça s'appelle de la [fatigue décisionnelle](/fr/ia-produit-de-la-merde.html). J'en parlais déjà en constatant que lire du code produit par une machine est la tâche la plus épuisante du métier, et ça finit en bugs qu'on ne voit plus passer.
 
 ## Quatre agents qui remontent tous vers moi
 
@@ -61,7 +61,7 @@ Combler chaque seconde de génération en ouvrant une autre tâche, c'est du pro
 
 Suivre l'agent sur la tâche que je viens de lui confier est une autre affaire, puisque je reste dans le même contexte, et c'est même la seule activité qui tienne vraiment dans une fenêtre de trois minutes. C'est là que je vois l'absurdité en direct, quand l'agent s'engage dans une impasse, quand il importe un package de 50 Mo pour une seule fonction utilitaire ou quand il glisse en douce un mock bancal pour faire passer un test au vert.
 
-Quand je regarde l'agent travailler, il m'arrive de l'interrompre en plein vol parce que je le vois partir dans une mauvaise direction, alors qu'avec plusieurs agents, je remonte le fil de travail en scrollant vers le haut, et je découvre après coup qu'il a perdu du temps pour rien. Le faire revenir en arrière n'est pas long, mais tout ce qu'il a produit entre-temps est à jeter, alors qu'une intervention en direct m'aurait coûté trois secondes. Encore faut-il regarder au bon moment, parce que mon agent affiche sa réflexion et ses appels d'outils pendant qu'il travaille, puis replie tout une fois la tâche terminée : pour s'apercevoir qu'il s'est trompé, il faudrait rouvrir le fil de raisonnement, ce qu'on ne fait pratiquement jamais, et la dérive passée inaperçue se paie bien plus tard, en bug. C'est très exactement la [vigilance](/fr/honte-de-votre-code) dont je disais qu'elle n'a rien d'une méfiance paranoïaque puisqu'elle est le travail normal de quelqu'un qui comprend ce qu'il commite. Ça ne fait pas pour autant de la surveillance un projet de journée, parce que ces dérives relèvent de ma chaîne de validation, c'est-à-dire des tests d'acceptance et de tous les contrôles automatiques qui bloquent une livraison sans mon avis.
+Quand je regarde l'agent travailler, il m'arrive de l'interrompre en plein vol parce que je le vois partir dans une mauvaise direction, alors qu'avec plusieurs agents, je remonte le fil de travail en scrollant vers le haut, et je découvre après coup qu'il a perdu du temps pour rien. Le faire revenir en arrière n'est pas long, mais tout ce qu'il a produit entre-temps est à jeter, alors qu'une intervention en direct m'aurait coûté trois secondes. Encore faut-il regarder au bon moment, parce que mon agent affiche sa réflexion et ses appels d'outils pendant qu'il travaille, puis replie tout une fois la tâche terminée : pour s'apercevoir qu'il s'est trompé, il faudrait rouvrir le fil de raisonnement, ce qu'on ne fait pratiquement jamais, et la dérive passée inaperçue se paie bien plus tard, en bug. C'est très exactement la [vigilance](/fr/honte-de-votre-code.html) dont je disais qu'elle n'a rien d'une méfiance paranoïaque puisqu'elle est le travail normal de quelqu'un qui comprend ce qu'il commite. Ça ne fait pas pour autant de la surveillance un projet de journée, parce que ces dérives relèvent de ma chaîne de validation, c'est-à-dire des tests d'acceptance et de tous les contrôles automatiques qui bloquent une livraison sans mon avis.
 
 ## Spécifier plus gros, pas prompter plus vite
 
@@ -71,7 +71,7 @@ Une tâche mal cadrée de deux minutes m'oblige à rester devant, alors qu'une t
 
 ## Quand le multi-agent tiendra debout
 
-Quand je décrivais [l'architecture multi-agents](/fr/llm-probabilite-orchestration), le chef d'orchestre était un processus qui délègue à des agents spécialisés et indépendants, et c'est précisément là que j'ai dévié, puisque dans mon terminal ce chef d'orchestre, c'était moi, à la main. Le multi-agent tiendra debout le jour où il n'aura plus besoin de moi pour valider, et il s'écroule tant que je reste la seule boucle. Quand ma chaîne de validation rejettera les dérives sans passer par mon cerveau, le goulot se déplacera encore et le parallélisme redeviendra une option défendable, si bien que la bonne question porte sur la charge qu'elle encaisse sans moi.
+Quand je décrivais [l'architecture multi-agents](/fr/llm-probabilite-orchestration.html), le chef d'orchestre était un processus qui délègue à des agents spécialisés et indépendants, et c'est précisément là que j'ai dévié, puisque dans mon terminal ce chef d'orchestre, c'était moi, à la main. Le multi-agent tiendra debout le jour où il n'aura plus besoin de moi pour valider, et il s'écroule tant que je reste la seule boucle. Quand ma chaîne de validation rejettera les dérives sans passer par mon cerveau, le goulot se déplacera encore et le parallélisme redeviendra une option défendable, si bien que la bonne question porte sur la charge qu'elle encaisse sans moi.
 
 Ceux qui tiennent dix agents sans finir en bouillie n'ont pas plus d'endurance que moi, ils ont juste une meilleure chaîne de validation, et c'est un autre sujet.
 
@@ -85,4 +85,4 @@ La théorie des contraintes appelle ça élever la contrainte, et c'est la répo
 
 Reste à savoir si je vais m'y tenir, ou si je vais me trouver une bonne raison d'ouvrir un cinquième terminal.
 
-*Mise à jour du 17 août 2026 : la suite est en ligne, [Ceux qui ont supprimé la revue de code ont raison](/fr/supprimer-revue-code).*
+*Mise à jour du 17 août 2026 : la suite est en ligne, [Ceux qui ont supprimé la revue de code ont raison](/fr/supprimer-revue-code.html).*

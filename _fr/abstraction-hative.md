@@ -8,7 +8,7 @@ description: "Le principe DRY vous a-t-il déjà transformé une duplication inn
 ---
 
 # DRY à tout prix : Le piège de l’abstraction prématurée
-(Publié le 27 novembre 2024 - [English version](/en/hasty-abstraction))
+(Publié le 27 novembre 2024 - [English version](/en/hasty-abstraction.html))
 
 Le principe "DRY" (Don't Repeat Yourself) est une pratique de développement qui vise à réduire la duplication de code en favorisant la réutilisation et l'abstraction.
 Seulement, c'est une méthode qui peut conduire les développeurs à créer des abstractions trop tôt, avant même de comprendre pleinement les besoins et les exigences du projet.

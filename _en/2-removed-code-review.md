@@ -10,7 +10,7 @@ description: "Developers showed up on my MR with an AI doing the review in their
 ---
 
 # Those Who Removed Code Review Are Right
-(Published on August 17, 2026 - [Version française](/fr/supprimer-revue-code))
+(Published on August 17, 2026 - [Version française](/fr/supprimer-revue-code.html))
 
 They're right about the diagnosis, but for the wrong reasons, and the consequences look nothing like what they imagine.
 
@@ -22,7 +22,7 @@ Half of that reasoning deserves to be defended, and the other half to be buried.
 
 An attentive reviewer processes [a few hundred lines per hour](https://smartbear.com/learn/code-review/best-practices-for-peer-code-review/), and beyond that pace their defect detection rate collapses, a limit documented since the [code inspections of the 1970s](https://en.wikipedia.org/wiki/Fagan_inspection) and one that AI has obviously not pushed back. An agent produces that volume in a few seconds, so code now gets written a hundred times faster than it gets read, and no team closes a gap like that by getting better organized.
 
-That leaves only two ways out: either your team actually reads, and review becomes [the new bottleneck](/en/stopped-running-several-agents), with PRs rotting for five days while three others go stale behind them, or it pretends. That's where it turns serious, because a rubber-stamp review is worse than no review at all: with no review, everyone knows the risk exists, whereas with an approval you manufacture assurance, and two reviewers scrolling through a 900-line PR in four minutes produce nothing but an audit trail.
+That leaves only two ways out: either your team actually reads, and review becomes [the new bottleneck](/en/stopped-running-several-agents.html), with PRs rotting for five days while three others go stale behind them, or it pretends. That's where it turns serious, because a rubber-stamp review is worse than no review at all: with no review, everyone knows the risk exists, whereas with an approval you manufacture assurance, and two reviewers scrolling through a 900-line PR in four minutes produce nothing but an audit trail.
 
 I've watched the theater modernize in my own team, where the volume of code produced has exploded while detailed reading dwindled, unable to keep up: developers run an AI to do their review pass, and some show up on my MR with an agent reading in their place. I told them in a meeting that doing the review with an AI means trusting it blindly, and that since it's already the one producing the code, we might as well stop bothering with review at all: it compiles, so it works, straight to prod. What I was holding against them was approving without judging: their agent returns an opinion that changes with every run, nobody answers for it, and the approval still carries the signature of a human who looked at nothing.
 

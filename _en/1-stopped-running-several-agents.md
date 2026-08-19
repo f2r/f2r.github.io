@@ -9,11 +9,11 @@ description: "Waiting isn't wasting. I was filling every second of generation ti
 ---
 
 # I Stopped Running Several Agents
-(Published on August 2, 2026 - [Version française](/fr/arrete-plusieurs-agents))
+(Published on August 2, 2026 - [Version française](/fr/arrete-plusieurs-agents.html))
 
 Yesterday afternoon I had four agents working for me and I spent my time answering their questions, until the point where I no longer knew which one was waiting for what.
 
-There's nothing improvised about the way I work with AI, and I described it in detail the day [I became a Markdown developer](/en/markdown-developer). I now spend most of my time writing specifications, I have acceptance tests written to match those specifications, and I only launch the implementation in full autonomy once those two steps hold. The agent then runs for a few minutes, sometimes a good deal longer, without needing me, except that I find myself in front of a running terminal twiddling my thumbs, and the reflex that follows is to open another agent on another task, then another.
+There's nothing improvised about the way I work with AI, and I described it in detail the day [I became a Markdown developer](/en/markdown-developer.html). I now spend most of my time writing specifications, I have acceptance tests written to match those specifications, and I only launch the implementation in full autonomy once those two steps hold. The agent then runs for a few minutes, sometimes a good deal longer, without needing me, except that I find myself in front of a running terminal twiddling my thumbs, and the reflex that follows is to open another agent on another task, then another.
 
 Nobody asked me to do that, and that's exactly what bothers me, because this drift isn't the price of bad framing: it feeds on the free time that good framing gives me back.
 
@@ -35,7 +35,7 @@ Nobody trips over the planks. All my life my constraint was writing, meaning typ
 
 So generating ten times faster unblocks nothing, it just piles up stock in front of me: open branches everywhere, PRs rotting away and a whole day spent arbitrating proposals I don't have time to understand. I've built a traffic jam and I'm its only junction.
 
-When you force-feed a station that's already saturated, you trigger a failure: on a server the requests start timing out, and on a human it's called [decision fatigue](/en/ai-produces-garbage). I wrote about it back when I pointed out that reading code produced by a machine is the most exhausting task in this profession, and it ends in bugs nobody catches any more.
+When you force-feed a station that's already saturated, you trigger a failure: on a server the requests start timing out, and on a human it's called [decision fatigue](/en/ai-produces-garbage.html). I wrote about it back when I pointed out that reading code produced by a machine is the most exhausting task in this profession, and it ends in bugs nobody catches any more.
 
 ## Four agents all routing back through me
 
@@ -61,7 +61,7 @@ Filling every second of generation by opening another task is a misplaced manage
 
 Following the agent on the task I've just handed it is another matter, since I stay in the same context, and it's even the only activity that genuinely fits in a three-minute window. That's where I see the absurdity live, when the agent heads down a dead end, when it imports a 50 MB package for a single utility function or when it quietly slips in a shaky mock to turn a test green.
 
-When I'm following what the agent does, I sometimes interrupt it mid-flight because I can see it heading in the wrong direction, whereas with several agents I scroll back up through the work log and discover after the fact that it wasted time for nothing. Walking it back doesn't take long, but everything it produced in the meantime goes in the bin, when stepping in live would have cost me three seconds. And you still have to be looking at the right moment, because my agent displays its reasoning and its tool calls while it works, then folds everything away once the task is done: to notice it went wrong, you would have to reopen the reasoning thread, which you practically never do, and the drift nobody saw gets paid for much later, as a bug. That's precisely the [vigilance](/en/ashamed-of-your-code) I described as having nothing to do with paranoid distrust, since it's the normal work of someone who understands what they commit. That still doesn't make watching the agent a way to spend a day, because those drifts belong to my validation chain, meaning the acceptance tests and all the automated checks that block a delivery without my sign-off.
+When I'm following what the agent does, I sometimes interrupt it mid-flight because I can see it heading in the wrong direction, whereas with several agents I scroll back up through the work log and discover after the fact that it wasted time for nothing. Walking it back doesn't take long, but everything it produced in the meantime goes in the bin, when stepping in live would have cost me three seconds. And you still have to be looking at the right moment, because my agent displays its reasoning and its tool calls while it works, then folds everything away once the task is done: to notice it went wrong, you would have to reopen the reasoning thread, which you practically never do, and the drift nobody saw gets paid for much later, as a bug. That's precisely the [vigilance](/en/ashamed-of-your-code.html) I described as having nothing to do with paranoid distrust, since it's the normal work of someone who understands what they commit. That still doesn't make watching the agent a way to spend a day, because those drifts belong to my validation chain, meaning the acceptance tests and all the automated checks that block a delivery without my sign-off.
 
 ## Specify bigger, don't prompt faster
 
@@ -71,7 +71,7 @@ A badly framed two-minute task forces me to stay in front of it, whereas a task 
 
 ## The day multi-agent holds up
 
-When I described [multi-agent architecture](/en/llm-probability-orchestration), the conductor was a process delegating to specialized, independent agents, and that's precisely where I went off course, since in my terminal that conductor was me, by hand. Multi-agent will hold up the day it no longer needs me to validate, and it collapses as long as I remain the only loop. When my validation chain rejects the drifts without going through my brain, the bottleneck will move again and parallelism will become a defensible option once more, so the right question is about the load it absorbs without me.
+When I described [multi-agent architecture](/en/llm-probability-orchestration.html), the conductor was a process delegating to specialized, independent agents, and that's precisely where I went off course, since in my terminal that conductor was me, by hand. Multi-agent will hold up the day it no longer needs me to validate, and it collapses as long as I remain the only loop. When my validation chain rejects the drifts without going through my brain, the bottleneck will move again and parallelism will become a defensible option once more, so the right question is about the load it absorbs without me.
 
 Those who keep ten agents running without ending up fried have no more stamina than I do, they just have a better validation chain, and that's another subject.
 
@@ -85,4 +85,4 @@ The theory of constraints calls this elevating the constraint, and it's the answ
 
 Whether I'll stick to it, or find myself a good reason to open a fifth terminal, remains to be seen.
 
-*Update, August 17, 2026: the follow-up is online, [Those Who Removed Code Review Are Right](/en/removed-code-review).*
+*Update, August 17, 2026: the follow-up is online, [Those Who Removed Code Review Are Right](/en/removed-code-review.html).*

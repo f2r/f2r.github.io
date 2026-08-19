@@ -9,9 +9,9 @@ description: "A colleague tells me AI produces garbage. He's right — and he's 
 ---
 
 # AI Produces Garbage?
-(Published on May 3, 2026 - [Version française](/fr/ia-produit-de-la-merde))
+(Published on May 3, 2026 - [Version française](/fr/ia-produit-de-la-merde.html))
 
-A developer I've shared the floor with at several conferences, and whose opinion I respect, recently commented on [my previous article](/en/ashamed-of-your-code): *"When I use an LLM, it's total garbage. It generates something, and I end up spending more time starting from scratch. It's unbearable."*
+A developer I've shared the floor with at several conferences, and whose opinion I respect, recently commented on [my previous article](/en/ashamed-of-your-code.html): *"When I use an LLM, it's total garbage. It generates something, and I end up spending more time starting from scratch. It's unbearable."*
 
 I understand the frustration. The current state of generative AI often produces a strange sensation: code that seems to work at first glance but collapses dismally at the first complex business rule. Generated code becomes **disposable**.
 

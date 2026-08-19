@@ -10,7 +10,7 @@ description: "Des développeurs sont arrivés sur ma MR avec une IA qui faisait 
 ---
 
 # Ceux qui ont supprimé la revue de code ont raison
-(Publié le 17 août 2026 - [English version](/en/removed-code-review))
+(Publié le 17 août 2026 - [English version](/en/removed-code-review.html))
 
 Ils ont raison sur le constat, mais pour de mauvaises raisons, et les conséquences ne ressemblent pas à ce qu'ils imaginent.
 
@@ -22,7 +22,7 @@ La moitié de ce raisonnement mérite d'être défendue, et l'autre d'être ente
 
 Un relecteur attentif traite [quelques centaines de lignes par heure](https://smartbear.com/learn/code-review/best-practices-for-peer-code-review/), et au-delà de ce rythme, son taux de détection des défauts s'effondre, une limite documentée depuis les [inspections de code des années 70](https://en.wikipedia.org/wiki/Fagan_inspection) que l'IA n'a évidemment pas repoussée. Un agent produit ce volume en quelques secondes, si bien que le code s'écrit désormais cent fois plus vite qu'il ne se relit, et aucune équipe ne comble un écart pareil en s'organisant mieux.
 
-Il ne reste alors que deux issues : soit votre équipe relit réellement, et la revue devient [le nouveau goulot](/fr/arrete-plusieurs-agents), avec des PR qui moisissent cinq jours pendant que trois autres se périment derrière, soit elle fait semblant. C'est là que ça devient grave, parce qu'une revue de complaisance est pire que pas de revue du tout : sans revue, tout le monde sait que le risque existe, alors qu'avec une approbation, on fabrique de l'assurance, et deux relecteurs qui scrollent une PR de 900 lignes en quatre minutes ne produisent rien d'autre qu'une trace d'audit.
+Il ne reste alors que deux issues : soit votre équipe relit réellement, et la revue devient [le nouveau goulot](/fr/arrete-plusieurs-agents.html), avec des PR qui moisissent cinq jours pendant que trois autres se périment derrière, soit elle fait semblant. C'est là que ça devient grave, parce qu'une revue de complaisance est pire que pas de revue du tout : sans revue, tout le monde sait que le risque existe, alors qu'avec une approbation, on fabrique de l'assurance, et deux relecteurs qui scrollent une PR de 900 lignes en quatre minutes ne produisent rien d'autre qu'une trace d'audit.
 
 J'ai vu le théâtre se moderniser dans ma propre équipe, où le volume de code produit a explosé pendant que la relecture détaillée s'amenuisait, faute de pouvoir suivre : des développeurs passent une IA pour faire leur passe de revue, et certains arrivent sur ma MR avec un agent qui relit à leur place. Je leur ai dit en réunion que faire la revue avec une IA, c'est lui faire aveuglément confiance, et que puisque c'est déjà elle qui produit le code, autant arrêter de s'emmerder avec la revue : ça compile, donc ça marche, go prod. Ce que je leur reprochais, c'était d'approuver sans avoir jugé : leur agent rend un avis qui change à chaque exécution, personne n'en répond, et l'approbation reste signée d'un humain qui n'a rien regardé.
 

@@ -7,7 +7,7 @@ lang: en
 description: "callable and iterable look convenient. They're a trap. A deep dive into what these pseudo-types actually hide, why they weaken your code, and how Closure changes everything."
 ---
 # Stop using Pseudo-Types
-(Published on January 20, 2025 - [Version française](/fr/arretez-les-pseudo-types))
+(Published on January 20, 2025 - [Version française](/fr/arretez-les-pseudo-types.html))
 
 In 2011, with the release of [PHP 5.4](https://www.php.net/ChangeLog-5.php#PHP_5_4), the pseudo-type `callable` was introduced via the [RFC: Callable](https://wiki.php.net/rfc/callable).
 In 2016, another pseudo-type, `iterable`, was added in [PHP 7.1.0](https://www.php.net/ChangeLog-7.php#7.1.0) through the [RFC: Iterable](https://wiki.php.net/rfc/iterable).

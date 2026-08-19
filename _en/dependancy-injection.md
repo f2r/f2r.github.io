@@ -8,7 +8,7 @@ description: "new is a coupling. A complete walkthrough of dependency injection 
 ---
 
 # Understanding Dependency Injection
-(Published on December 12, 2024 - [Version française](/fr/injection-de-dependance))
+(Published on December 12, 2024 - [Version française](/fr/injection-de-dependance.html))
 
 In the world of development, the use of modern frameworks has become commonplace.  
 These tools provide practical and efficient solutions for building applications, standardizing development approaches, and reducing code complexity.  

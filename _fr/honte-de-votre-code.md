@@ -9,7 +9,7 @@ description: "Il y a une scène qui se répète dans les code reviews : un déve
 ---
 
 # Depuis quand avez-vous honte de votre code ?
-(Publié sur [LinkedIn](https://www.linkedin.com/pulse/depuis-quand-avez-vous-honte-de-votre-code-frederic-bouchery-oo8ce/) le 31 mars 2026 - [English version](/en/ashamed-of-your-code))
+(Publié sur [LinkedIn](https://www.linkedin.com/pulse/depuis-quand-avez-vous-honte-de-votre-code-frederic-bouchery-oo8ce/) le 31 mars 2026 - [English version](/en/ashamed-of-your-code.html))
 
 J'ai une scène qui se répète dans mes revues de code. Un développeur présente son travail. Il explique les choix, l'architecture, les compromis. Et à un moment, il y a une hésitation. Un léger flottement. Puis la phrase sort, à voix basse, presque en s'excusant : *"Cette partie-là... c'est pas moi qui l'ai écrite. C'est l'IA."*
 

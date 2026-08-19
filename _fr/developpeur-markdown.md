@@ -9,7 +9,7 @@ description: "Je code depuis 1983. Aujourd'hui, mon outil principal n'est plus u
 ---
 
 # Je deviens un développeur Markdown
-(Publié le 27 mai 2026 - [English version](/en/markdown-developer))
+(Publié le 27 mai 2026 - [English version](/en/markdown-developer.html))
 
 Je code depuis 1983. J'ai connu les cartes perforées, les terminaux à texte et la naissance du Web. Aujourd'hui, j'entends deux discours qui me fatiguent. D'un côté, les évangélistes du vibe coding qui vous expliquent que l'IA va remplacer le département tech. De l'autre, les puristes qui refusent de toucher à l'IA par fierté ou par peur qu'elle produise n'importe quoi.
 

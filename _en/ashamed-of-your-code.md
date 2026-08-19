@@ -9,7 +9,7 @@ description: "There's a scene that keeps repeating in code reviews: a developer 
 ---
 
 # When Did You Start Being Ashamed of Your Code?
-(Published on March 31, 2026 - [Version française](/fr/honte-de-votre-code))
+(Published on March 31, 2026 - [Version française](/fr/honte-de-votre-code.html))
 
 There's a scene that keeps repeating itself in my code reviews. A developer presents their work. They explain the choices, the architecture, the trade-offs. And at some point, there's a hesitation. A slight faltering. Then the sentence comes out, in a low voice, almost apologetically: *"That part... I didn't write it. The AI did."*
 

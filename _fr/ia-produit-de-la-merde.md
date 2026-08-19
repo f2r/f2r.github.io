@@ -9,9 +9,9 @@ description: "Un collègue me dit que l'IA produit de la merde. Il a raison — 
 ---
 
 # L'IA produit de la merde ?
-(Publié sur [LinkedIn](https://www.linkedin.com/pulse/lia-produit-de-la-merde-frederic-bouchery-t5gbe/) le 3 mai 2026 - [English version](/en/ai-produces-garbage))
+(Publié sur [LinkedIn](https://www.linkedin.com/pulse/lia-produit-de-la-merde-frederic-bouchery-t5gbe/) le 3 mai 2026 - [English version](/en/ai-produces-garbage.html))
 
-Un développeur avec qui j'ai partagé les bancs de plusieurs conférences et dont je respecte l'avis a récemment commenté [mon précédent article](/fr/honte-de-votre-code) : *"Quand j'utilise un LLM, c'est de la merde en barres. Ça me génère un truc, et finalement je passe plus de temps à tout reprendre de zéro. C'est insupportable."*
+Un développeur avec qui j'ai partagé les bancs de plusieurs conférences et dont je respecte l'avis a récemment commenté [mon précédent article](/fr/honte-de-votre-code.html) : *"Quand j'utilise un LLM, c'est de la merde en barres. Ça me génère un truc, et finalement je passe plus de temps à tout reprendre de zéro. C'est insupportable."*
 
 Je comprends ce ras-le-bol. L'état actuel de l'IA générative produit souvent une étrange sensation : un code qui semble fonctionner au premier regard, mais qui s'effondre lamentablement à la première règle métier complexe. Le code généré devient **jetable**.
 

@@ -8,9 +8,9 @@ description: "Your closure doesn't reference $this, yet it's keeping the object 
 ---
 
 # Why use static closures?
-(Published on March 3, 2026 - [Version française](/fr/closures-statiques))
+(Published on March 3, 2026 - [Version française](/fr/closures-statiques.html))
 
-In PHP, we use [closures](https://www.php.net/closure) more and more, in dependency injection, middleware, collection callbacks, and also in asynchronous processing, as I wrote in my article "[Asynchronous Programming in PHP](/en/asynchrone)" as a callback tool.
+In PHP, we use [closures](https://www.php.net/closure) more and more, in dependency injection, middleware, collection callbacks, and also in asynchronous processing, as I wrote in my article "[Asynchronous Programming in PHP](/en/asynchrone.html)" as a callback tool.
 
 However, they have a behaviour that can be surprising: any closure created inside an instance method automatically carries a reference to the current object, even if it does **not** use `$this`.
 This behaviour can have unexpected consequences on object lifetimes and generate memory leaks if you aren't careful..
