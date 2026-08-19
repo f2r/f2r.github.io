@@ -19,6 +19,11 @@
           <h1>{{ site.title | default: site.github.repository_name }}</h1>
         </a>
         <h2>{{ site.description | default: site.github.project_tagline }}</h2>
+        <nav id="site-nav">
+          <a href="{{ '/' | relative_url }}">Accueil</a> |
+          <a href="/articles-fr">Articles en français</a> |
+          <a href="/articles-en">Articles in English</a>
+        </nav>
       </div>
     </header>
 
@@ -26,6 +31,7 @@
       <section id="main_content">
         {{ content }}
         <hr>
+        <p><a href="/articles-fr">Tous les articles en français</a></p>
         <p>Suivez-moi sur Bluesky: <a href="https://bsky.app/profile/bouchery.fr">@bouchery.fr</a></p>
         <p><a href="https://f2r.github.io/feed/fr.xml">Flux Atom en français</a> <img src="../img/rss.svg" id="rss" style="height: 1.1em; vertical-align: sub;"></p>
       </section>

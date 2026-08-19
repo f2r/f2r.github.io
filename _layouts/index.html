@@ -21,6 +21,11 @@
           <h1>{{ site.title | default: site.github.repository_name }}</h1>
         </a>
         <h2>{{ site.description | default: site.github.project_tagline }}</h2>
+        <nav id="site-nav">
+          <a href="{{ '/' | relative_url }}">Accueil / Home</a> |
+          <a href="/articles-fr">Articles en français</a> |
+          <a href="/articles-en">Articles in English</a>
+        </nav>
       </div>
     </header>
 
