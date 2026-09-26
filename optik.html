@@ -156,6 +156,9 @@ select{width:100%;height:32px;border-radius:6px;border:1px solid var(--line2);ba
 .simfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;font:500 11.5px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;}
 .zoom button{width:26px;height:26px;border-radius:5px;border:1px solid #2a3547;background:rgba(10,14,20,.85);cursor:pointer;font:600 14px var(--f-mono);}
 .zoom button.w{width:auto;padding:0 8px;font:500 11.5px var(--f-cond);}
+.callout{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid #5d2a24;background:#1e0f0d;color:#f1cdc7;font-size:13px;line-height:1.5;}
+.callout::before{content:"!";display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--bad);color:#1e0f0d;font:700 12px var(--f-mono);margin-top:1px;}
+.callout b{color:#fff0ec;font-weight:600;}
 .pills{display:flex;gap:6px;flex-wrap:wrap;}
 .pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:12px;font:500 12px var(--f-cond);border:1px solid;white-space:nowrap;}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
@@ -297,6 +300,7 @@ kbd{font:500 11px var(--f-mono);padding:1px 6px;border-radius:4px;border:1px sol
     </div>
     <div id="skyBox" hidden><div class="canvas-box"><canvas id="cvSky"></canvas><div class="ov" id="ovSky1"></div><div class="ov r" id="ovSky2"></div><div class="ov b" id="ovSky3"></div></div></div>
     <div class="pills" id="pills"></div>
+    <div class="callout" id="simWarn" role="status" hidden></div>
   </div></section>
   <section class="sec" id="sData"><h2 data-help="data">Caractéristiques</h2><div class="body"><dl class="kv" id="kv"></dl></div></section>
   <section class="sec" id="sNotes"><h2 data-help="notes">Ce qui se passe</h2><div class="body"><ul class="notes" id="notes"></ul></div></section>
@@ -848,21 +852,46 @@ const ACCESSORIES = {
   reducer:{name:'Réducteur de focale ×0,63', A:0.63, x:100, achro:true},
   diag:{name:'Renvoi coudé 90°'}
 };
-function thinLensGroup(f, achro, R, P, A){
-  // doublet mince (ou simple) de focale f, centré en P, axe A
-  let glasses, c;
-  if(achro){
-    glasses=['N-BK7','F2']; const pw=thinPowers(glasses,1/f);
-    const n1=nIdx('N-BK7',LAM.d), n2=nIdx('F2',LAM.d);
-    c=[pw[0]/(2*(n1-1))]; c[1]=-c[0]; c[2]=c[1]-pw[1]/(n2-1);
-  } else { glasses=['N-BK7']; const n1=nIdx('N-BK7',LAM.d); c=[1/(f*2*(n1-1))]; c[1]=-c[0]; }
-  const L=lensStack(glasses,c,2*R,0);
-  const F=makeFrame(A,[0,1,0]);
-  const half=L.zEnd/2;
-  for(const s of L.surfs){ const z=s.pos[2]-half; s.pos=V.add(P,V.mul(A,z)); s.F=F; s.group='acc'; s.ap=R; }
-  return {surfs:L.surfs, glasses};
+/* Barlow / réducteur : doublet (ou lentille simple) dont la courbure (b) et la focale (fs) sont optimisées
+   pour le cône de lumière réel (rapport d'ouverture N), afin d'obtenir l'amplification annoncée avec une tache minimale. */
+function accCurv(achro, f, b, split){
+  if(achro){ const glasses=['N-BK7','F2'], pw=thinPowers(glasses,1/f), n1=nIdx('N-BK7',LAM.d), n2=nIdx('F2',LAM.d);
+    if(split){ pw[0]*=1+split; pw[1]=1/f-pw[0]; }  // retouche de l'achromatisation pour un faisceau convergent
+    const c0=pw[0]/(n1-1)*(0.5+b); const c1=c0-pw[0]/(n1-1); return {glasses, c:[c0,c1,c1-pw[1]/(n2-1)]}; }
+  const n1=nIdx('N-BK7',LAM.d), k=1/(f*(n1-1)); const c0=k*(0.5+b); return {glasses:['N-BK7'], c:[c0,c0-k]};
 }
-function buildAccessory(st, foc){
+function accStack(achro, f, b, R, split){ const g=accCurv(achro,f,b,split); const L=lensStack(g.glasses,g.c,2*R,0); const half=L.zEnd/2;
+  for(const s of L.surfs) s.pos=[0,0,s.pos[2]-half]; return {surfs:L.surfs, glasses:g.glasses, ok:L.ok}; }
+/* trace un cône idéal convergeant à x mm derrière le centre de la lentille ; renvoie amplification et tache */
+function accPerf(surfs, x, N, wls){
+  const z0=-40, rIn=(x-z0)/(2*N); const lines=[]; let Aeff=NaN;
+  for(const lam of wls){
+    for(let i=0;i<8;i++){ const rho=Math.sqrt((i+0.5)/8)*0.98; for(const sg of [1,-1]){ const h=sg*rIn*rho;
+      const tr=traceRay(surfs,[0,h,z0],V.nrm([0,-h,x-z0]),lam,false); if(tr.status!=='out') return null; lines.push(tr); } }
+    if(lam===LAM.e){ const h=rIn*0.02, tr=traceRay(surfs,[0,h,z0],V.nrm([0,-h,x-z0]),lam,false); if(tr.status!=='out') return null;
+      const uIn=h/(x-z0), uOut=-tr.d[1]/tr.d[2]; if(!(uOut>0)) return null; Aeff=uIn/uOut; }
+  }
+  // meilleur foyer commun (moindres carrés sur y)
+  let Z=0,nZ=0; for(const t of lines){ if(Math.abs(t.d[1])>1e-9){ Z+=t.p[2]-t.p[1]*t.d[2]/t.d[1]; nZ++; } } Z/=nZ;
+  const ys=[],ms=[]; for(const t of lines){ ys.push(t.p[1]+t.d[1]*(Z-t.p[2])/t.d[2]); ms.push(t.d[1]/t.d[2]); }
+  let num=0,den=0; for(let i=0;i<ys.length;i++){ num+=ys[i]*ms[i]; den+=ms[i]*ms[i]; } const dz=den>0?-num/den:0;
+  let s2=0; for(let i=0;i<ys.length;i++) s2+=(ys[i]+ms[i]*dz)**2;
+  return {A:Aeff, rms:Math.sqrt(s2/ys.length)};
+}
+const _accCache=new Map();
+function designAccessory(key, N){
+  const acc=ACCESSORIES[key]; const ck=key+'|'+N.toFixed(1); if(_accCache.has(ck)) return _accCache.get(ck);
+  const x=acc.x, R=acc.A>1?14:24, f0=acc.A>1? -acc.A*x/(acc.A-1) : acc.A*x/(1-acc.A);
+  const wls=acc.achro?[LAM.F,LAM.e,LAM.C]:[LAM.e];  // lentille simple : on n'optimise que sa forme, son chromatisme reste
+  const airy=1.22*0.00055*N*acc.A;
+  const merit=v=>{ const st=accStack(acc.achro,f0*(1+v[1]),v[0],R,v[2]||0); if(!st.ok) return 1e9; const pf=accPerf(st.surfs,x,N,wls); if(!pf) return 1e9;
+    return (pf.rms/airy)**2 + 1e4*(pf.A/acc.A-1)**2; };
+  const r=acc.achro?optimize(merit,[0,0,0],[0.4,0.05,0.1],400,2):optimize(merit,[0,0],[0.4,0.05],250,2);
+  const out={achro:acc.achro, f:f0*(1+r.x[1]), b:r.x[0], split:r.x[2]||0, R, x};
+  _accCache.set(ck,out); if(_accCache.size>60) _accCache.delete(_accCache.keys().next().value);
+  return out;
+}
+function buildAccessory(st, foc, N){
   const acc=ACCESSORIES[st.acc]||ACCESSORIES.none;
   if(!foc || st.acc==='none') return {surfs:[],parts:[],labels:[]};
   const {P,A}=foc;
@@ -876,10 +905,10 @@ function buildAccessory(st, foc){
     const s=S({kind:'mirror', pos:M, F, ell:[a*1.5,a*1.5*Math.SQRT2], group:'acc'});
     return {surfs:[s], parts:[{type:'diag', s, a:a*1.5, thick:5, boxed:true}], labels:[{text:'Renvoi coudé', pos:V.add(M,V.mul(side,-34))}]};
   }
-  const x=acc.x; const f=acc.A>1? -acc.A*x/(acc.A-1) : acc.A*x/(1-acc.A);
+  const des=designAccessory(st.acc, N||st.F/st.D), x=des.x, R=des.R;
   const Pl=V.sub(P,V.mul(A,x));
-  const R=acc.A>1?14:24;
-  const g=thinLensGroup(f,acc.achro,R,Pl,A);
+  const g=accStack(des.achro,des.f,des.b,R,des.split); const F=makeFrame(A,[0,1,0]);
+  for(const s of g.surfs){ const z=s.pos[2]; s.pos=V.add(Pl,V.mul(A,z)); s.F=F; s.group='acc'; s.ap=R; }
   return {surfs:g.surfs, parts:[{type:'lens', surfs:g.surfs, glasses:g.glasses, R, label:acc.name, barrel:true}],
     labels:[{text:acc.A>1?'Barlow':'Réducteur', pos:V.add(Pl,[0,R+20,0])}]};
 }
@@ -895,7 +924,7 @@ const WL = [
 function compose(st){
   const nom=buildBase(st,true);
   let foc=focusOf(nom.surfs,nom,LAM.e,0);
-  const acc=buildAccessory(st,foc);
+  const acc=buildAccessory(st,foc,foc?eflOf(nom.surfs,nom,foc.A,LAM.e)/st.D:0);
   const optNom=nom.surfs.concat(acc.surfs);
   if(acc.surfs.length) foc=focusOf(optNom,nom,LAM.e,0);
   if(!foc) return null;
@@ -1912,6 +1941,15 @@ function updatePills(){
   if(S.seeing>116/S.D*1.1) h+=pill('info','Limité par la turbulence');
   if(S.sky==='double'){ h+=S.sep>=116/S.D?pill('ok','Double séparable'):pill('bad','Sous la limite de Dawes'); }
   $('pills').innerHTML=h;
+  // alerte : grossissement au-delà du maximum utile (2 × D), la netteté est impossible
+  const w=$('simWarn'); const Gmax=2*S.D;
+  if(S.out==='eye' && res.G>Gmax*1.02){
+    const airyApp=2*1.22*0.5461e-3/S.D*206265*res.G/60, seeApp=S.seeing*res.G/60, feMin=res.efl/Gmax;
+    const fes=FES.filter(f=>f>=feMin), fe=fes.length?fes[fes.length-1]:null;
+    w.innerHTML='<div><b>Netteté impossible à ×'+fr(res.G,0)+'.</b> Un instrument de '+fr(S.D,0)+' mm ne peut pas dépasser environ ×'+fr(Gmax,0)+' (2 × D) : au-delà, on agrandit le flou sans voir plus de détails. Ici, la tache de diffraction apparaît large de '+fr(airyApp,1)+'′ dans l’oculaire'+(S.seeing>0.05?' et la turbulence de '+fr(seeApp,1)+'′':'')+', alors que l’œil distingue environ 1′. La pupille de sortie ('+fr(res.ep,2)+' mm) rend aussi l’image très sombre.'
+      +' Aucune mise au point ne peut corriger cela. '+(fe?'Avec '+(S.acc.startsWith('barlow')?'cette Barlow':'cette focale')+', utilisez un oculaire de '+fr(fe,fe%1?1:0)+' mm ou plus (×'+fr(res.efl/fe,0)+')'+(S.acc.startsWith('barlow')?', ou retirez la Barlow':'')+'.':'Retirez la Barlow ou choisissez un oculaire plus long.')+'</div>';
+    w.hidden=false;
+  } else w.hidden=true;
 }
 function note(cls,t){ return `<li class="${cls}">${t}</li>`; }
 function updateNotes(){
