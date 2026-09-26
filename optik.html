@@ -41,7 +41,7 @@ button,select,input{font:inherit;color:inherit;}
 .tbtn.primary{background:var(--brass);color:#1b1407;border-color:var(--brass);}
 .tbtn.primary:hover{background:var(--brass2);}
 /* ---------- grille principale ---------- */
-.main{display:grid;grid-template-columns:318px minmax(0,1fr) 372px;min-height:0;}
+.main{display:grid;grid-template-columns:318px minmax(0,1fr) 420px;min-height:0;}
 .side{overflow-y:auto;overflow-x:hidden;background:var(--panel);scrollbar-width:thin;scrollbar-color:var(--line2) transparent;}
 .side.left{border-right:1px solid var(--line);}
 .side.right{border-left:1px solid var(--line);}
@@ -150,7 +150,10 @@ select{width:100%;height:32px;border-radius:6px;border:1px solid var(--line2);ba
 .canvas-box .ov{position:absolute;left:8px;top:7px;font:500 11px var(--f-mono);color:#a9b5c8;text-shadow:0 1px 2px #000;pointer-events:none;font-variant-numeric:tabular-nums;}
 .canvas-box .ov.r{left:auto;right:8px;text-align:right;}
 .canvas-box .ov.b{top:auto;bottom:7px;}
-.zoom{position:absolute;right:6px;bottom:6px;display:flex;gap:4px;}
+.zoom{display:flex;gap:4px;}
+.simstack{display:grid;gap:8px;}
+.stars2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.simfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;font:500 11.5px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;}
 .zoom button{width:26px;height:26px;border-radius:5px;border:1px solid #2a3547;background:rgba(10,14,20,.85);cursor:pointer;font:600 14px var(--f-mono);}
 .zoom button.w{width:auto;padding:0 8px;font:500 11.5px var(--f-cond);}
 .pills{display:flex;gap:6px;flex-wrap:wrap;}
@@ -216,18 +219,18 @@ kbd{font:500 11px var(--f-mono);padding:1px 6px;border-radius:4px;border:1px sol
       <div class="hint" id="hFoc"></div></div>
     <div class="btnrow"><button class="btn" id="fM2">−−</button><button class="btn" id="fM1">−</button><button class="btn" id="fP1">+</button><button class="btn" id="fP2">++</button><button class="btn ok" id="fAuto" title="Mise au point automatique (F)">Mise au point auto</button></div>
   </div></section>
-  <section class="sec" id="sCol"><h2 data-help="col">Collimation <span class="tag" id="tagCol"></span></h2><div class="body">
+  <section class="sec closed" id="sCol"><h2 data-help="col">Collimation <span class="tag" id="tagCol"></span></h2><div class="body">
     <div class="ctl"><div class="ctl-h"><label for="cPx" id="lPx">Primaire, vis verticale</label><output id="oPx"></output></div><input type="range" id="cPx" min="-30" max="30" step="0.5"></div>
     <div class="ctl"><div class="ctl-h"><label for="cPy" id="lPy">Primaire, vis horizontale</label><output id="oPy"></output></div><input type="range" id="cPy" min="-30" max="30" step="0.5"></div>
     <div class="ctl" id="wSx"><div class="ctl-h"><label for="cSx">Secondaire, inclinaison verticale</label><output id="oSx"></output></div><input type="range" id="cSx" min="-30" max="30" step="0.5"></div>
     <div class="ctl" id="wSy"><div class="ctl-h"><label for="cSy">Secondaire, inclinaison horizontale</label><output id="oSy"></output></div><input type="range" id="cSy" min="-30" max="30" step="0.5"></div>
     <div class="btnrow"><button class="btn ok" id="colOk">Collimater parfaitement</button><button class="btn accent" id="colRnd" title="Exercice : retrouver la collimation grâce au test sur étoile">Dérégler au hasard</button></div>
   </div></section>
-  <section class="sec" id="sAcc"><h2 data-help="acc">Accessoire</h2><div class="body">
+  <section class="sec closed" id="sAcc"><h2 data-help="acc">Accessoire</h2><div class="body">
     <div class="row" id="accPicker"></div>
     <div class="subnote" id="accNote"></div>
   </div></section>
-  <section class="sec" id="sOut"><h2 data-help="out">Au foyer</h2><div class="body">
+  <section class="sec closed" id="sOut"><h2 data-help="out">Au foyer</h2><div class="body">
     <div class="seg" role="group" aria-label="Sortie"><button id="oEye" aria-pressed="true">Oculaire + œil</button><button id="oCam" aria-pressed="false">Caméra</button></div>
     <div id="eyeBox" style="display:grid;gap:12px;">
       <div class="ctl"><div class="ctl-h"><label data-help="fe">Focale de l'oculaire</label><output id="oFe"></output></div><div class="row" id="fePicker"></div></div>
@@ -239,23 +242,21 @@ kbd{font:500 11px var(--f-mono);padding:1px 6px;border-radius:4px;border:1px sol
       <div class="ctl"><div class="ctl-h"><label for="cSt" data-help="tilt">Tilt du capteur</label><output id="oSt"></output></div><input type="range" id="cSt" min="-60" max="60" step="1"><div class="hint">Un capteur incliné donne des étoiles nettes d'un côté et floues de l'autre (à voir avec une étoile hors de l'axe).</div></div>
     </div>
   </div></section>
-  <section class="sec" id="sSky"><h2>Étoile et ciel</h2><div class="body">
-    <div class="ctl"><div class="ctl-h"><label for="cField" data-help="field">Position de l'étoile dans le champ</label><output id="oField"></output></div><input type="range" id="cField" min="0" max="1.2" step="0.01"><div class="hint">0° = centre du champ. Hors de l'axe apparaissent coma, astigmatisme et courbure de champ.</div></div>
+  <section class="sec closed" id="sSky"><h2>Lumière et turbulence</h2><div class="body">
     <div class="ctl"><div class="ctl-h"><label data-help="light">Lumière</label></div><div class="seg"><button id="lWhite" aria-pressed="true">Blanche (4 couleurs)</button><button id="lMono" aria-pressed="false">Verte seule</button></div></div>
-    <div class="ctl"><div class="ctl-h"><label data-help="target">Cible</label></div><div class="seg"><button id="tSingle" aria-pressed="true">Étoile simple</button><button id="tDouble" aria-pressed="false">Étoile double</button></div></div>
-    <div class="ctl" id="wSep"><div class="ctl-h"><label for="cSep" data-help="sep">Écart de l'étoile double</label><output id="oSep"></output></div><input type="range" id="cSep" min="0.2" max="8" step="0.05"></div>
     <div class="ctl"><div class="ctl-h"><label for="cSee" data-help="seeing">Turbulence atmosphérique</label><output id="oSee"></output></div><input type="range" id="cSee" min="0" max="5" step="0.1"><div class="hint">0 = dans l'espace. 1″ excellente nuit, 2 à 3″ nuit ordinaire.</div></div>
   </div></section>
-  <section class="sec" id="sDisp"><h2>Affichage 3D</h2><div class="body">
-    <div class="ctl"><div class="ctl-h"><label for="cRays" data-help="rays">Nombre de rayons</label><output id="oRays"></output></div><input type="range" id="cRays" min="3" max="41" step="2"></div>
+  <section class="sec closed" id="sDisp"><h2>Affichage 3D</h2><div class="body">
+    <div class="ctl"><div class="ctl-h"><label for="cRays" data-help="rays">Nombre de rayons</label><output id="oRays"></output></div><input type="range" id="cRays" min="3" max="15" step="2"></div>
     <div class="seg"><button id="fanM" aria-pressed="true">Plan de coupe</button><button id="fan3" aria-pressed="false">Faisceau 3D</button></div><span class="qslot" data-help="fan"></span>
     <div class="checks">
       <label class="check"><input type="checkbox" id="xPhot" checked>Photons animés<span class="qslot" data-help="photons"></span></label>
       <label class="check"><input type="checkbox" id="xFront">Fronts d'onde<span class="qslot" data-help="fronts"></span></label>
       <label class="check"><input type="checkbox" id="xCut" checked>Tube en coupe<span class="qslot" data-help="cut"></span></label>
-      <label class="check"><input type="checkbox" id="xLab" checked>Étiquettes</label>
+      <label class="check"><input type="checkbox" id="xLab">Étiquettes</label>
       <label class="check"><input type="checkbox" id="xExt" checked>Prolonger après le foyer<span class="qslot" data-help="ext"></span></label>
       <label class="check"><input type="checkbox" id="xRGB" checked>Rayons colorés<span class="qslot" data-help="rgb"></span></label>
+      <label class="check"><input type="checkbox" id="xEdge">Rayons de l'étoile de bord<span class="qslot" data-help="edgeRays"></span></label>
     </div>
     <div class="ctl"><div class="ctl-h"><label for="cSpeed" data-help="speed">Vitesse de la lumière (animation)</label><output id="oSpeed"></output></div><input type="range" id="cSpeed" min="0.1" max="3" step="0.05"></div>
   </div></section>
@@ -281,15 +282,21 @@ kbd{font:500 11px var(--f-mono);padding:1px 6px;border-radius:4px;border:1px sol
   <div class="busy" id="busy" hidden>Calcul de la combinaison optique…</div>
 </div>
 <aside class="side right" id="right"><div class="rgrid">
-  <section class="sec" id="sImg"><h2 data-help="img">Image de l'étoile <span class="tag" id="tagImg"></span></h2><div class="body">
-    <div class="card-h"><div class="seg"><button id="imPsf" aria-pressed="true">Image simulée</button><button id="imSpot" aria-pressed="false">Points d'impact</button></div><label class="check" title="Renforcer les faibles intensités (anneaux, aigrettes)"><input type="checkbox" id="xGam" checked>Anneaux<span class="qslot" data-help="gam"></span></label></div>
-    <div class="canvas-box"><canvas id="cvImg"></canvas><div class="ov" id="ovImg1"></div><div class="ov r" id="ovImg2"></div><div class="ov b" id="ovImg3"></div>
-      <div class="zoom"><button id="zIn" title="Zoom avant">+</button><button id="zOut" title="Zoom arrière">−</button><button class="w" id="zFit">Ajuster</button></div></div>
+  <section class="sec" id="sSim"><h2 data-help="sim"><span id="simTitle">Simulation</span> <span class="tag" id="tagImg"></span></h2><div class="body">
+    <div class="row" id="simPicker"></div>
+    <div id="starBox" class="simstack">
+      <div class="card-h"><div class="seg"><button id="imPsf" aria-pressed="true">Image simulée</button><button id="imSpot" aria-pressed="false">Points d'impact</button></div><label class="check" title="Renforcer les faibles intensités (anneaux, aigrettes)"><input type="checkbox" id="xGam" checked>Anneaux<span class="qslot" data-help="gam"></span></label></div>
+      <div class="stars2">
+        <div class="canvas-box"><canvas id="cvImg"></canvas><div class="ov" id="ovC1"></div><div class="ov b" id="ovC2"></div></div>
+        <div class="canvas-box"><canvas id="cvImg2"></canvas><div class="ov" id="ovE1"></div><div class="ov b" id="ovE2"></div></div>
+      </div>
+      <div class="simfoot"><span id="ovImg1"></span><div class="zoom"><button id="zIn" title="Zoom avant">+</button><button id="zOut" title="Zoom arrière">−</button><button class="w" id="zFit">Ajuster</button></div></div>
+      <div class="subnote" id="ovImg3"></div>
+      <div class="ctl"><div class="ctl-h"><label for="cField" data-help="field">Étoile de bord : distance au centre</label><output id="oField"></output></div><input type="range" id="cField" min="0" max="1.2" step="0.01"><div class="btnrow"><button class="chip sm" id="edgeAuto" aria-pressed="true">Bord réel du champ</button></div><div class="hint">Étoile de droite. Par défaut : 90 % du rayon du champ de l'oculaire, ou le coin du capteur.</div></div>
+      <div class="ctl" id="wSep"><div class="ctl-h"><label for="cSep" data-help="sep">Écart de l'étoile double</label><output id="oSep"></output></div><input type="range" id="cSep" min="0.2" max="8" step="0.05"></div>
+    </div>
+    <div id="skyBox" hidden><div class="canvas-box"><canvas id="cvSky"></canvas><div class="ov" id="ovSky1"></div><div class="ov r" id="ovSky2"></div><div class="ov b" id="ovSky3"></div></div></div>
     <div class="pills" id="pills"></div>
-  </div></section>
-  <section class="sec" id="sSkyV"><h2 data-help="sky"><span id="skyTitle">Vue à l'oculaire</span></h2><div class="body">
-    <div class="row" id="skyPicker"></div>
-    <div class="canvas-box"><canvas id="cvSky"></canvas><div class="ov" id="ovSky1"></div><div class="ov r" id="ovSky2"></div><div class="ov b" id="ovSky3"></div></div>
   </div></section>
   <section class="sec" id="sData"><h2 data-help="data">Caractéristiques</h2><div class="body"><dl class="kv" id="kv"></dl></div></section>
   <section class="sec" id="sNotes"><h2 data-help="notes">Ce qui se passe</h2><div class="body"><ul class="notes" id="notes"></ul></div></section>
@@ -429,8 +436,9 @@ function traceRay(surfs, p, d, lam, noBlock){
     if(s.kind==='image'){ img={x,y,dx:ld[0],dy:ld[1],dz:ld[2]}; status='image'; break; }
     if(s.kind==='pass') continue;
     if(s.kind==='ideal'){
-      const sg=ld[2]>=0?1:-1;
-      const nl=V.mul(V.nrm([ld[0]/ld[2]-x/s.f, ld[1]/ld[2]-y/s.f, 1]),sg);
+      const sg=ld[2]>=0?1:-1, n2=s.n2||n;
+      const nl=V.mul(V.nrm([(n*ld[0]/ld[2]-x/s.f)/n2, (n*ld[1]/ld[2]-y/s.f)/n2, 1]),sg);
+      n=n2;
       d=V.nrm([F.u[0]*nl[0]+F.v[0]*nl[1]+F.w[0]*nl[2], F.u[1]*nl[0]+F.v[1]*nl[1]+F.w[1]*nl[2], F.u[2]*nl[0]+F.v[2]*nl[1]+F.w[2]*nl[2]]);
       continue;
     }
@@ -689,7 +697,11 @@ function buildNewton(st, nominal){
     labels:[{text:'Miroir primaire', pos:[0,-R-26,f1]},{text:'Miroir secondaire (plan)', pos:[0,-a-30,h]}]};
 }
 const _cassCache=new Map();
-const _lastCass={ sct:[-0.7533,0.99,-0.004,0.36], mak:[-8.832858,-8.463849,-5.815836,2.312125] };
+/* Maksutov : la conception est mémorisée en proportions sans dimension, transposables à d'autres D, F et fp :
+   rc1, rc2m = courbures du ménisque × D ; rc2 = courbure du secondaire / courbure Cassegrain théorique (−1/R2) ;
+   rd = distance ménisque–primaire / distance Cassegrain théorique. Graine : conception optimisée à 127/1500, fp 3. */
+const MAK_SEED={rc1:-0.747848, rc2m:-0.716606, rc2:1.006731, rd:1.033398};
+const _lastCass={ sct:[-0.7533,0.99,-0.004,0.36], mak:Object.assign({},MAK_SEED) };
 function designCass(type, D, F, fp, quick){
   const key=type+'|'+D.toFixed(1)+'|'+F.toFixed(1)+'|'+fp.toFixed(2);
   if(_cassCache.has(key)) return _cassCache.get(key);
@@ -723,24 +735,33 @@ function designCass(type, D, F, fp, quick){
   }
   else if(type==='mak'){
     out.K1=0; out.K2=0;
-    const t=D*0.1, n=nIdx('N-BK7',LAM.e);
-    const Rm2=-g.R2*0.9, Rm1=Rm2-t*(n*n-1)/(n*n);
-    const x0=[F/Rm1, F/Rm2, -F/g.R2, g.d/D];
+    const t=D*0.1, n=nIdx('N-BK7',LAM.e), c20=-1/g.R2;
     const airy=1.22*0.00055*F/D;
+    const toX=r=>[r.rc1/D*F, r.rc2m/D*F, r.rc2*c20*F, r.rd*g.d/D];
     const mk=x=>Object.assign({},out,{c1m:x[0]/F, c2m:x[1]/F, c2:x[2]/F, d:x[3]*D});
-    const merit=x=>{
-      const o=mk(x);
-      if(o.d<D*0.8) return 1e9;
-      const built=cassSurfs(type,D,o,true,0,null); const sys={R, pupilZ:-t, startZ:-t-60};
-      const foc=focusOf(built.surfs,sys,LAM.e,0); if(!foc) return 1e9;
-      const efl=eflOf(built.surfs,sys,foc.A,LAM.e); if(!(efl>0)) return 1e9;
-      const bf=foc.P[2]-o.d;
+    const sys={R, pupilZ:-t, startZ:-t-60};
+    const evalX=x=>{
+      const o=mk(x); if(o.d<D*0.8) return null;
+      const built=cassSurfs(type,D,o,true,0,null);
+      const foc=focusOf(built.surfs,sys,LAM.e,0); if(!foc) return null;
+      const efl=eflOf(built.surfs,sys,foc.A,LAM.e); if(!(efl>0)) return null;
       const sp=spotBest(built.surfs,sys,[LAM.F,LAM.e,LAM.C],foc.P,foc.A,8);
-      return (sp.rms/airy)**2 + 3e4*((efl-F)/F)**2 + 20*((bf-B)/D)**2;
+      return {efl, bf:foc.P[2]-o.d, rms:sp.rms};
     };
-    let best=optimize(merit,_lastCass.mak,[0.15,0.15,0.1,0.02],450,1);
-    if(best.f>30){ for(const k of [1,0.8,1.2]){ const xs=x0.slice(); xs[0]*=k; xs[1]*=k; const r=optimize(merit,xs,[0.4,0.4,0.3,0.05],1200,3); if(r.f<best.f) best=r; } }
-    Object.assign(out,mk(best.x)); out.meritMak=best.f; _lastCass.mak=best.x; out.qx=best.x;
+    const merit=x=>{ const e=evalX(x); if(!e) return 1e9;
+      // le foyer doit sortir derrière le primaire : pénalité forte s'il reste dans le tube
+      const low=Math.max(0,0.5*B-e.bf)/D;
+      return (e.rms/airy)**2 + 3e4*((e.efl-F)/F)**2 + 200*((e.bf-B)/D)**2 + 2e4*low*low; };
+    const good=r=>{ const e=evalX(r.x); return !!e && r.f<2.5 && e.bf>0.5*B && e.bf<1.6*B; };
+    let best=optimize(merit,toX(_lastCass.mak),[0.15,0.15,0.1,0.02],500,1);
+    if(!good(best)){
+      const Rm2=-g.R2*0.9, Rm1=Rm2-t*(n*n-1)/(n*n);
+      const starts=[toX(MAK_SEED),[F/Rm1,F/Rm2,c20*F,g.d/D]];
+      for(const x0 of starts){ const r=optimize(merit,x0,[0.3,0.3,0.2,0.04],1200,3); if(r.f<best.f) best=r; if(good(best)) break; }
+    }
+    Object.assign(out,mk(best.x)); out.meritMak=best.f;
+    out.rat={rc1:out.c1m*D, rc2m:out.c2m*D, rc2:out.c2/c20, rd:out.d/g.d};
+    if(good(best)) _lastCass.mak=out.rat;
   }
   _cassCache.set(key,out); _lastKey[type]=key; if(_cassCache.size>300) _cassCache.delete(_cassCache.keys().next().value);
   return out;
@@ -751,7 +772,7 @@ function quickCass(type,D,F,fp,last){
   const o=Object.assign({},last,{g,B});
   if(type==='sct'){ const R=D/2, n=nIdx('N-BK7',LAM.e), S4=1/(4*(n-1)*(2*g.f1)**3), x=last.qx;
     o.a=[x[1]*S4*R*R, x[0]*S4, x[2]*S4/(R*R)]; o.c2=(-1/g.R2)*(1+0.05*x[3]); o.d=g.d; }
-  else if(type==='mak'){ const x=last.qx; o.c1m=x[0]/F; o.c2m=x[1]/F; o.c2=x[2]/F; o.d=x[3]*D; }
+  else if(type==='mak'){ const r=last.rat||_lastCass.mak; o.c1m=r.rc1/D; o.c2m=r.rc2m/D; o.c2=r.rc2*(-1/g.R2); o.d=r.rd*g.d; }
   else { o.c2=-1/g.R2; o.d=g.d; }
   o.quick=true; return o;
 }
@@ -864,7 +885,7 @@ function buildAccessory(st, foc){
 }
 
 /* ---------- Système complet ---------- */
-const EYE_F=17;
+const EYE_F=17, EYE_N=1.336; // cristallin : focale équivalente dans l'air ; humeur vitrée : rétine à EYE_F·EYE_N ≈ 22,7 mm
 const WL = [
   {key:'R', lam:0.6563, col:0xff5b4f, name:'rouge 656 nm'},
   {key:'G', lam:0.5461, col:0x74f08c, name:'vert 546 nm'},
@@ -903,8 +924,8 @@ function compose(st){
     const off=V.mul(A,drawOff);
     const eyePos=V.add(V.add(Pe,V.mul(A,er)),off);
     const eyepR=S(Object.assign({},eyep,{pos:V.add(Pe,off)}));
-    const eyeLens=S({kind:'ideal', f:EYE_F, pos:eyePos, F:Ff, ap:eyePupil/2, group:'eye'});
-    const retina=S({kind:'image', pos:V.add(eyePos,V.mul(A,EYE_F)), F:Ff, group:'retina'});
+    const eyeLens=S({kind:'ideal', f:EYE_F, n2:EYE_N, pos:eyePos, F:Ff, ap:eyePupil/2, group:'eye'});
+    const retina=S({kind:'image', pos:V.add(eyePos,V.mul(A,EYE_F*EYE_N)), F:Ff, group:'retina'});
     res.surfs=optics.concat([eyepR,eyeLens,retina]);
     const fieldR=fe*Math.tan(st.afov/2*Math.PI/180);
     res.parts.push({type:'eyepiece', pos:V.add(Pe,off), A, fe, R:Math.max(6,fieldR*1.15), F:Ff});
@@ -1019,9 +1040,9 @@ const HELP = {
   eyep:{t:'Pupille de l’œil', h:"Ouverture de l'iris dans l'obscurité : environ 7 mm pour un œil jeune, 5 mm vers 60 ans.<br>Si la <b>pupille de sortie</b> du télescope est plus large, une partie de la lumière n'entre pas dans l'œil : on le voit dans la vue 3D, où les rayons du bord sont arrêtés."},
   sensor:{t:'Capteur', h:"Taille des pixels et dimensions de la puce.<br><b>Échantillonnage</b> (secondes d'arc par pixel) = 206 × taille du pixel (µm) ÷ focale (mm). L'idéal : 2 à 3 pixels dans la tache de turbulence."},
   tilt:{t:'Tilt du capteur', h:"Inclinaison du capteur par rapport au plan où se forme l'image. Défaut fréquent en astrophotographie : les étoiles sont nettes d'un côté de l'image et floues de l'autre.<br>L'effet se voit surtout avec une étoile hors de l'axe."},
-  field:{t:'Position dans le champ', h:"Distance de l'étoile au centre du champ, en degrés. Sur l'axe, beaucoup d'instruments sont parfaits. En s'en écartant apparaissent la <b>coma</b> (étoile en comète), l'<b>astigmatisme</b> et la <b>courbure de champ</b>. Leur importance dépend de la formule."},
+  field:{t:'Étoile de bord', h:"Position de la seconde étoile, affichée à droite dans « Image de l'étoile », en degrés depuis le centre. Par défaut, elle est au <b>bord réel du champ</b> : 90 % du rayon du champ de l'oculaire, ou le coin du capteur.<br>Sur l'axe, beaucoup d'instruments sont parfaits. En s'en écartant apparaissent la <b>coma</b> (étoile en comète), l'<b>astigmatisme</b> et la <b>courbure de champ</b>. La mise au point est faite sur l'étoile du centre, comme sur le terrain."},
+  edgeRays:{t:'Rayons de l\u2019étoile de bord', h:"Ajoute dans la vue 3D les rayons de l'étoile de bord, en couleurs atténuées. Ils entrent inclinés et convergent à côté de l'axe. Avec le « Zoom foyer », on voit le faisceau se déformer."},
   light:{t:'Lumière', h:"<b>Blanche</b> : quatre couleurs calculées séparément (rouge 656 nm, vert 546 nm, bleu 486 nm, violet 436 nm), pour voir l'aberration chromatique.<br><b>Verte seule</b> : une seule longueur d'onde. L'image est plus fine et le calcul plus rapide."},
-  target:{t:'Cible', h:"Étoile simple, ou étoile double pour tester le <b>pouvoir séparateur</b> : deux étoiles plus proches que la limite de Dawes (116 / D secondes d'arc) se confondent en une seule tache."},
   sep:{t:'Écart de l’étoile double', h:"Distance angulaire entre les deux étoiles, en secondes d'arc. Comparez-la au pouvoir séparateur affiché dans « Caractéristiques »."},
   seeing:{t:'Turbulence', h:"L'air agité par la chaleur étale l'image de l'étoile. On mesure ce « seeing » par la taille de l'étoile obtenue, en secondes d'arc.<br>0 = instrument dans l'espace, 1″ = excellente nuit, 2 à 3″ = nuit ordinaire. Au-delà d'environ 150 mm de diamètre, c'est souvent la turbulence qui limite la netteté, pas l'instrument."},
   rays:{t:'Nombre de rayons', h:"Nombre de rayons tracés dans la vue 3D, pour chaque couleur. Davantage de rayons fait mieux voir les <b>caustiques</b>, les zones où les rayons se croisent, mais la vue devient chargée.<br>Sans effet sur l'image de l'étoile, qui utilise toujours environ 1 500 rayons par couleur."},
@@ -1036,9 +1057,8 @@ const HELP = {
   views:{t:'Points de vue', h:"<b>Coupe</b> : de côté. <b>3/4</b> : en perspective. <b>Face</b> : depuis le ciel, on voit le secondaire et l'araignée. <b>Zoom foyer</b> : convergence des rayons. <b>Zoom sortie</b> : oculaire et œil, ou capteur. <b>Ortho</b> : sans perspective, comme un schéma.<br>À la souris : glisser pour tourner, clic droit ou Maj pour déplacer, molette pour zoomer. Touches 1 à 5."},
   sweep:{t:'Balayage', h:"Fait varier automatiquement un réglage en va-et-vient, pour montrer son effet en classe : mise au point, diamètre, turbulence… Touche Espace pour lancer ou arrêter."},
   /* ----- Panneau droit ----- */
-  img:{t:'Image de l’étoile', h:"Une seule étoile, très agrandie, telle qu'elle arrive sur le capteur ou la rétine. Elle combine les impacts réels des rayons, la <b>diffraction</b> par l'ouverture (obstruction et araignée comprises) et la <b>turbulence</b>.<br>• <b>Cercle vert pointillé</b> : bord du disque d'Airy, la plus petite tache possible.<br>• <b>Strehl</b> : intensité du pic comparée à un instrument parfait (1 = parfait, au-dessus de 0,8 aucun défaut visible).<br>• <b>Croix laiton</b> : axe optique, affiché si l'étoile en est décalée.<br>• <b>Quadrillage</b> : pixels du capteur, en mode caméra.<br>Zoom avec +, − et la molette.<br><b>Image simulée</b> : ce que l'on verrait réellement. <b>Points d'impact</b> : un point par rayon, sans diffraction. C'est le « spot diagram » des opticiens, idéal pour reconnaître une aberration : comète pour la coma, halo pour l'aberration sphérique, couleurs séparées pour le chromatisme."},
   gam:{t:'Anneaux', h:"Renforce les faibles lumières pour rendre visibles les anneaux de diffraction et les aigrettes, qui sont en réalité peu lumineux. Décochez pour voir les intensités réelles."},
-  sky:{t:'Vue au télescope', h:"Le ciel à l'échelle réelle, avec la netteté calculée : diffraction, aberrations et turbulence.<br>• <b>À l'oculaire</b> : le cercle du champ de l'oculaire. La luminosité baisse quand la pupille de sortie diminue.<br>• <b>À la caméra</b> : le rectangle du capteur, avec les vrais pixels quand ils sont visibles.<br>Tailles : Jupiter ≈ 44″, Saturne ≈ 42″ avec ses anneaux, la Lune ≈ 31′."},
+  sim:{t:'Simulation', h:"Ce que donne l'instrument, selon la cible choisie.<br>• <b>Étoile</b> et <b>Étoile double</b> : deux vues très agrandies, l'étoile au <b>centre du champ</b> à gauche et au <b>bord du champ</b> à droite. On y voit la diffraction (disque d'Airy et anneaux, aigrettes de l'araignée), les aberrations (coma au bord, halo coloré) et la turbulence. Le cercle vert est le disque d'Airy ; le <b>Strehl</b> compare le pic à celui d'un instrument parfait (1 = parfait, au-dessus de 0,8 aucun défaut visible). Même zoom pour les deux vues : +, − ou molette.<br>• <b>Lune</b>, <b>Jupiter</b>, <b>Saturne</b>, <b>Amas</b> : le champ de l'oculaire (cercle) ou du capteur (rectangle) à l'échelle réelle, avec la netteté et la luminosité calculées.<br><b>Image simulée</b> : ce que l'on verrait. <b>Points d'impact</b> : un point par rayon, sans diffraction (« spot diagram »)."},
   data:{t:'Caractéristiques', h:"Valeurs calculées pour les réglages actuels. La focale et les défauts viennent du lancer de rayons, pas de formules approchées. Les « ? » de chaque ligne expliquent chaque grandeur."},
   notes:{t:'Ce qui se passe', h:"Explications rédigées à partir de l'état réel de l'instrument : mise au point, couleurs, aberrations, collimation, grossissement, turbulence. Pastille verte : tout va bien. Orange : défaut visible. Rouge : défaut important."},
   /* ----- Lignes du tableau « Caractéristiques » ----- */
@@ -1091,10 +1111,10 @@ const SENSORS={
   imx462:{name:'Planétaire · IMX462 · 2,9 µm', px:2.9, w:5.6, h:3.2}
 };
 const FES=[40,32,25,17,12,9,6,4,2.5];
-const DEF={type:'newton', D:200, F:1000, fp:3, K:-1, tPx:0,tPy:0,tSx:0,tSy:0, focus:0, field:0, acc:'none',
-  out:'eye', fe:10, afov:52, eyePupil:7, sensor:'imx571', sT:0, mono:false, target:'single', sep:1.5, seeing:0.5,
-  nRays:11, fan:'m', photons:true, fronts:false, cut:true, labels:true, extend:true, rgb:true, speed:1,
-  sky:'moon', imgMode:'psf', gam:true, W:60, ortho:false};
+const DEF={type:'single', D:60, F:900, fp:3, K:-1, tPx:0,tPy:0,tSx:0,tSy:0, focus:0, edge:0.3, edgeAuto:true, edgeRays:false, acc:'none',
+  out:'eye', fe:10, afov:52, eyePupil:7, sensor:'imx571', sT:0, mono:false, sep:1.5, seeing:1.5,
+  nRays:5, fan:'m', photons:true, fronts:false, cut:true, labels:false, extend:true, rgb:true, speed:1,
+  sky:'star', imgMode:'psf', gam:true, W:60, ortho:false};
 let S=Object.assign({},DEF);
 
 const ABOUT={
@@ -1137,8 +1157,14 @@ function constrain(){
   if(r.fpr){ S.fp=clamp(S.fp,r.fpr[0],r.fpr[1]); if(S.F/S.D/S.fp<1.8) S.fp=Math.max(r.fpr[0],S.F/S.D/1.8); }
 }
 const primaryFocus=()=>S.type==='sct'||S.type==='mak';
+const starMode=()=>S.sky==='star'||S.sky==='double';
+/* étoile de bord : par défaut 90 % du rayon du champ réel (oculaire) ou du coin du capteur */
+function autoEdge(){ if(!res) return 0.3;
+  if(S.out==='eye') return 0.9*S.afov/res.G/2;
+  const sn=SENSORS[S.sensor]; return 0.9*Math.atan(Math.hypot(sn.w,sn.h)/2/res.efl)*180/Math.PI; }
+const edgeDeg=()=>S.edgeAuto?autoEdge():S.edge;
 function est(quick){
-  return {type:S.type,D:S.D,F:S.F,fp:S.fp,K:S.K,tPx:S.tPx,tPy:S.tPy,tSx:S.tSx,tSy:S.tSy,focus:S.focus,field:S.field,
+  return {type:S.type,D:S.D,F:S.F,fp:S.fp,K:S.K,tPx:S.tPx,tPy:S.tPy,tSx:S.tSx,tSy:S.tSy,focus:S.focus,field:0,
     acc:S.acc,out:S.out==='eye'?'eye':'cam',fe:S.fe,afov:S.afov,eyePupil:S.eyePupil,sensor:SENSORS[S.sensor],sTx:S.sT,sTy:0,mono:S.mono,quick:!!quick};
 }
 
@@ -1300,9 +1326,10 @@ function addEyepiece(p){
   gSec.add(polyline(sec,gm.l,true)); addCap(sec,p.pos,p.A,gm.cap);
 }
 function addEye(p){
-  const ball=new THREE.Mesh(new THREE.SphereGeometry(12,32,20),MAT.eye); ball.position.copy(v3(V.add(p.pos,V.mul(p.A,11)))); gOpt.add(ball);
+  const L=EYE_F*EYE_N, Rb=L/2+0.3, c0=L-Rb; // fond du globe = rétine
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(Rb,32,20),MAT.eye); ball.position.copy(v3(V.add(p.pos,V.mul(p.A,c0)))); gOpt.add(ball);
   const ir=new THREE.Mesh(new THREE.RingGeometry(p.pupil/2,5.8,40),MAT.iris); orient(ir,p.pos,p.A); ir.rotateX(Math.PI/2); gOpt.add(ir);
-  const ret=[]; for(let k=0;k<=24;k++){ const a=-0.9+1.8*k/24; ret.push(V.add(V.add(p.pos,V.mul(p.A,11+12*Math.cos(a))),V.mul(p.F.v,12*Math.sin(a)))); }
+  const ret=[]; for(let k=0;k<=24;k++){ const a=-0.9+1.8*k/24; ret.push(V.add(V.add(p.pos,V.mul(p.A,c0+Rb*Math.cos(a))),V.mul(p.F.v,Rb*Math.sin(a)))); }
   gOpt.add(polyline(ret,new THREE.LineBasicMaterial({color:0xd08a8a,transparent:true,opacity:0.8})));
 }
 function addSensor(p){
@@ -1338,10 +1365,11 @@ function buildRays(){
   const white=!S.mono&&!S.rgb;
   const pos=[], col=[];
   const extLen=S.out==='eye'? 12 : Math.max(15,S.F*0.02);
-  keys.forEach(key=>{
-    const w=WLD[key]; const c=white?[0.95,0.9,0.75]:rayColor(key);
+  const fields=S.edgeRays?[0,edgeDeg()]:[0];
+  fields.forEach((fd,fi)=>keys.forEach(key=>{
+    const w=WLD[key]; const c0=white?[0.95,0.9,0.75]:rayColor(key); const c=fi?c0.map(v=>v*0.55):c0;
     samples.forEach((sp,idx)=>{
-      const r=starRay(sys,sp[0],sp[1],S.field);
+      const r=starRay(sys,sp[0],sp[1],fd);
       const tr=traceRay(res.surfs,r.p,r.d,w.lam,false);
       const pts=tr.pts.slice(); const ns=tr.ns.slice();
       let dim=1, extPts=null;
@@ -1353,9 +1381,9 @@ function buildRays(){
       if(extPts){ const a=extPts[0], b=extPts[1]; pos.push(a[0],a[1],a[2],b[0],b[1],b[2]); col.push(c[0]*0.35,c[1]*0.35,c[2]*0.35,0,0,0); }
       // longueurs optiques
       const cum=[0]; for(let i=0;i<pts.length-1;i++) cum.push(cum[i]+V.len(V.sub(pts[i+1],pts[i]))*(ns[i]||1));
-      rayData.push({pts,cum,total:cum[cum.length-1],phase:V.dot(r.p,r.d),col:c,idx,key,dim});
+      rayData.push({pts,cum,total:cum[cum.length-1],phase:V.dot(r.p,r.d),col:c,idx,key,dim,edge:fi>0});
     });
-  });
+  }));
   const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
   MAT.rays.opacity=clamp(1.25-samples.length*keys.length/90,0.35,0.95);
   gRay.add(new THREE.LineSegments(g,MAT.rays));
@@ -1392,7 +1420,7 @@ function updatePhotons(dt){
       if(q && S.photons){ P[k*3]=q[0];P[k*3+1]=q[1];P[k*3+2]=q[2]; C[k*3]=r.col[0]*r.dim;C[k*3+1]=r.col[1]*r.dim;C[k*3+2]=r.col[2]*r.dim; }
       else { P[k*3]=P[k*3+1]=P[k*3+2]=0; C[k*3]=C[k*3+1]=C[k*3+2]=0; }
       k++;
-      if(S.fronts && (r.key==='G') && S.fan==='m'){ (grid[j]||(grid[j]=[]))[r.idx]=q; }
+      if(S.fronts && r.key==='G' && !r.edge && S.fan==='m'){ (grid[j]||(grid[j]=[]))[r.idx]=q; }
     } }
   phPoints.geometry.attributes.position.needsUpdate=true; phPoints.geometry.attributes.color.needsUpdate=true;
   const F=frLines.geometry.attributes.position.array; let m=0;
@@ -1546,47 +1574,64 @@ function splat(h, arr, cx, cy, p, ox, oy, wgt){
 }
 let AN=null; // dernier résultat d'analyse
 const offImg=document.createElement('canvas'); offImg.width=offImg.height=NG; const offCtx=offImg.getContext('2d');
-const offSingle=document.createElement('canvas'); offSingle.width=offSingle.height=NG; const offSCtx=offSingle.getContext('2d');
+const offSingle=document.createElement('canvas'); offSingle.width=offSingle.height=NG;
+const offEdge=document.createElement('canvas'); offEdge.width=offEdge.height=NG;
 let needFit=true;
-function runAnalysis(){
-  const st=est(false);
-  const a=analyzeImage(res,st,S.mono?2400:1500);
-  const plateUmAs=res.plate*1000*AS; // µm par seconde d'arc
-  const airyR=1.22*0.5461*res.N;
-  if(needFit){ needFit=false; const base=Math.max(12*airyR, 7*(isFinite(a.rmsPoly)?a.rmsPoly:0)); S.W=nice(clamp(base,4,30000)); }
-  const W=S.W, p=W/NG;
+function analyzeAt(fieldDeg){ const st=est(false); st.field=fieldDeg; return analyzeImage(res,st,S.mono?2400:1500); }
+/* image d'une étoile (diffraction ⊗ impacts ⊗ turbulence), peinte dans offC (avec l'étoile double) et offS (étoile seule) */
+function renderStar(a, offC, offS){
+  const plateUmAs=res.plate*1000*AS, W=S.W, p=W/NG;
   const eps=res.obsRatio||0, spider=!!res.spider, vaneRel=res.spider?res.spider.w/S.D:0;
   const sigSee=S.seeing/2.3548*plateUmAs/p; const sig=Math.sqrt(sigSee*sigSee+0.45*0.45);
   const keys=S.mono?['G']:['R','G','B','V'];
-  const sepUm=S.target==='double'?S.sep*plateUmAs:0; const pa=0.5;
+  const sepUm=S.sky==='double'?S.sep*plateUmAs:0; const pa=0.5;
   const ox=sepUm*Math.cos(pa)/2, oy=sepUm*Math.sin(pa)/2;
-  const lin={}, single={};
-  const H={};
+  const lin={}, single={}, H={};
   for(const k of keys){ H[k]=new Float64Array(NG*NG); splat(H[k],a.hits[k],a.cx,a.cy,p,0,0,1); }
   const K={}; for(const k of keys) K[k]=kernelSpec(WLD[k].lam,res.N,p,eps,spider,vaneRel,sig);
   const pairs=S.mono?[['G',null]]:[['R','G'],['B','V']];
   for(const [x,y] of pairs){ const o=convolvePair(H[x],y?H[y]:null,K[x],y?K[y]:null); single[x]=o[0]; if(y) single[y]=o[1]; }
-  // étoile double : superposition décalée
   const shiftPx=[ox/p, -oy/p];
   for(const k of keys){ if(!sepUm){ lin[k]=single[k]; continue; }
-    const s=single[k], o=new Float64Array(NG*NG);
-    addShift(o,s,-shiftPx[0],-shiftPx[1],1); addShift(o,s,shiftPx[0],shiftPx[1],0.85); lin[k]=o; }
+    const s0=single[k], o=new Float64Array(NG*NG);
+    addShift(o,s0,-shiftPx[0],-shiftPx[1],1); addShift(o,s0,shiftPx[0],shiftPx[1],0.85); lin[k]=o; }
   const nG=a.hits.G.length/2; const ideal=nG*K.G.peak;
   let pkG=0; for(let i=0;i<single.G.length;i++) if(single.G[i]>pkG) pkG=single.G[i];
-  const strehl=ideal>0?Math.min(1,pkG/ideal):0;
-  const normRef=keys.reduce((s,k)=>s+a.hits[k].length/2*K[k].peak,0)/keys.length;
-  paintImage(offCtx,lin,keys,normRef);
-  paintImage(offSCtx,single,keys,normRef);
-  AN={a,W,p,airyR,strehl,plateUmAs,sepUm,ox,oy,sigSee:S.seeing/2.3548};
-  drawImagePanel(); drawSky(); updatePills(); updateNotes();
+  const normRef=keys.reduce((t,k)=>t+a.hits[k].length/2*K[k].peak,0)/keys.length;
+  paintImage(offC.getContext('2d'),lin,keys,normRef);
+  if(offS) paintImage(offS.getContext('2d'),single,keys,normRef);
+  const rmsK={}; for(const k of keys){ const h=a.hits[k]; let s2=0; for(let i=0;i<h.length;i+=2) s2+=(h[i]-a.cx)**2+(h[i+1]-a.cy)**2; rmsK[k]=h.length?Math.sqrt(s2/(h.length/2)):0; }
+  return {strehl:ideal>0?Math.min(1,pkG/ideal):0, rmsK, sepUm, ox, oy};
+}
+function runAnalysis(){
+  const aC=analyzeAt(0);
+  const eDeg=edgeDeg(), aE=starMode()?analyzeAt(eDeg):null;
+  const plateUmAs=res.plate*1000*AS, airyR=1.22*0.5461*res.N;
+  const fin=x=>isFinite(x)?x:0;
+  if(needFit){ needFit=false; const base=Math.max(12*airyR, 7*fin(aC.rmsPoly), aE?5*fin(aE.rmsPoly):0); S.W=nice(clamp(base,4,30000)); }
+  const rC=renderStar(aC,offImg,offSingle);
+  const rE=aE?renderStar(aE,offEdge,null):null;
+  AN={a:aC,W:S.W,p:S.W/NG,airyR,plateUmAs,sigSee:S.seeing/2.3548,strehl:rC.strehl,rmsK:rC.rmsK,sepUm:rC.sepUm,ox:rC.ox,oy:rC.oy,
+    edge:aE?{a:aE,deg:eDeg,strehl:rE.strehl}:null};
+  drawSim(); updatePills(); updateNotes();
 }
 function addShift(o,s,dx,dy,w){ const ix=Math.floor(dx), iy=Math.floor(dy), tx=dx-ix, ty=dy-iy;
   const ws=[[0,0,(1-tx)*(1-ty)],[1,0,tx*(1-ty)],[0,1,(1-tx)*ty],[1,1,tx*ty]];
   for(const [ax,ay,ww] of ws){ const sx=ix+ax, sy=iy+ay; if(ww<1e-6) continue;
     for(let y=0;y<NG;y++){ const yy=y-sy; if(yy<0||yy>=NG) continue; for(let x=0;x<NG;x++){ const xx=x-sx; if(xx<0||xx>=NG) continue; o[y*NG+x]+=s[yy*NG+xx]*ww*w; } } } }
+/* Rendu des couleurs. Chaque longueur d'onde a une teinte d'affichage (TINT) et un poids :
+   sensibilité de l'œil (courbe photopique V(λ), très faible pour le rouge profond et le violet)
+   ou d'un capteur couleur (réponse plus plate). Les poids sont normalisés pour que les quatre
+   couleurs superposées donnent du blanc. */
+const TINT={R:[1,0.22,0.18],G:[1,1,0.85],B:[0.3,0.5,1],V:[0.8,0.3,1]};
+const W_EYE={R:0.10,G:0.72,B:0.13,V:0.05}, W_CAM={R:0.28,G:0.40,B:0.22,V:0.10};
+function spectralW(){ return S.out==='eye'?W_EYE:W_CAM; }
+function colorMix(){ const W=spectralW(), sum=[0,0,0];
+  for(const k in TINT) for(let c=0;c<3;c++) sum[c]+=W[k]*TINT[k][c];
+  const M={}; for(const k in TINT) M[k]=TINT[k].map((t,c)=>W[k]*t/sum[c]); return M; }
 function paintImage(ctx,lin,keys,normRef){
   const img=ctx.createImageData(NG,NG), d=img.data;
-  const M=S.mono?null:{R:[0.8,0.1,0],G:[0.05,0.8,0.05],B:[0,0.1,0.6],V:[0.15,0,0.35]};
+  const M=S.mono?null:colorMix();
   let mx=0; const n=NG*NG; const out=new Float32Array(n*3);
   for(let i=0;i<n;i++){ let r=0,g=0,b=0;
     if(S.mono){ const v=Math.max(0,lin.G[i]); r=v*0.45;g=v;b=v*0.55; }
@@ -1598,33 +1643,46 @@ function paintImage(ctx,lin,keys,normRef){
 }
 function fitCanvas(cv){ const r=cv.getBoundingClientRect(); const dpr=Math.min(window.devicePixelRatio||1,2); const w=Math.round(r.width*dpr), h=Math.round(r.height*dpr);
   if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; } return {w,h,dpr}; }
-function drawImagePanel(){
-  if(!AN) return; const cv=$('cvImg'), {w,h,dpr}=fitCanvas(cv); const ctx=cv.getContext('2d');
+function drawSim(){
+  if(!AN) return; const sm=starMode();
+  $('starBox').hidden=!sm; $('skyBox').hidden=sm;
+  $('simTitle').textContent=sm?'Image de l\u2019étoile':(S.out==='eye'?'Vue à l\u2019oculaire':'Image sur le capteur');
+  $('tagImg').textContent=sm?(S.imgMode==='psf'?'diffraction + géométrie':'optique géométrique'):'';
+  if(sm) drawStars(); else drawSky();
+}
+function drawStars(){
+  drawStar($('cvImg'),AN.a,offImg,AN.sepUm);
+  $('ovC1').textContent='Centre du champ'; $('ovC2').textContent='Strehl ≈ '+fr(AN.strehl,2);
+  if(AN.edge){ drawStar($('cvImg2'),AN.edge.a,offEdge,AN.sepUm);
+    $('ovE1').textContent='Bord · '+fr(AN.edge.deg,2)+'°'+(S.edgeAuto?'':' (réglé)'); $('ovE2').textContent='Strehl ≈ '+fr(AN.edge.strehl,2); }
+  const asW=AN.W/AN.plateUmAs;
+  $('ovImg1').textContent='Champ de chaque vue : '+(S.out==='cam'?fmtUm(AN.W)+' · ':'')+fmtAs(asW);
+  $('ovImg3').textContent='Disque d\u2019Airy ⌀ '+fmtAs(2*AN.airyR/AN.plateUmAs)+(S.out==='cam'?' · '+fr(2*AN.airyR,1)+' µm':'')+' (cercle vert).';
+}
+function drawStar(cv, a, off, sepUm){
+  const {w,h,dpr}=fitCanvas(cv); const ctx=cv.getContext('2d');
   ctx.fillStyle='#000'; ctx.fillRect(0,0,w,h);
   const k=w/AN.W; // px canvas par µm
-  if(S.imgMode==='psf'){ ctx.imageSmoothingEnabled=true; ctx.drawImage(offImg,0,0,w,h); }
+  if(S.imgMode==='psf'){ ctx.imageSmoothingEnabled=true; ctx.drawImage(off,0,0,w,h); }
   else { ctx.globalCompositeOperation='lighter'; const keys=S.mono?['G']:['R','G','B','V'];
-    const n=keys.reduce((s,q)=>s+AN.a.hits[q].length/2,0); const rr=Math.max(0.8,1.3*dpr), al=clamp(900/n,0.12,0.8);
-    for(const q of keys){ const arr=AN.a.hits[q]; const c=new THREE.Color(WLD[q].col); ctx.fillStyle=`rgba(${c.r*255|0},${c.g*255|0},${c.b*255|0},${al})`;
-      for(const [sx,sy] of (AN.sepUm?[[-AN.ox,-AN.oy],[AN.ox,AN.oy]]:[[0,0]])) for(let i=0;i<arr.length;i+=2){ const x=w/2+(arr[i]-AN.a.cx+sx)*k, y=h/2-(arr[i+1]-AN.a.cy+sy)*k; ctx.fillRect(x-rr/2,y-rr/2,rr,rr); } }
+    const n=keys.reduce((t,q)=>t+a.hits[q].length/2,0); const rr=Math.max(0.8,1.2*dpr), al=clamp(900/n,0.12,0.8);
+    const ox=Math.cos(0.5)*sepUm/2, oy=Math.sin(0.5)*sepUm/2;
+    for(const q of keys){ const arr=a.hits[q]; const c=new THREE.Color(WLD[q].col); ctx.fillStyle=`rgba(${c.r*255|0},${c.g*255|0},${c.b*255|0},${al})`;
+      for(const [sx,sy] of (sepUm?[[-ox,-oy],[ox,oy]]:[[0,0]])) for(let i=0;i<arr.length;i+=2){ const x=w/2+(arr[i]-a.cx+sx)*k, y=h/2-(arr[i+1]-a.cy+sy)*k; ctx.fillRect(x-rr/2,y-rr/2,rr,rr); } }
     ctx.globalCompositeOperation='source-over'; }
   // grille de pixels du capteur
   if(S.out==='cam'){ const px=SENSORS[S.sensor].px*k; if(px>=6){ ctx.strokeStyle='rgba(120,150,200,.16)'; ctx.lineWidth=1; ctx.beginPath();
-    const ox=(w/2-AN.a.cx*k)%px, oy=(h/2+AN.a.cy*k)%px; for(let x=ox;x<w;x+=px){ctx.moveTo(x,0);ctx.lineTo(x,h);} for(let y=oy;y<h;y+=px){ctx.moveTo(0,y);ctx.lineTo(w,y);} ctx.stroke(); } }
+    const gx=(w/2-a.cx*k)%px, gy=(h/2+a.cy*k)%px; for(let x=gx;x<w;x+=px){ctx.moveTo(x,0);ctx.lineTo(x,h);} for(let y=gy;y<h;y+=px){ctx.moveTo(0,y);ctx.lineTo(w,y);} ctx.stroke(); } }
   // disque d'Airy
   const ra=AN.airyR*k; if(ra>3&&ra<w){ ctx.setLineDash([4*dpr,4*dpr]); ctx.strokeStyle='rgba(116,240,140,.55)'; ctx.lineWidth=dpr; ctx.beginPath(); ctx.arc(w/2,h/2,ra,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]); }
-  // axe optique
-  const ax=w/2-AN.a.cx*k, ay=h/2+AN.a.cy*k; if(ax>-10&&ax<w+10&&ay>-10&&ay<h+10&&(Math.abs(AN.a.cx)+Math.abs(AN.a.cy))*k>6){ ctx.strokeStyle='rgba(214,168,90,.8)'; ctx.lineWidth=dpr; ctx.beginPath(); ctx.moveTo(ax-6*dpr,ay);ctx.lineTo(ax+6*dpr,ay);ctx.moveTo(ax,ay-6*dpr);ctx.lineTo(ax,ay+6*dpr); ctx.stroke(); }
+  // axe optique (si l'étoile en est décalée et qu'il est dans le cadre)
+  const ax=w/2-a.cx*k, ay=h/2+a.cy*k; if(ax>-10&&ax<w+10&&ay>-10&&ay<h+10&&(Math.abs(a.cx)+Math.abs(a.cy))*k>6){ ctx.strokeStyle='rgba(214,168,90,.8)'; ctx.lineWidth=dpr; ctx.beginPath(); ctx.moveTo(ax-6*dpr,ay);ctx.lineTo(ax+6*dpr,ay);ctx.moveTo(ax,ay-6*dpr);ctx.lineTo(ax,ay+6*dpr); ctx.stroke(); }
   // échelle
   const asW=AN.W/AN.plateUmAs; let bar, lab;
-  if(S.out==='cam'){ bar=nice(AN.W/4); lab=(bar>=1000?fr(bar/1000,bar>=10000?0:1)+' mm':fr(bar,bar<10?1:0)+' µm')+' · '+fmtAs(bar/AN.plateUmAs); }
-  else { const b2=nice(asW/4); bar=b2*AN.plateUmAs; lab=fmtAs(b2)+' sur le ciel'; }
-  const bl=bar*k; ctx.fillStyle='rgba(221,228,238,.85)'; ctx.fillRect(w-12*dpr-bl,h-38*dpr,bl,2*dpr);
-  ctx.font=`${11*dpr}px JetBrains Mono, monospace`; ctx.textAlign='right'; ctx.fillText(lab,w-12*dpr,h-44*dpr);
-  $('ovImg1').textContent=(S.out==='cam'?'Capteur · champ '+fmtUm(AN.W):'Rétine · champ ')+' '+fmtAs(asW);
-  $('ovImg2').textContent='Strehl ≈ '+fr(AN.strehl,2);
-  $('ovImg3').textContent='Airy ⌀ '+fmtAs(2*AN.airyR/AN.plateUmAs)+(S.out==='cam'?' · '+fr(2*AN.airyR,1)+' µm':'');
-  $('tagImg').textContent=S.imgMode==='psf'?'diffraction + géométrie':'optique géométrique';
+  if(S.out==='cam'){ bar=nice(AN.W/4); lab=bar>=1000?fr(bar/1000,bar>=10000?0:1)+' mm':fr(bar,bar<10?1:0)+' µm'; }
+  else { const b2=nice(asW/4); bar=b2*AN.plateUmAs; lab=fmtAs(b2); }
+  const bl=bar*k; ctx.fillStyle='rgba(221,228,238,.85)'; ctx.fillRect(w-8*dpr-bl,h-10*dpr,bl,2*dpr);
+  ctx.font=`${10*dpr}px JetBrains Mono, monospace`; ctx.textAlign='right'; ctx.fillText(lab,w-8*dpr,h-15*dpr);
 }
 function fmtUm(u){ return u>=1000?fr(u/1000,u>=10000?1:2)+' mm':fr(u,u<10?1:0)+' µm'; }
 function fmtAs(a){ if(a>=3600) return fr(a/3600,2)+'°'; if(a>=120) return fr(a/60,1)+'′'; return fr(a,a<10?2:1)+'″'; }
@@ -1658,7 +1716,7 @@ function prerender(kind){
     const tg=x.createLinearGradient(640,0,760,0); tg.addColorStop(0,'rgba(0,0,0,0)'); tg.addColorStop(1,'rgba(0,0,0,.97)'); x.fillStyle=tg; x.fillRect(640,0,384,1024); x.restore(); }
   planetCache[kind]=c; return c;
 }
-const SKY=[['jupiter','Jupiter'],['saturn','Saturne'],['moon','Lune'],['double','Étoile double'],['cluster','Amas']];
+const SKY=[['star','Étoile'],['double','Étoile double'],['moon','Lune'],['jupiter','Jupiter'],['saturn','Saturne'],['cluster','Amas']];
 const cluster=(()=>{ let s=5; const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647;}; const a=[];
   for(let i=0;i<220;i++){ const r=Math.pow(rnd(),0.8)*1500, t=rnd()*Math.PI*2; a.push([r*Math.cos(t),r*Math.sin(t),0.12+Math.pow(rnd(),5)*1.3]); } return a; })();
 const field=(()=>{ let s=91; const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647;}; const a=[];
@@ -1670,9 +1728,11 @@ function drawSky(){
   if(eye){ fieldAs=S.afov/res.G*3600; k=(w*0.94)/fieldAs; }
   else { const sn=SENSORS[S.sensor]; fw=sn.w/res.efl*206265; fh=sn.h/res.efl*206265; k=Math.min(w*0.94/fw,h*0.94/fh); }
   // flou total (secondes d'arc)
-  const geo=(isFinite(AN.a.rmsPoly)?AN.a.rmsPoly:0)/AN.plateUmAs;
   const diff=0.44*0.55e-3/S.D*206265;
-  const sig=Math.sqrt(AN.sigSee**2+diff*diff+(geo*0.8)**2);
+  const sigOf=k=>{ const geo=(AN.rmsK[k]||0)/AN.plateUmAs; const df=diff*WLD[k].lam/0.55; return Math.sqrt(AN.sigSee**2+df*df+(geo*0.8)**2); };
+  const chans=S.mono?['G']:['R','G','B','V'], SW=spectralW(), MIX=S.mono?null:colorMix();
+  // flou « perçu » (moyenne pondérée) pour les étoiles trop petites pour l'image calculée
+  const sig=S.mono?sigOf('G'):Math.sqrt(chans.reduce((t,k)=>t+SW[k]*sigOf(k)**2,0)/chans.reduce((t,k)=>t+SW[k],0));
   const bright=eye?clamp(Math.pow(Math.min(res.ep,S.eyePupil)/2.2,0.9),0.12,1.5):1;
   ctx.save(); ctx.beginPath();
   if(eye) ctx.arc(w/2,h/2,w*0.47,0,Math.PI*2); else ctx.rect(w/2-fw*k/2,h/2-fh*k/2,fw*k,fh*k);
@@ -1686,7 +1746,15 @@ function drawSky(){
     if(size>6){ tctx.globalAlpha=clamp(b,0,1); tctx.globalCompositeOperation='lighter'; tctx.drawImage(offSingle,cx+x*kk-size/2,cy-y*kk-size/2,size,size); tctx.globalAlpha=1; tctx.globalCompositeOperation='source-over'; }
     else { const r=Math.max(0.7,sig*kk*1.6,0.9); const g=tctx.createRadialGradient(cx+x*kk,cy-y*kk,0,cx+x*kk,cy-y*kk,r*2.2); g.addColorStop(0,`rgba(255,250,240,${clamp(b*1.2,0,1)})`); g.addColorStop(1,'rgba(255,250,240,0)'); tctx.fillStyle=g; tctx.fillRect(cx+x*kk-r*2.2,cy-y*kk-r*2.2,r*4.4,r*4.4); } };
   for(const s of field) starSpr(s[0],s[1],s[2]*bright*0.8);
-  const ext=(img,wAs,hAs,ox)=>{ const sp=sig*kk; tctx.save(); if('filter' in tctx) tctx.filter=`blur(${sp.toFixed(2)}px) brightness(${bright.toFixed(2)})`; tctx.drawImage(img,cx-wAs*kk/2+(ox||0)*kk,cy-hAs*kk/2,wAs*kk,hAs*kk); tctx.restore(); };
+  // objet étendu : une passe par couleur, floutée selon sa propre tache, teintée puis additionnée
+  const ext=(img,wAs,hAs,ox)=>{ const x0=cx-wAs*kk/2+(ox||0)*kk, y0=cy-hAs*kk/2, ww=wAs*kk, hh=hAs*kk;
+    if(!('filter' in tctx) || S.mono){ tctx.save(); if('filter' in tctx) tctx.filter=`blur(${(sigOf('G')*kk).toFixed(2)}px) brightness(${bright.toFixed(2)})`; tctx.drawImage(img,x0,y0,ww,hh); tctx.restore(); return; }
+    const oc=document.createElement('canvas'); oc.width=tw; oc.height=th; const o=oc.getContext('2d');
+    for(const k of chans){ const m=MIX[k];
+      o.globalCompositeOperation='source-over'; o.filter='none'; o.fillStyle='#000'; o.fillRect(0,0,tw,th);
+      o.filter=`blur(${(sigOf(k)*kk).toFixed(2)}px) brightness(${bright.toFixed(2)})`; o.drawImage(img,x0,y0,ww,hh);
+      o.filter='none'; o.globalCompositeOperation='multiply'; o.fillStyle=`rgb(${Math.round(m[0]*255)},${Math.round(m[1]*255)},${Math.round(m[2]*255)})`; o.fillRect(0,0,tw,th);
+      tctx.save(); tctx.globalCompositeOperation='lighter'; tctx.drawImage(oc,0,0); tctx.restore(); } };
   if(S.sky==='jupiter'){ ext(prerender('jupiter'),44.5,41.7); for(const [x,b] of [[95,0.9],[-150,0.85],[235,1],[-420,0.7]]) starSpr(x,0,b*bright); }
   else if(S.sky==='saturn'){ ext(prerender('saturn'),42.3,19); starSpr(190,6,0.6*bright); }
   else if(S.sky==='moon'){ ext(prerender('moon'),1865,1865,-560); }
@@ -1697,8 +1765,8 @@ function drawSky(){
   // bord du champ
   ctx.strokeStyle='rgba(214,168,90,.35)'; ctx.lineWidth=dpr; ctx.beginPath();
   if(eye) ctx.arc(w/2,h/2,w*0.47,0,Math.PI*2); else ctx.rect(w/2-fw*k/2,h/2-fh*k/2,fw*k,fh*k); ctx.stroke();
-  if(eye){ $('skyTitle').textContent='Vue à l’oculaire'; $('ovSky1').textContent='×'+fr(res.G,0); $('ovSky2').textContent='champ réel '+fmtAs(fieldAs); $('ovSky3').textContent='pupille de sortie '+fr(res.ep,res.ep<2?2:1)+' mm'; }
-  else { $('skyTitle').textContent='Image sur le capteur'; const pxAs=SENSORS[S.sensor].px/1000/res.efl*206265; $('ovSky1').textContent=fr(pxAs,2)+'″ par pixel'; $('ovSky2').textContent=fmtAs(fw)+' × '+fmtAs(fh); $('ovSky3').textContent=pixScale>1?'pixels visibles : sous-échantillonnage':''; }
+  if(eye){ $('ovSky1').textContent='×'+fr(res.G,0); $('ovSky2').textContent='champ réel '+fmtAs(fieldAs); $('ovSky3').textContent='pupille de sortie '+fr(res.ep,res.ep<2?2:1)+' mm'; }
+  else { const pxAs=SENSORS[S.sensor].px/1000/res.efl*206265; $('ovSky1').textContent=fr(pxAs,2)+'″ par pixel'; $('ovSky2').textContent=fmtAs(fw)+' × '+fmtAs(fh); $('ovSky3').textContent=pixScale>1?'pixels visibles : sous-échantillonnage':''; }
 }
 
 /* ================= Interface ================= */
@@ -1708,7 +1776,7 @@ function buildTypePicker(){
     for(const [t,ic] of f.items){ const b=document.createElement('button'); b.className='type'; b.dataset.type=t; b.innerHTML=ic+`<span>${TYPES[t].short}</span>`; b.title=TYPES[t].name; b.onclick=()=>selectType(t); g.appendChild(b); }
     d.appendChild(g); box.appendChild(d); }
 }
-function chipRow(box,items,cur,on){ box.innerHTML=''; for(const [v,l] of items){ const b=document.createElement('button'); b.className='chip'; b.textContent=l; b.setAttribute('aria-pressed',String(v===cur)); b.onclick=()=>on(v); box.appendChild(b); } }
+function chipRow(box,items,cur,on,cls){ box.innerHTML=''; for(const [v,l] of items){ const b=document.createElement('button'); b.className='chip'+(cls?' '+cls:''); b.textContent=l; b.setAttribute('aria-pressed',String(v===cur)); b.onclick=()=>on(v); box.appendChild(b); } }
 function setP(inp){ const p=(inp.value-inp.min)/(inp.max-inp.min)*100; inp.style.setProperty('--p',p+'%'); }
 function bindRange(id, key, fmt, opts){
   const el=$(id); opts=opts||{};
@@ -1741,17 +1809,17 @@ function syncUI(){
   $('oFe').textContent=fr(S.fe,S.fe%1?1:0)+' mm'; $('cAfov').value=String(S.afov); $('oAfov').textContent=S.afov+'°';
   $('cEp').value=S.eyePupil; $('oEp').textContent=fr(S.eyePupil,1)+' mm';
   $('cSensor').value=S.sensor; $('cSt').value=S.sT; $('oSt').textContent=sgn(S.sT,0)+'′';
-  $('cField').value=S.field; $('oField').textContent=fr(S.field,2)+'°';
+  { const e=edgeDeg(), el=$('cField'); el.max=Math.max(1.2,Math.ceil(autoEdge()*13)/10); el.value=e; $('oField').textContent=fr(e,2)+'°'+(S.edgeAuto?' · bord réel':'');
+    $('edgeAuto').setAttribute('aria-pressed',String(S.edgeAuto)); $('xEdge').checked=S.edgeRays; }
   $('lWhite').setAttribute('aria-pressed',String(!S.mono)); $('lMono').setAttribute('aria-pressed',String(S.mono));
-  $('tSingle').setAttribute('aria-pressed',String(S.target==='single')); $('tDouble').setAttribute('aria-pressed',String(S.target==='double'));
-  $('wSep').hidden=S.target!=='double'; $('cSep').value=S.sep; $('oSep').textContent=fr(S.sep,2)+'″';
+  $('wSep').hidden=S.sky!=='double'; $('cSep').value=S.sep; $('oSep').textContent=fr(S.sep,2)+'″';
   $('cSee').value=S.seeing; $('oSee').textContent=S.seeing<0.05?'aucune (espace)':fr(S.seeing,1)+'″';
   $('cRays').value=S.nRays; $('oRays').textContent=S.fan==='m'?S.nRays+' par couleur':'faisceau 3D';
   $('fanM').setAttribute('aria-pressed',String(S.fan==='m')); $('fan3').setAttribute('aria-pressed',String(S.fan!=='m'));
   $('xPhot').checked=S.photons; $('xFront').checked=S.fronts; $('xCut').checked=S.cut; $('xLab').checked=S.labels; $('xExt').checked=S.extend; $('xRGB').checked=S.rgb; $('xGam').checked=S.gam;
   $('cSpeed').value=S.speed; $('oSpeed').textContent='×'+fr(S.speed,2);
   $('imPsf').setAttribute('aria-pressed',String(S.imgMode==='psf')); $('imSpot').setAttribute('aria-pressed',String(S.imgMode!=='psf'));
-  chipRow($('skyPicker'),SKY,S.sky,v=>{S.sky=v; syncUI(); drawSky();});
+  chipRow($('simPicker'),SKY,S.sky,v=>{ const was=starMode(); S.sky=v; if(starMode()&&!was) needFit=true; syncUI(); analysisFlag=true; },'sm');
   $('bOrtho').setAttribute('aria-pressed',String(S.ortho));
   $('about').innerHTML=ABOUT[S.type];
   document.querySelectorAll('input[type=range]').forEach(setP);
@@ -1842,7 +1910,7 @@ function updatePills(){
   if(diag && S.out){ const rb=Math.max(Math.abs(diag.foci.R-diag.foci.B),Math.abs(diag.foci.V-diag.foci.G)); if(!S.mono) h+=rb<diag.dof?pill('ok','Pas de chromatisme'):rb<4*diag.dof?pill('warn','Chromatisme faible'):pill('bad','Chromatisme fort'); }
   if(Math.hypot(S.tPx,S.tPy)+Math.hypot(S.tSx,S.tSy)>0.01) h+=pill('warn','Collimation déréglée');
   if(S.seeing>116/S.D*1.1) h+=pill('info','Limité par la turbulence');
-  if(S.target==='double'){ h+=S.sep>=116/S.D?pill('ok','Double séparable'):pill('bad','Sous la limite de Dawes'); }
+  if(S.sky==='double'){ h+=S.sep>=116/S.D?pill('ok','Double séparable'):pill('bad','Sous la limite de Dawes'); }
   $('pills').innerHTML=h;
 }
 function note(cls,t){ return `<li class="${cls}">${t}</li>`; }
@@ -1856,12 +1924,21 @@ function updateNotes(){
     if(fam==='refr'||S.acc==='barlow2s'){ if(Math.max(rb,vg)>4*dofU) out.push(note('bad','<b>Aberration chromatique.</b> Le verre dévie plus le bleu que le rouge : les foyers rouge et bleu sont séparés de '+fr(rb,0)+' µm, le violet de '+fr(vg,0)+' µm, pour une profondeur de foyer de ±'+fr(dofU,0)+' µm. D’où le halo coloré autour de l’étoile.'));
       else if(Math.max(rb,vg)>dofU) out.push(note('warn','<b>Spectre secondaire.</b> Rouge et bleu sont presque réunis ('+fr(rb,0)+' µm), mais le violet focalise '+fr(vg,0)+' µm plus loin : léger halo violet sur les objets brillants.'));
       else out.push(note('ok','<b>Couleurs corrigées.</b> Toutes les couleurs focalisent à moins de ±'+fr(dofU,0)+' µm du même point : comportement apochromatique.')); }
-    else out.push(note('ok','<b>Aucune aberration chromatique</b> '+(S.type==='sct'||S.type==='mak'?'notable : le correcteur en verre est presque sans puissance':'  : un miroir réfléchit toutes les couleurs sous le même angle')+'.')); }
+    else { const m=Math.max(rb,vg), ecarts='les foyers rouge et bleu sont séparés de '+fr(rb,0)+' µm, le violet et le vert de '+fr(vg,0)+' µm, pour une profondeur de foyer de ±'+fr(dofU,0)+' µm';
+      if(S.type==='sct'){
+        if(m>dofU) out.push(note(m>4*dofU?'bad':'warn','<b>Sphérochromatisme '+(m>4*dofU?'marqué':'léger')+'.</b> La lame de Schmidt n\u2019a presque pas de puissance au centre, mais son profil agit un peu différemment sur chaque couleur : l\u2019aberration sphérique, corrigée pour le vert, l\u2019est un peu moins pour le rouge et le violet. Ici, '+ecarts+'. Le résidu coloré reste '+(m>4*dofU?'visible sur les objets brillants':'discret')+'.'));
+        else out.push(note('ok','<b>Chromatisme négligeable.</b> La lame de Schmidt est si peu puissante que '+ecarts+'.')); }
+      else if(S.type==='mak'){
+        if(m>dofU) out.push(note(m>4*dofU?'bad':'warn','<b>Chromatisme '+(m>4*dofU?'marqué':'léger')+' du ménisque.</b> Le ménisque en verre épais dévie un peu différemment chaque couleur : '+ecarts+'.'));
+        else out.push(note('ok','<b>Chromatisme négligeable.</b> Les courbures du ménisque sont choisies pour qu\u2019il soit presque achromatique : '+ecarts+'.')); }
+      else if(m>dofU) out.push(note(m>4*dofU?'bad':'warn','<b>Chromatisme apporté par l\u2019accessoire.</b> Les miroirs n\u2019en produisent pas, mais la lentille ('+ACCESSORIES[S.acc].name.toLowerCase()+') sépare les couleurs : '+ecarts+'.'));
+      else out.push(note('ok','<b>Aucune aberration chromatique</b> : un miroir réfléchit toutes les couleurs sous le même angle.'+(S.acc!=='none'&&S.acc!=='diag'?' La lentille de l\u2019accessoire n\u2019ajoute qu\u2019un écart négligeable ('+fr(m,0)+' µm).':''))); } }
   if(diag && Math.abs(diag.lsa)>2*diag.dof) out.push(note('bad','<b>Aberration sphérique.</b> Les rayons du bord focalisent '+fr(Math.abs(diag.lsa),2)+' mm '+(diag.lsa<0?'plus près':'plus loin')+' que ceux du centre : aucune position de mise au point ne donne une image nette.'+(fam==='newton'?' Seule la parabole (K = −1) réunit tous les rayons.':'')));
   const tp=Math.hypot(S.tPx,S.tPy), ts=Math.hypot(S.tSx,S.tSy);
   if(tp>0.01) out.push(note('warn','<b>'+(fam==='refr'?'Objectif basculé':'Primaire désaligné')+' de '+fr(tp,1)+'′.</b> '+(fam==='refr'?'Les rayons traversent l’objectif en biais':'Le faisceau réfléchi est dévié de '+fr(2*tp,1)+'′')+' : l’étoile au centre du champ se comporte comme une étoile hors de l’axe et prend une forme de comète (coma).'));
   if(ts>0.01){ const off=Math.hypot(AN.a.cx,AN.a.cy)/1000; out.push(note('warn','<b>Secondaire incliné de '+fr(ts,1)+'′.</b> '+(fam==='newton'?'Un miroir plan ne déforme pas l’image mais la déplace : l’étoile est à '+fr(off,2)+' mm de l’axe du porte-oculaire, qui ne vise plus le centre du primaire.':'Le secondaire courbe décentré introduit de la coma et déplace l’image de '+fr(off,2)+' mm.'))); }
-  if(S.field>0.001) out.push(note('info','<b>Étoile à '+fr(S.field,2)+'° du centre.</b> Tache de '+fr(AN.a.rmsPoly,1)+' µm RMS contre un disque d’Airy de '+fr(AN.airyR,1)+' µm de rayon'+(fam==='newton'||S.type==='cass'||S.type==='dk'?' : la coma est le défaut typique de cette formule.':S.type==='rc'?' : le Ritchey-Chrétien est corrigé de la coma, reste l’astigmatisme et la courbure de champ.':'.')));
+  if(AN.edge){ const e=AN.edge, rel=e.a.rmsPoly/AN.airyR;
+    out.push(note(rel<1.2?'ok':rel<4?'warn':'bad','<b>Étoile en bord de champ ('+fr(e.deg,2)+'°'+(S.edgeAuto?', bord réel '+(S.out==='eye'?'de l\u2019oculaire':'du capteur'):'')+').</b> Tache de '+fr(e.a.rmsPoly,1)+' µm RMS, soit '+fr(rel,1)+' fois le rayon du disque d\u2019Airy (au centre : '+fr(AN.a.rmsPoly/AN.airyR,1)+' fois)'+(rel<1.2?' : le champ est net jusqu\u2019au bord.':TYPES[S.type].family==='newton'||S.type==='cass'||S.type==='dk'?' : c\u2019est la coma, défaut typique de cette formule (étoile en forme de comète).':S.type==='rc'?' : le Ritchey-Chrétien est corrigé de la coma ; il reste l\u2019astigmatisme et la courbure de champ.':' : coma, astigmatisme et courbure de champ.'))); }
   if(S.acc.startsWith('barlow')||S.acc==='reducer'){ const k=res.efl/nativeEfl(); out.push(note('info','<b>'+ACCESSORIES[S.acc].name+'.</b> La focale passe de '+fr(nativeEfl(),0)+' à '+fr(res.efl,0)+' mm (×'+fr(k,2)+') : F/'+fr(nativeEfl()/S.D,1)+' devient F/'+fr(res.efl/S.D,1)+'. Le diamètre ne change pas : la finesse maximale est la même, mais l’image est '+(k>1?'plus grande et '+fr(k*k,1)+' fois moins lumineuse par unité de surface':'plus petite et '+fr(1/(k*k),1)+' fois plus lumineuse')+'.')); }
   if(S.out==='eye'){ const G=res.G, ep=res.ep;
     if(ep>S.eyePupil) out.push(note('warn','<b>Pupille de sortie de '+fr(ep,1)+' mm</b>, plus large que la pupille de l’œil ('+fr(S.eyePupil,1)+' mm) : une partie de la lumière est perdue, tout se passe comme si le télescope ne faisait que '+fr(S.eyePupil*G,0)+' mm de diamètre.'));
@@ -1879,13 +1956,13 @@ function updateNotes(){
 /* ================= Balayage & leçons ================= */
 const SWEEPS={
   focus:{name:'Mise au point', ok:()=>true, range:()=>{ const r=focusRange(); const a=Math.min(r,Math.max(focusStep()*(primaryFocus()?22:22),0.2)); return [best-a,best+a]; }},
-  D:{name:'Diamètre', ok:()=>true, range:()=>ranges().Dr, quick:true},
+  D:{name:'Diamètre', ok:()=>true, range:()=>{ const r=ranges(); return [Math.max(r.Dr[0],Math.ceil(S.F/r.Nr[1])),Math.min(r.Dr[1],Math.floor(S.F/r.Nr[0]))]; }, quick:true},
   F:{name:'Focale', ok:()=>true, range:()=>{ const r=ranges().Nr; return [S.D*r[0],S.D*r[1]]; }, quick:true},
   K:{name:'Forme du miroir (K)', ok:()=>TYPES[S.type].family==='newton', range:()=>[0.2,-1.3]},
   fp:{name:'Ouverture du primaire', ok:()=>!!ranges().fpr, range:()=>{ const r=ranges().fpr; return [r[0],Math.min(r[1],S.F/S.D/1.8)]; }, quick:true},
   tPx:{name:'Inclinaison du primaire', ok:()=>true, range:()=>[-12,12]},
   tSx:{name:'Inclinaison du secondaire', ok:()=>TYPES[S.type].family!=='refr', range:()=>[-15,15]},
-  field:{name:'Position dans le champ', ok:()=>true, range:()=>[0,1]},
+  edge:{name:'Position de l\u2019étoile de bord', ok:()=>starMode(), range:()=>[0,Math.max(0.6,autoEdge()*1.1)]},
   fe:{name:'Oculaire (grossissement)', ok:()=>S.out==='eye', range:()=>[40,3], log:true},
   seeing:{name:'Turbulence', ok:()=>true, range:()=>[0.2,4]}
 };
@@ -1893,7 +1970,7 @@ let sweep={on:false,param:'focus',t:0,from:0,to:1};
 function buildSweepOptions(){ const sel=$('sweepParam'); const cur=sweep.param; sel.innerHTML='';
   for(const k in SWEEPS){ if(!SWEEPS[k].ok()) continue; const o=document.createElement('option'); o.value=k; o.textContent=SWEEPS[k].name; sel.appendChild(o); }
   if(!SWEEPS[cur].ok()) sweep.param='focus'; sel.value=sweep.param; }
-function startSweep(param){ if(param) sweep.param=param; const sw=SWEEPS[sweep.param]; const r=sw.range(); sweep.from=r[0]; sweep.to=r[1];
+function startSweep(param){ if(param) sweep.param=param; if(sweep.param==='edge'){ S.edge=edgeDeg(); S.edgeAuto=false; } const sw=SWEEPS[sweep.param]; const r=sw.range(); sweep.from=r[0]; sweep.to=r[1];
   // démarrer depuis la valeur courante
   const cur=S[sweep.param]; const lin=v=>sw.log?Math.log(v):v; const u=clamp((lin(cur)-lin(r[0]))/((lin(r[1])-lin(r[0]))||1),0,1);
   sweep.t=Math.acos(1-2*u)/Math.PI*0.5; sweep.on=true; $('sweepParam').value=sweep.param; setPlayIcon(); }
@@ -1911,44 +1988,44 @@ function syncLight(){ // mise à jour légère pendant l'animation
   for(const [id,k] of [['cD','D'],['cF','F']]){ $(id).value=S[k]; $('n'+id.slice(1)).value=Math.round(S[k]); setP($(id)); }
   $('tagFD').textContent='F/'+fr(S.F/S.D,1);
   $('cK').value=S.K; $('oK').textContent=fr(S.K,2); $('cPx').value=S.tPx; $('oPx').textContent=sgn(S.tPx,1)+'′'; $('cSx').value=S.tSx; $('oSx').textContent=sgn(S.tSx,1)+'′';
-  $('cField').value=S.field; $('oField').textContent=fr(S.field,2)+'°'; $('cSee').value=S.seeing; $('oSee').textContent=fr(S.seeing,1)+'″';
+  $('cField').value=edgeDeg(); $('oField').textContent=fr(edgeDeg(),2)+'°'; $('cSee').value=S.seeing; $('oSee').textContent=fr(S.seeing,1)+'″';
   $('oFe').textContent=fr(S.fe,1)+' mm'; if(!$('wFp').hidden){ $('cFp').value=S.fp; $('oFp').textContent='F/'+fr(S.fp,2); }
   ['cK','cPx','cSx','cField','cSee','cFp'].forEach(id=>setP($(id)));
 }
 const LESSONS=[
-  {k:'Les bases', t:'Le trajet de la lumière', p:{type:'achro',D:102,F:1000,out:'eye',fe:25,photons:true,fronts:true,fan:'m',nRays:13,acc:'none',field:0,seeing:1,sky:'moon'}, view:'side',
+  {k:'Les bases', t:'Le trajet de la lumière', p:{type:'achro',D:102,F:1000,out:'eye',fe:25,photons:true,fronts:true,fan:'m',nRays:13,acc:'none',seeing:1,sky:'moon',labels:true}, view:'side',
    txt:'<p>Une étoile est si lointaine que ses rayons arrivent <b>parallèles</b>. L’objectif les courbe pour les réunir en un point : le <b>foyer</b>. La distance objectif–foyer est la <b>focale</b>.</p><p>Les lignes blanches sont des <b>fronts d’onde</b> : plans à l’entrée, ils deviennent des calottes sphériques centrées sur le foyer. Dans le verre, la lumière ralentit (vitesse c/n) : les photons du centre, qui traversent plus de verre, prennent du retard. C’est ce retard qui courbe le front d’onde.</p>'},
-  {k:'Les bases', t:'Diamètre : lumière et finesse', p:{type:'newton',D:150,F:1200,out:'cam',sensor:'imx585',seeing:0,photons:true,fronts:false,acc:'none',field:0,target:'double',sep:0.9}, view:'side', sweep:'D',
-   txt:'<p>Le diamètre <b>D</b> est la surface qui collecte la lumière : doubler D, c’est capter <b>4 fois</b> plus de photons.</p><p>C’est aussi D qui fixe la finesse : la tache de diffraction (disque d’Airy) mesure 1,22 λ/D. Regardez l’étoile double à 0,9″ : sous environ 130 mm, les deux étoiles se confondent. Au-dessus, elles se séparent.</p>'},
-  {k:'Les bases', t:'Focale et rapport F/D', p:{type:'newton',D:200,F:1000,out:'cam',sensor:'imx571',seeing:1.5,photons:true,acc:'none',field:0,target:'single'}, view:'side', sweep:'F',
-   txt:'<p>La focale fixe l’<b>échelle de l’image</b> : au foyer, une seconde d’arc mesure F/206 µm. Plus la focale est longue, plus Jupiter est grosse sur le capteur.</p><p>Le rapport <b>F/D</b> décrit l’ouverture du cône de lumière. F/4 est un cône très ouvert (« rapide », pour la photo du ciel profond), F/12 un cône fin (planétaire). Plus le cône est ouvert, plus la mise au point est critique : la profondeur de foyer vaut ±2 λ (F/D)².</p>'},
-  {k:'Les bases', t:'La mise au point et le test sur étoile', p:{type:'newton',D:200,F:1000,out:'eye',fe:10,seeing:0.5,photons:false,acc:'none',field:0,target:'single',gam:true,imgMode:'psf'}, view:'focus', sweep:'focus',
-   txt:'<p>Hors du foyer, l’étoile devient un disque de lumière. On y voit l’<b>ombre du miroir secondaire</b> et les quatre <b>bras de l’araignée</b> qui le tiennent.</p><p>Au foyer, les bras produisent les <b>aigrettes de diffraction</b> en croix, typiques des photos prises au Newton. Comparer les disques intra et extra-focaux est le test le plus sensible pour juger une optique.</p>'},
-  {k:'Aberrations', t:'L’aberration chromatique', p:{type:'single',D:60,F:900,out:'cam',sensor:'imx585',seeing:0.5,photons:false,fronts:false,rgb:true,acc:'none',field:0,target:'single',mono:false,nRays:9}, view:'focus', sweep:'focus',
+  {k:'Les bases', t:'Diamètre : lumière et finesse', p:{type:'newton',D:150,F:1200,out:'cam',sensor:'imx585',seeing:0,photons:true,fronts:false,acc:'none',sky:'double',sep:0.9}, view:'side', sweep:'D',
+   txt:'<p>Le diamètre <b>D</b> est la surface qui collecte la lumière : doubler D, c’est capter <b>4 fois</b> plus de photons.</p><p>C’est aussi D qui fixe la finesse : la tache de diffraction (disque d’Airy) mesure 1,22 λ/D. Regardez l’étoile double à 0,9″ dans la vue de gauche (centre du champ) : sous environ 130 mm, les deux étoiles se confondent. Au-dessus, elles se séparent. La focale reste fixe à 1 200 mm.</p>'},
+  {k:'Les bases', t:'Focale et rapport F/D', p:{type:'newton',D:200,F:1000,out:'cam',sensor:'imx462',seeing:1.5,photons:true,acc:'none',sky:'jupiter'}, view:'side', sweep:'F',
+   txt:'<p>La focale fixe l’<b>échelle de l’image</b> : au foyer, une seconde d’arc mesure F/206 µm. Plus la focale est longue, plus Jupiter est grosse sur le capteur : regardez-la grandir dans la simulation pendant que le cône de lumière s’allonge dans la vue 3D.</p><p>Le rapport <b>F/D</b> décrit l’ouverture du cône de lumière. F/4 est un cône très ouvert (« rapide », pour la photo du ciel profond), F/12 un cône fin (planétaire). Plus le cône est ouvert, plus la mise au point est critique : la profondeur de foyer vaut ±2 λ (F/D)².</p>'},
+  {k:'Les bases', t:'La mise au point et le test sur étoile', p:{type:'newton',D:200,F:1000,out:'eye',fe:10,seeing:0.5,photons:false,acc:'none',sky:'star',gam:true,imgMode:'psf'}, view:'focus', sweep:'focus',
+   txt:'<p>Hors du foyer, l’étoile du centre du champ (vue de gauche) devient un disque de lumière. On y voit l’<b>ombre du miroir secondaire</b> et les quatre <b>bras de l’araignée</b> qui le tiennent.</p><p>Au foyer, les bras produisent les <b>aigrettes de diffraction</b> en croix, typiques des photos prises au Newton. Comparer les disques intra et extra-focaux est le test le plus sensible pour juger une optique.</p>'},
+  {k:'Aberrations', t:'L’aberration chromatique', p:{type:'single',D:60,F:900,out:'cam',sensor:'imx585',seeing:0.5,photons:false,fronts:false,rgb:true,acc:'none',sky:'star',mono:false,nRays:9}, view:'focus', sweep:'focus',
    btn:[['Passer à l’achromat',{type:'achro',D:60,F:900}],['Revenir à la lentille simple',{type:'single',D:60,F:900}]],
    txt:'<p>Le verre ne dévie pas toutes les couleurs de la même façon (<b>dispersion</b>) : le bleu est plus dévié que le rouge, il focalise plus près de l’objectif.</p><p>Avec une lentille simple, les foyers rouge et bleu sont séparés de plus de 10 mm ! Où que l’on fasse la mise au point, une couleur est nette et les autres forment un halo.</p>'},
-  {k:'Aberrations', t:'Achromat, ED et apochromat', p:{type:'achro',D:100,F:800,out:'cam',sensor:'imx585',seeing:0.5,photons:false,rgb:true,acc:'none',field:0,target:'single',mono:false,nRays:9}, view:'focus',
+  {k:'Aberrations', t:'Achromat, ED et apochromat', p:{type:'achro',D:100,F:800,out:'cam',sensor:'imx585',seeing:0.5,photons:false,rgb:true,acc:'none',sky:'star',mono:false,nRays:9}, view:'focus',
    btn:[['Achromat BK7 + F2',{type:'achro',D:100,F:800}],['Doublet ED',{type:'ed',D:100,F:800}],['Triplet APO',{type:'apo',D:100,F:800}]],
    txt:'<p>En associant une lentille convergente en <b>crown</b> et une divergente en <b>flint</b>, Fraunhofer ramène le rouge et le bleu au même foyer : c’est l’<b>achromat</b>. Il reste un décalage du vert et surtout du violet, le <b>spectre secondaire</b>.</p><p>Les verres <b>ED</b> et la <b>fluorite</b> ont une dispersion inhabituelle qui réduit ce résidu. Comparez les trois objectifs de même diamètre et même focale : regardez le halo violet et les écarts de foyer dans « Caractéristiques ».</p>'},
-  {k:'Aberrations', t:'L’aberration sphérique', p:{type:'newton',D:200,F:800,K:0,out:'cam',sensor:'imx585',seeing:0.3,photons:false,acc:'none',field:0,target:'single',nRays:21}, view:'focus', sweep:'K',
+  {k:'Aberrations', t:'L’aberration sphérique', p:{type:'newton',D:200,F:800,K:0,out:'cam',sensor:'imx585',seeing:0.3,photons:false,acc:'none',sky:'star',nRays:15}, view:'focus', sweep:'K',
    txt:'<p>Avec un miroir <b>sphérique</b> (K = 0), les rayons du bord se croisent plus près du miroir que ceux du centre : ils dessinent une <b>caustique</b> au lieu d’un point.</p><p>La <b>parabole</b> (K = −1) est la seule surface qui réunit en un point tous les rayons parallèles à l’axe. Passer de la sphère à la parabole ne demande de creuser le centre que de quelques microns : c’est le délicat travail du <b>parabolisage</b>.</p>'},
-  {k:'Aberrations', t:'La coma hors de l’axe', p:{type:'newton',D:200,F:800,K:-1,out:'cam',sensor:'imx571',seeing:0.5,photons:false,acc:'none',field:0,target:'single',nRays:13}, view:'focus', sweep:'field',
+  {k:'Aberrations', t:'La coma hors de l’axe', p:{edgeRays:true,type:'newton',D:200,F:800,K:-1,out:'cam',sensor:'imx571',seeing:0.5,photons:false,acc:'none',sky:'star',nRays:13}, view:'side', sweep:'edge',
    btn:[['Newton F/4',{type:'newton',D:200,F:800}],['Ritchey-Chrétien F/8',{type:'rc',D:200,F:1600,fp:3}]],
-   txt:'<p>La parabole est parfaite… uniquement sur l’axe. Dès qu’on s’en écarte, les étoiles prennent une forme de <b>comète</b> : c’est la coma. Son étendue varie comme 1/(F/D)² : un Newton F/4 en souffre quatre fois plus qu’un F/8.</p><p>Les astrophotographes ajoutent un <b>correcteur de coma</b>. Le <b>Ritchey-Chrétien</b> la supprime par construction.</p>'},
-  {k:'Réglages', t:'La collimation d’un Newton', p:{type:'newton',D:200,F:1000,out:'eye',fe:6,seeing:0.5,photons:false,acc:'none',field:0,target:'single',tPx:0,tSx:0}, view:'side', sweep:'tPx',
+   txt:'<p>La parabole est parfaite… uniquement sur l’axe. Dès qu’on s’en écarte, les étoiles prennent une forme de <b>comète</b> : c’est la coma. Comparez les deux vues : centre du champ à gauche, étoile de bord à droite, qui s’éloigne pendant l’animation. Dans la 3D, ses rayons (atténués) entrent inclinés. Son étendue varie comme 1/(F/D)² : un Newton F/4 en souffre quatre fois plus qu’un F/8.</p><p>Les astrophotographes ajoutent un <b>correcteur de coma</b>. Le <b>Ritchey-Chrétien</b> la supprime par construction.</p>'},
+  {k:'Réglages', t:'La collimation d’un Newton', p:{type:'newton',D:200,F:1000,out:'eye',fe:6,seeing:0.5,photons:false,acc:'none',sky:'star',tPx:0,tSx:0}, view:'side', sweep:'tPx', open:['sCol'],
    btn:[['Dérégler au hasard',{rnd:true}],['Collimater',{tPx:0,tPy:0,tSx:0,tSy:0}]],
-   txt:'<p>Si le miroir primaire bascule, l’étoile au centre du champ devient une petite <b>comète</b> : le faisceau est dévié de <b>deux fois</b> l’angle d’inclinaison du miroir.</p><p>Exercice : cliquez sur « Dérégler au hasard », puis retrouvez les bons réglages avec les vis du primaire et du secondaire en observant l’image de l’étoile, légèrement défocalisée comme sur le terrain.</p>'},
-  {k:'Accessoires', t:'La lentille de Barlow', p:{type:'newton',D:200,F:1000,out:'eye',fe:10,acc:'barlow2',seeing:1,photons:true,field:0,target:'single',sky:'jupiter'}, view:'side',
+   txt:'<p>Si le miroir primaire bascule, l’étoile au centre du champ devient une petite <b>comète</b> : le faisceau est dévié de <b>deux fois</b> l’angle d’inclinaison du miroir.</p><p>Exercice : cliquez sur « Dérégler au hasard », puis retrouvez les bons réglages avec les vis du primaire et du secondaire (section Collimation, à gauche) en observant l’étoile du centre. Comme sur le terrain, défocalisez un peu avec le bouton − de la mise au point : un disque décentré trahit le défaut.</p>'},
+  {k:'Accessoires', t:'La lentille de Barlow', p:{type:'newton',D:200,F:1000,out:'eye',fe:10,acc:'barlow2',seeing:1,photons:true,sky:'jupiter',labels:true}, view:'side', open:['sAcc'],
    btn:[['Sans Barlow',{acc:'none'}],['Barlow ×2',{acc:'barlow2'}],['Barlow ×3',{acc:'barlow3'}],['Barlow ×2 simple',{acc:'barlow2s'}]],
    txt:'<p>Une Barlow est une lentille <b>divergente</b> placée avant le foyer. Elle ouvre le cône de lumière, qui converge plus loin : tout se passe comme si la focale était multipliée.</p><p>Avec le même oculaire, le grossissement double ou triple. Le diamètre ne change pas : la finesse maximale reste la même, mais l’image est plus sombre. Une Barlow à lentille simple ajoute sa propre aberration chromatique.</p>'},
-  {k:'Accessoires', t:'Grossissement et pupille de sortie', p:{type:'newton',D:200,F:1200,out:'eye',fe:25,acc:'none',seeing:1.2,photons:true,field:0,sky:'jupiter',eyePupil:7}, view:'eye', sweep:'fe',
+  {k:'Accessoires', t:'Grossissement et pupille de sortie', p:{type:'newton',D:200,F:1200,out:'eye',fe:25,acc:'none',seeing:1.2,photons:true,sky:'jupiter',eyePupil:7}, view:'eye', sweep:'fe', open:['sOut'],
    txt:'<p><b>Grossissement = focale du télescope ÷ focale de l’oculaire.</b> Le faisceau qui sort de l’oculaire a pour diamètre la <b>pupille de sortie</b> = D ÷ G.</p><p>Au-delà de 7 mm, la pupille de sortie ne rentre plus dans l’œil (lumière perdue). Sous 0,5 mm, l’image devient sombre et floue. La plage utile va donc d’environ D/7 à 2 × D (en mm).</p>'},
-  {k:'Formules', t:'L’obstruction centrale', p:{type:'sct',D:203,F:2032,fp:2,out:'cam',sensor:'imx462',seeing:0,acc:'none',field:0,target:'single',gam:true,photons:false}, view:'side', sweep:'focus',
+  {k:'Formules', t:'L’obstruction centrale', p:{type:'sct',D:203,F:2032,fp:2,out:'cam',sensor:'imx462',seeing:0,acc:'none',sky:'star',gam:true,photons:false}, view:'side', sweep:'focus',
    btn:[['Schmidt-Cassegrain',{type:'sct',D:203,F:2032,fp:2}],['Lunette APO',{type:'apo',D:130,F:910}],['Maksutov',{type:'mak',D:127,F:1500,fp:3}]],
    txt:'<p>Dans un télescope à deux miroirs, le secondaire masque le centre du faisceau. Une obstruction de 30 % du diamètre ne retire que 9 % de la lumière, mais elle <b>renforce les anneaux de diffraction</b> au détriment du disque central.</p><p>Hors foyer, l’étoile devient un anneau : le « donut » caractéristique des Schmidt-Cassegrain.</p>'},
-  {k:'Formules', t:'La mise au point d’un Schmidt-Cassegrain', p:{type:'sct',D:203,F:2032,fp:2,out:'eye',fe:25,acc:'none',seeing:1,field:0,photons:true}, view:'side', sweep:'focus',
+  {k:'Formules', t:'La mise au point d’un Schmidt-Cassegrain', p:{sky:'star',type:'sct',D:203,F:2032,fp:2,out:'eye',fe:25,acc:'none',seeing:1,photons:true}, view:'side', sweep:'focus',
    txt:'<p>Dans un Schmidt-Cassegrain, on ne déplace pas l’oculaire : c’est le <b>miroir primaire</b> qui avance ou recule. Le secondaire grossissant environ 5 fois, un déplacement du primaire est amplifié d’un facteur m² + 1 ≈ 26 au foyer.</p><p>Quelques dixièmes de millimètre suffisent à parcourir des centimètres de mise au point. C’est aussi pourquoi l’image peut « sauter » quand le miroir bascule légèrement sur son axe.</p>'},
-  {k:'Atmosphère', t:'La turbulence', p:{type:'newton',D:300,F:1500,out:'eye',fe:6,acc:'none',seeing:0.3,field:0,sky:'jupiter',target:'single'}, view:'side', sweep:'seeing',
+  {k:'Atmosphère', t:'La turbulence', p:{type:'newton',D:300,F:1500,out:'eye',fe:6,acc:'none',seeing:0.3,sky:'jupiter'}, view:'side', sweep:'seeing', open:['sSky'],
    txt:'<p>L’air agité par la chaleur se comporte comme une multitude de petites lentilles mouvantes : l’étoile danse et s’étale. C’est le <b>seeing</b>, mesuré en secondes d’arc.</p><p>Un 300 mm sépare 0,4″ en théorie. Mais par une nuit ordinaire (2 à 3″), il ne montre guère plus de détails qu’un 100 mm : c’est l’atmosphère qui commande.</p>'}
 ];
 let lessonIdx=-1;
@@ -1970,15 +2047,16 @@ function openLesson(i){
   const s=box.querySelector('[data-s]'); if(s) s.onclick=()=>startSweep(l.sweep);
   const p=Object.assign({focus:undefined},l.p); delete p.focus;
   const typeChange=l.p.type!==S.type; const T=TYPES[l.p.type];
-  Object.assign(S,{type:l.p.type,D:T.D,F:T.F,fp:T.fp||3,K:-1,tPx:0,tPy:0,tSx:0,tSy:0,acc:'none',field:0,target:'single',mono:false,rgb:true,fronts:false,nRays:11,fan:'m'});
+  Object.assign(S,{type:l.p.type,D:T.D,F:T.F,fp:T.fp||3,K:-1,tPx:0,tPy:0,tSx:0,tSy:0,acc:'none',sky:'star',edgeAuto:true,edgeRays:false,labels:false,mono:false,rgb:true,fronts:false,nRays:5,fan:'m'});
   Object.assign(S,l.p); constrain(); needFit=true; syncUI();
+  for(const id of (l.open||[])) $(id).classList.remove('closed');
   fullBuild(()=>{ S.focus=best; build(); setView(l.view||'side'); if(l.sweep) setTimeout(()=>startSweep(l.sweep),500); });
 }
 function randomTilt(){ const r=()=>(Math.random()*2-1); S.tPx=Math.round(r()*8*2)/2; S.tPy=Math.round(r()*8*2)/2;
   if(TYPES[S.type].family!=='refr'){ S.tSx=Math.round(r()*10*2)/2; S.tSy=Math.round(r()*10*2)/2; }
   // image légèrement défocalisée, comme pour un test sur étoile réel
   syncUI(); schedule('normal'); }
-function selectType(t){ stopSweep(); const T=TYPES[t]; Object.assign(S,{type:t,D:T.D,F:T.F,fp:T.fp||3,K:-1,tPx:0,tPy:0,tSx:0,tSy:0,field:0}); if(S.acc==='reducer'&&TYPES[t].family==='newton') S.acc='none';
+function selectType(t){ stopSweep(); const T=TYPES[t]; Object.assign(S,{type:t,D:T.D,F:T.F,fp:T.fp||3,K:-1,tPx:0,tPy:0,tSx:0,tSy:0}); if(S.acc==='reducer'&&TYPES[t].family==='newton') S.acc='none';
   constrain(); needFit=true; syncUI(); fullBuild(()=>{ S.focus=best; build(); setView(S.view==='focus'||S.view==='eye'?S.view:'side',false); }); }
 function closeModal(){ $('modal').hidden=true; }
 
@@ -2022,12 +2100,14 @@ $('colRnd').onclick=randomTilt;
 $('oEye').onclick=()=>{ S.out='eye'; needFit=true; syncUI(); schedule('normal'); };
 $('oCam').onclick=()=>{ S.out='cam'; needFit=true; syncUI(); schedule('normal'); };
 $('cAfov').onchange=()=>{ S.afov=+$('cAfov').value; syncUI(); schedule('normal'); };
+// (le bord réel du champ dépend de l'oculaire et du capteur : recalculé à chaque analyse)
 bindRange('cEp','eyePupil');
 { const sel=$('cSensor'); for(const k in SENSORS){ const o=document.createElement('option'); o.value=k; o.textContent=SENSORS[k].name; sel.appendChild(o); } sel.onchange=()=>{ S.sensor=sel.value; syncUI(); schedule('normal'); }; }
 bindRange('cSt','sT');
-bindRange('cField','field');
+$('cField').addEventListener('input',()=>{ S.edge=parseFloat($('cField').value); S.edgeAuto=false; syncUI(); if(S.edgeRays) buildRays(); analysisFlag=true; });
+$('edgeAuto').onclick=()=>{ S.edgeAuto=true; syncUI(); if(S.edgeRays) buildRays(); analysisFlag=true; };
+$('xEdge').onchange=e=>{ S.edgeRays=e.target.checked; buildRays(); };
 $('lWhite').onclick=()=>{ S.mono=false; syncUI(); schedule('normal'); }; $('lMono').onclick=()=>{ S.mono=true; syncUI(); schedule('normal'); };
-$('tSingle').onclick=()=>{ S.target='single'; syncUI(); analysisFlag=true; }; $('tDouble').onclick=()=>{ S.target='double'; syncUI(); analysisFlag=true; };
 $('cSep').addEventListener('input',()=>{ S.sep=+$('cSep').value; syncUI(); analysisFlag=true; });
 $('cSee').addEventListener('input',()=>{ S.seeing=+$('cSee').value; syncUI(); analysisFlag=true; });
 $('cRays').addEventListener('input',()=>{ S.nRays=+$('cRays').value; syncUI(); buildRays(); });
@@ -2040,9 +2120,9 @@ $('xExt').onchange=e=>{ S.extend=e.target.checked; buildRays(); };
 $('xRGB').onchange=e=>{ S.rgb=e.target.checked; buildRays(); updateHUD(); };
 $('xGam').onchange=e=>{ S.gam=e.target.checked; analysisFlag=true; };
 $('cSpeed').addEventListener('input',()=>{ S.speed=+$('cSpeed').value; syncUI(); });
-$('imPsf').onclick=()=>{ S.imgMode='psf'; syncUI(); drawImagePanel(); }; $('imSpot').onclick=()=>{ S.imgMode='spot'; syncUI(); drawImagePanel(); };
+$('imPsf').onclick=()=>{ S.imgMode='psf'; syncUI(); drawSim(); }; $('imSpot').onclick=()=>{ S.imgMode='spot'; syncUI(); drawSim(); };
 $('zIn').onclick=()=>{ S.W=Math.max(2,S.W/1.6); analysisFlag=true; }; $('zOut').onclick=()=>{ S.W=Math.min(60000,S.W*1.6); analysisFlag=true; }; $('zFit').onclick=()=>{ needFit=true; analysisFlag=true; };
-$('cvImg').addEventListener('wheel',e=>{ e.preventDefault(); S.W=clamp(S.W*Math.exp(e.deltaY*0.0015),2,60000); analysisFlag=true; },{passive:false});
+for(const id of ['cvImg','cvImg2']) $(id).addEventListener('wheel',e=>{ e.preventDefault(); S.W=clamp(S.W*Math.exp(e.deltaY*0.0015),2,60000); analysisFlag=true; },{passive:false});
 document.querySelectorAll('#views [data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 $('bOrtho').onclick=()=>{ S.ortho=!S.ortho; syncUI(); applyCam(); };
 $('sweepPlay').onclick=()=>{ if(sweep.on) stopSweep(); else startSweep($('sweepParam').value); };
@@ -2063,7 +2143,7 @@ window.addEventListener('keydown',e=>{
   else if(e.key==='l'||e.key==='L') $('modal').hidden=!$('modal').hidden;
   else if('12345'.includes(e.key)) setView(['side','iso','front','focus','eye'][+e.key-1]);
 });
-window.addEventListener('resize',()=>{ drawImagePanel(); drawSky(); });
+window.addEventListener('resize',()=>{ drawSim(); });
 
 /* ================= Boucle principale ================= */
 let lastT=performance.now();
