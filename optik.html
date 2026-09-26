@@ -1,0 +1,2087 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Optik</title>
+<meta name="description" content="Banc d'optique virtuel : lunettes, Newton, Cassegrain, Schmidt-Cassegrain, Maksutov. Trajet réel de la lumière en 3D, mise au point, collimation, Barlow, image de l'étoile.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --ink:#080b11; --panel:#0e131b; --panel2:#131a25; --raise:#1a2330; --line:#222d3d; --line2:#2e3b50;
+  --text:#dde4ee; --muted:#8a96aa; --faint:#5d6a7f;
+  --brass:#d6a85a; --brass2:#f0c983; --brass-dim:#6e5631;
+  --ok:#6fd49c; --warn:#e9b34d; --bad:#f06b5b; --info:#7fb2ff;
+  --r:#ff5b4f; --g:#74f08c; --b:#5f8dff; --v:#b36bff;
+  --f-disp:"Michroma", "Eurostile", "Arial Black", sans-serif;
+  --f-body:"Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-cond:"Barlow Semi Condensed", "Arial Narrow", "Barlow", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+[hidden]{display:none!important;}
+html,body{height:100%;}
+body{margin:0;background:var(--ink);color:var(--text);font:14px/1.45 var(--f-body);overflow:hidden;}
+*{box-sizing:border-box;}
+button,select,input{font:inherit;color:inherit;}
+:focus-visible{outline:2px solid var(--brass2);outline-offset:2px;}
+.app{display:grid;grid-template-rows:auto 1fr;height:100%;}
+/* ---------- barre du haut ---------- */
+.top{display:flex;align-items:center;gap:18px;padding:0 16px;height:52px;border-bottom:1px solid var(--line);background:linear-gradient(#0d121a,#0a0e15);}
+.brand{display:flex;align-items:baseline;gap:12px;white-space:nowrap;}
+.brand b{font:400 17px/1 var(--f-disp);letter-spacing:.32em;color:var(--brass2);}
+.brand span{font:500 12px var(--f-cond);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.top .spacer{flex:1;}
+.tbtn{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;font:500 13px var(--f-cond);letter-spacing:.04em;white-space:nowrap;}
+.tbtn:hover{border-color:var(--brass-dim);background:var(--raise);}
+.tbtn.on{border-color:var(--brass);color:var(--brass2);}
+.tbtn svg{width:16px;height:16px;}
+.tbtn.primary{background:var(--brass);color:#1b1407;border-color:var(--brass);}
+.tbtn.primary:hover{background:var(--brass2);}
+/* ---------- grille principale ---------- */
+.main{display:grid;grid-template-columns:318px minmax(0,1fr) 372px;min-height:0;}
+.side{overflow-y:auto;overflow-x:hidden;background:var(--panel);scrollbar-width:thin;scrollbar-color:var(--line2) transparent;}
+.side.left{border-right:1px solid var(--line);}
+.side.right{border-left:1px solid var(--line);}
+.sec{border-bottom:1px solid var(--line);}
+.sec>h2{margin:0;display:flex;align-items:center;gap:10px;padding:12px 16px 8px;font:600 11.5px var(--f-cond);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);cursor:pointer;user-select:none;}
+.sec>h2::after{content:"";margin-left:auto;width:7px;height:7px;border-right:1.5px solid var(--faint);border-bottom:1.5px solid var(--faint);transform:rotate(45deg);transition:transform .2s;}
+.sec.closed>h2::after{transform:rotate(-45deg);}
+.sec.closed>.body{display:none;}
+.sec>.body{padding:2px 16px 14px;display:grid;gap:12px;}
+.sec h2 .tag{font:500 10.5px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--brass);}
+/* sélecteur d'instrument */
+.fam{display:grid;gap:5px;}
+.fam-t{font:500 11px var(--f-cond);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-top:4px;}
+.types{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.type{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;text-align:left;font:500 12.5px/1.15 var(--f-cond);}
+.type svg{flex:none;width:38px;height:18px;}
+.type:hover{border-color:var(--line2);background:var(--raise);}
+.type[aria-pressed="true"]{border-color:var(--brass);background:#1d1a14;color:var(--brass2);}
+/* contrôles */
+.ctl{display:grid;gap:4px;}
+.ctl-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+.ctl-h label{font:500 13px var(--f-body);color:var(--text);}
+.numw{font:500 12px var(--f-mono);color:var(--brass2);white-space:nowrap;}
+.num{width:68px;height:24px;padding:0 6px;border-radius:4px;border:1px solid var(--line2);background:var(--ink);color:var(--brass2);font:500 12.5px var(--f-mono);text-align:right;font-variant-numeric:tabular-nums;}
+.num:hover{border-color:var(--brass-dim);}
+.num:focus{border-color:var(--brass);outline:none;}
+.btn:disabled,.seg button:disabled{opacity:.4;cursor:not-allowed;}
+.q{display:inline-grid;place-items:center;flex:none;width:16px;height:16px;margin-left:6px;padding:0;border-radius:50%;border:1px solid var(--line2);background:transparent;color:var(--muted);font:600 10px/1 var(--f-mono);letter-spacing:0;text-transform:none;cursor:pointer;vertical-align:1px;}
+.q:hover,.q[aria-expanded="true"]{border-color:var(--brass);color:var(--brass2);background:#1d1a14;}
+.hud .q,.sweep .q{width:28px;height:28px;margin:0;border-radius:5px;border-color:#2a3547;background:rgba(14,19,27,.82);font-size:12px;}
+.sweep .q{height:30px;border-radius:6px;}
+.qslot{display:inline-flex;align-items:center;}
+.pop{position:fixed;z-index:40;width:min(340px,calc(100vw - 16px));padding:12px 14px 13px;border-radius:8px;background:#151c27;border:1px solid var(--brass-dim);box-shadow:0 12px 36px rgba(0,0,0,.55);font-size:13px;line-height:1.5;color:#c9d2df;}
+.pop b.t{display:block;margin-bottom:5px;font:600 13.5px var(--f-body);color:var(--brass2);}
+.pop b{color:var(--text);font-weight:600;}
+.ctl-h output{font:500 12px var(--f-mono);color:var(--brass2);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ctl .hint{font-size:11.5px;color:var(--faint);line-height:1.35;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;margin:0;cursor:pointer;}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--brass-dim) var(--p,50%),var(--line2) var(--p,50%));}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--line2);}
+input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--brass-dim);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-5px;border-radius:50%;background:var(--brass2);border:2px solid #2a2112;box-shadow:0 0 0 1px var(--brass-dim);}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--brass2);border:2px solid #2a2112;}
+.track-wrap{position:relative;}
+.bestmark{position:absolute;top:0;width:2px;height:22px;background:var(--ok);pointer-events:none;border-radius:1px;box-shadow:0 0 6px var(--ok);transform:translateX(-1px);}
+.bestmark::after{content:"";position:absolute;left:-3px;top:-4px;border:4px solid transparent;border-top-color:var(--ok);}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.chip{height:28px;padding:0 10px;border-radius:5px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;font:500 12.5px var(--f-cond);white-space:nowrap;}
+.chip:hover{background:var(--raise);}
+.chip[aria-pressed="true"]{border-color:var(--brass);color:var(--brass2);background:#1d1a14;}
+.chip.sm{height:24px;padding:0 7px;font-size:12px;}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:6px;overflow:hidden;}
+.seg button{border:0;background:var(--panel2);height:28px;padding:0 11px;cursor:pointer;font:500 12.5px var(--f-cond);}
+.seg button+button{border-left:1px solid var(--line2);}
+.seg button[aria-pressed="true"]{background:#2a2213;color:var(--brass2);}
+select{width:100%;height:32px;border-radius:6px;border:1px solid var(--line2);background:var(--panel2);padding:0 8px;}
+.check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;}
+.check input{accent-color:var(--brass);width:15px;height:15px;margin:0;}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px;}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap;}
+.btn{height:30px;padding:0 11px;border-radius:6px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;font:500 12.5px var(--f-cond);white-space:nowrap;}
+.btn:hover{border-color:var(--brass-dim);background:var(--raise);}
+.btn.accent{border-color:var(--brass-dim);color:var(--brass2);}
+.btn.ok{border-color:#2f5a43;color:var(--ok);}
+.btn:disabled{opacity:.45;cursor:default;}
+.subnote{font-size:12px;color:var(--muted);line-height:1.45;}
+.subnote b{color:var(--text);font-weight:500;}
+/* ---------- vue 3D ---------- */
+.stage{position:relative;min-width:0;min-height:0;background:radial-gradient(120% 90% at 50% 40%,#0c1320 0%,#070a10 70%);}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;}
+.hud{position:absolute;pointer-events:none;}
+.hud>*{pointer-events:auto;}
+.hud.tl{left:16px;top:14px;max-width:min(560px,calc(100% - 32px));}
+.hud.tr{right:14px;top:14px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:50%;}
+.hud.bl{left:16px;bottom:14px;}
+.hud.br{right:14px;bottom:14px;}
+.inst-name{font:400 15px/1.3 var(--f-disp);letter-spacing:.08em;color:var(--text);text-wrap:balance;}
+.inst-spec{margin-top:6px;font:500 12.5px var(--f-mono);color:var(--brass2);font-variant-numeric:tabular-nums;}
+.inst-spec span{color:var(--muted);}
+.vbtn{height:28px;padding:0 10px;border-radius:5px;border:1px solid #2a3547;background:rgba(14,19,27,.82);backdrop-filter:blur(4px);cursor:pointer;font:500 12px var(--f-cond);letter-spacing:.03em;}
+.vbtn:hover{border-color:var(--brass-dim);}
+.vbtn[aria-pressed="true"]{border-color:var(--brass);color:var(--brass2);}
+.legend{margin-top:10px;width:max-content;max-width:100%;display:flex;gap:12px;align-items:center;font:500 11.5px var(--f-cond);color:var(--muted);background:rgba(10,14,20,.7);padding:6px 10px;border-radius:6px;border:1px solid #1d2635;flex-wrap:wrap;}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle;}
+.sweep{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:6px 8px 6px 6px;border-radius:9px;background:rgba(14,19,27,.9);border:1px solid #2a3547;backdrop-filter:blur(6px);}
+.sweep select{width:auto;height:30px;font-size:12.5px;}
+.play{width:34px;height:30px;border-radius:6px;border:1px solid var(--brass-dim);background:#231d12;color:var(--brass2);cursor:pointer;display:grid;place-items:center;}
+.play svg{width:14px;height:14px;}
+.sweep .lbl{font:600 10.5px var(--f-cond);letter-spacing:.16em;text-transform:uppercase;color:var(--faint);padding-left:6px;}
+.labels{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.lab{position:absolute;transform:translate(-50%,-50%);font:500 11.5px var(--f-cond);letter-spacing:.05em;color:#c9d3e2;background:rgba(8,11,17,.72);border:1px solid #263246;padding:2px 7px;border-radius:4px;white-space:nowrap;}
+.lab.focus{color:var(--ok);border-color:#2a5a40;}
+.busy{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px 16px;border-radius:8px;background:rgba(14,19,27,.92);border:1px solid var(--line2);font:500 13px var(--f-cond);color:var(--brass2);}
+/* carte de leçon */
+.lesson{position:absolute;left:16px;bottom:64px;width:min(430px,calc(100% - 32px));background:rgba(13,18,26,.95);border:1px solid var(--brass-dim);border-radius:10px;padding:14px 16px 12px;backdrop-filter:blur(8px);box-shadow:0 10px 40px rgba(0,0,0,.45);}
+.lesson .k{font:600 10.5px var(--f-cond);letter-spacing:.2em;text-transform:uppercase;color:var(--brass);}
+.lesson h3{margin:4px 0 8px;font:600 18px/1.25 var(--f-body);text-wrap:balance;}
+.lesson p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:#c3ccd9;}
+.lesson p b{color:var(--text);font-weight:600;}
+.lesson .foot{display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.lesson .x{position:absolute;right:8px;top:8px;width:26px;height:26px;border:0;background:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;}
+/* ---------- panneau droit ---------- */
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.canvas-box{position:relative;border-radius:8px;overflow:hidden;background:#000;border:1px solid var(--line);aspect-ratio:1/1;max-width:100%;}
+.canvas-box canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.canvas-box .ov{position:absolute;left:8px;top:7px;font:500 11px var(--f-mono);color:#a9b5c8;text-shadow:0 1px 2px #000;pointer-events:none;font-variant-numeric:tabular-nums;}
+.canvas-box .ov.r{left:auto;right:8px;text-align:right;}
+.canvas-box .ov.b{top:auto;bottom:7px;}
+.zoom{position:absolute;right:6px;bottom:6px;display:flex;gap:4px;}
+.zoom button{width:26px;height:26px;border-radius:5px;border:1px solid #2a3547;background:rgba(10,14,20,.85);cursor:pointer;font:600 14px var(--f-mono);}
+.zoom button.w{width:auto;padding:0 8px;font:500 11.5px var(--f-cond);}
+.pills{display:flex;gap:6px;flex-wrap:wrap;}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:12px;font:500 12px var(--f-cond);border:1px solid;white-space:nowrap;}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+.pill.ok{color:var(--ok);border-color:#2b5641;background:#0f1d16;}
+.pill.warn{color:var(--warn);border-color:#5a4520;background:#1d170c;}
+.pill.bad{color:var(--bad);border-color:#5d2a24;background:#1e0f0d;}
+.pill.info{color:var(--info);border-color:#2a3f63;background:#0e1522;}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0;}
+.kv dt{font-size:12.5px;color:var(--muted);}
+.kv dd{margin:0;text-align:right;font:500 12.5px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--text);}
+.kv dd small{color:var(--faint);font-size:11px;}
+.kv .grp{grid-column:1/-1;font:600 10.5px var(--f-cond);letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);}
+.kv .grp:first-child{margin-top:0;padding-top:0;border-top:0;}
+.notes{display:grid;gap:9px;margin:0;padding:0;list-style:none;}
+.notes li{position:relative;padding-left:16px;font-size:13px;line-height:1.5;color:#c4cddb;}
+.notes li::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;border-radius:50%;background:var(--info);}
+.notes li.ok::before{background:var(--ok);} .notes li.warn::before{background:var(--warn);} .notes li.bad::before{background:var(--bad);}
+.notes li b{color:var(--text);font-weight:600;}
+.about{font-size:13px;line-height:1.55;color:#b9c3d2;margin:0;}
+.about em{color:var(--brass2);font-style:normal;}
+/* modale leçons */
+.modal{position:fixed;inset:0;background:rgba(3,5,8,.72);display:grid;place-items:center;padding:16px;z-index:20;}
+.modal .box{width:min(860px,100%);max-height:calc(100% - 32px);overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:22px 24px;}
+.modal h2{margin:0 0 4px;font:400 17px var(--f-disp);letter-spacing:.12em;color:var(--brass2);}
+.modal .lead{margin:0 0 16px;color:var(--muted);font-size:13.5px;max-width:65ch;}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;}
+.lcard{text-align:left;padding:12px 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;display:grid;gap:4px;align-content:start;}
+.lcard:hover{border-color:var(--brass-dim);background:var(--raise);}
+.lcard .n{font:500 11px var(--f-mono);color:var(--brass);}
+.lcard b{font:600 14.5px var(--f-body);}
+.lcard span{font-size:12.5px;color:var(--muted);line-height:1.4;}
+.keys{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);}
+kbd{font:500 11px var(--f-mono);padding:1px 6px;border-radius:4px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);}
+.night{position:fixed;inset:0;background:#ff1a00;mix-blend-mode:multiply;pointer-events:none;z-index:50;}
+/* ---------- responsive ---------- */
+@media (max-width:1180px){ .main{grid-template-columns:292px minmax(0,1fr);} .side.right{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);overflow:visible;} .main{overflow-y:auto;grid-auto-rows:auto;} .stage{min-height:62vh;} .side.left{max-height:62vh;} .rgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));} }
+@media (max-width:760px){ body{overflow:auto;} .app{height:auto;} .main{display:flex;flex-direction:column;} .stage{height:64vh;min-height:360px;order:-1;} .side.left{max-height:none;border-right:0;} .brand span{display:none;} .top{gap:8px;} .tbtn .t{display:none;} .hud.tr{max-width:calc(100% - 28px);top:auto;bottom:58px;right:10px;} .sweep{left:10px;right:10px;transform:none;justify-content:center;} .sweep .lbl{display:none;} .lesson{bottom:108px;} .hud.bl{display:none;} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;} }
+</style>
+<div class="app">
+<header class="top">
+  <div class="brand"><b>OPTIK</b><span>Banc d'optique pour télescopes</span></div>
+  <div class="spacer"></div>
+  <button class="tbtn primary" id="bLessons" title="Leçons animées (L)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3.5h5a2 2 0 0 1 2 2V13a1.5 1.5 0 0 0-1.5-1.5H2zM14 3.5H9"/><path d="M14 3.5v8H10.5A1.5 1.5 0 0 0 9 13"/></svg><span class="t">Leçons</span></button>
+  <button class="tbtn" id="bNight" title="Lumière rouge pour préserver la vision nocturne (N)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5z"/></svg><span class="t">Vision nocturne</span></button>
+  <button class="tbtn" id="bReset" title="Revenir aux réglages d'usine de l'instrument"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8a5 5 0 1 0 1.5-3.6M3 2.5v2.5h2.5"/></svg><span class="t">Réinitialiser</span></button>
+</header>
+<div class="main">
+<aside class="side left" id="left">
+  <section class="sec" id="sInstr"><h2 data-help="instr">Instrument</h2><div class="body" id="typePicker"></div></section>
+  <section class="sec" id="sOpt"><h2>Optique <span class="tag" id="tagFD"></span></h2><div class="body">
+    <div class="ctl"><div class="ctl-h"><label for="cD" data-help="D">Diamètre</label><span class="numw"><input type="number" id="nD" class="num" step="1" aria-label="Diamètre en millimètres"> mm</span></div><input type="range" id="cD"></div>
+    <div class="ctl"><div class="ctl-h"><label for="cF" data-help="F">Focale</label><span class="numw"><input type="number" id="nF" class="num" step="1" aria-label="Focale en millimètres"> mm</span></div><input type="range" id="cF"></div>
+    <div class="ctl" id="wFp"><div class="ctl-h"><label for="cFp" data-help="fp">Ouverture du primaire</label><output id="oFp"></output></div><input type="range" id="cFp"><div class="hint">Le secondaire multiplie la focale du primaire par <b id="oM"></b>.</div></div>
+    <div class="ctl" id="wK"><div class="ctl-h"><label for="cK" data-help="K">Forme du miroir primaire (conique K)</label><output id="oK"></output></div><input type="range" id="cK" min="-2" max="0.6" step="0.01"><div class="btnrow"><button class="chip sm" data-k="0">Sphère K = 0</button><button class="chip sm" data-k="-1">Parabole K = −1</button><button class="chip sm" data-k="-1.4">Hyperbole</button></div></div>
+    <div class="subnote" id="glassNote"></div>
+  </div></section>
+  <section class="sec" id="sFoc"><h2 data-help="focus">Mise au point <span class="tag" id="tagFoc"></span></h2><div class="body">
+    <div class="ctl"><div class="ctl-h"><label for="cFoc" id="lFoc">Position du porte-oculaire</label><output id="oFoc"></output></div>
+      <div class="track-wrap"><input type="range" id="cFoc"><div class="bestmark" id="bestMark" title="Meilleur foyer"></div></div>
+      <div class="hint" id="hFoc"></div></div>
+    <div class="btnrow"><button class="btn" id="fM2">−−</button><button class="btn" id="fM1">−</button><button class="btn" id="fP1">+</button><button class="btn" id="fP2">++</button><button class="btn ok" id="fAuto" title="Mise au point automatique (F)">Mise au point auto</button></div>
+  </div></section>
+  <section class="sec" id="sCol"><h2 data-help="col">Collimation <span class="tag" id="tagCol"></span></h2><div class="body">
+    <div class="ctl"><div class="ctl-h"><label for="cPx" id="lPx">Primaire, vis verticale</label><output id="oPx"></output></div><input type="range" id="cPx" min="-30" max="30" step="0.5"></div>
+    <div class="ctl"><div class="ctl-h"><label for="cPy" id="lPy">Primaire, vis horizontale</label><output id="oPy"></output></div><input type="range" id="cPy" min="-30" max="30" step="0.5"></div>
+    <div class="ctl" id="wSx"><div class="ctl-h"><label for="cSx">Secondaire, inclinaison verticale</label><output id="oSx"></output></div><input type="range" id="cSx" min="-30" max="30" step="0.5"></div>
+    <div class="ctl" id="wSy"><div class="ctl-h"><label for="cSy">Secondaire, inclinaison horizontale</label><output id="oSy"></output></div><input type="range" id="cSy" min="-30" max="30" step="0.5"></div>
+    <div class="btnrow"><button class="btn ok" id="colOk">Collimater parfaitement</button><button class="btn accent" id="colRnd" title="Exercice : retrouver la collimation grâce au test sur étoile">Dérégler au hasard</button></div>
+  </div></section>
+  <section class="sec" id="sAcc"><h2 data-help="acc">Accessoire</h2><div class="body">
+    <div class="row" id="accPicker"></div>
+    <div class="subnote" id="accNote"></div>
+  </div></section>
+  <section class="sec" id="sOut"><h2 data-help="out">Au foyer</h2><div class="body">
+    <div class="seg" role="group" aria-label="Sortie"><button id="oEye" aria-pressed="true">Oculaire + œil</button><button id="oCam" aria-pressed="false">Caméra</button></div>
+    <div id="eyeBox" style="display:grid;gap:12px;">
+      <div class="ctl"><div class="ctl-h"><label data-help="fe">Focale de l'oculaire</label><output id="oFe"></output></div><div class="row" id="fePicker"></div></div>
+      <div class="ctl"><div class="ctl-h"><label for="cAfov" data-help="afov">Champ apparent de l'oculaire</label><output id="oAfov"></output></div><select id="cAfov"><option value="42">42° · Huygens / Kellner</option><option value="52" selected>52° · Plössl</option><option value="68">68° · grand champ</option><option value="82">82° · ultra grand champ</option><option value="100">100° · extrême</option></select></div>
+      <div class="ctl"><div class="ctl-h"><label for="cEp" data-help="eyep">Pupille de l'œil</label><output id="oEp"></output></div><input type="range" id="cEp" min="2" max="8" step="0.5"><div class="hint">7 mm pour un jeune œil adapté à l'obscurité, 5 mm vers 60 ans.</div></div>
+    </div>
+    <div id="camBox" style="display:none;gap:12px;">
+      <div class="ctl"><div class="ctl-h"><label for="cSensor" data-help="sensor">Capteur</label></div><select id="cSensor"></select></div>
+      <div class="ctl"><div class="ctl-h"><label for="cSt" data-help="tilt">Tilt du capteur</label><output id="oSt"></output></div><input type="range" id="cSt" min="-60" max="60" step="1"><div class="hint">Un capteur incliné donne des étoiles nettes d'un côté et floues de l'autre (à voir avec une étoile hors de l'axe).</div></div>
+    </div>
+  </div></section>
+  <section class="sec" id="sSky"><h2>Étoile et ciel</h2><div class="body">
+    <div class="ctl"><div class="ctl-h"><label for="cField" data-help="field">Position de l'étoile dans le champ</label><output id="oField"></output></div><input type="range" id="cField" min="0" max="1.2" step="0.01"><div class="hint">0° = centre du champ. Hors de l'axe apparaissent coma, astigmatisme et courbure de champ.</div></div>
+    <div class="ctl"><div class="ctl-h"><label data-help="light">Lumière</label></div><div class="seg"><button id="lWhite" aria-pressed="true">Blanche (4 couleurs)</button><button id="lMono" aria-pressed="false">Verte seule</button></div></div>
+    <div class="ctl"><div class="ctl-h"><label data-help="target">Cible</label></div><div class="seg"><button id="tSingle" aria-pressed="true">Étoile simple</button><button id="tDouble" aria-pressed="false">Étoile double</button></div></div>
+    <div class="ctl" id="wSep"><div class="ctl-h"><label for="cSep" data-help="sep">Écart de l'étoile double</label><output id="oSep"></output></div><input type="range" id="cSep" min="0.2" max="8" step="0.05"></div>
+    <div class="ctl"><div class="ctl-h"><label for="cSee" data-help="seeing">Turbulence atmosphérique</label><output id="oSee"></output></div><input type="range" id="cSee" min="0" max="5" step="0.1"><div class="hint">0 = dans l'espace. 1″ excellente nuit, 2 à 3″ nuit ordinaire.</div></div>
+  </div></section>
+  <section class="sec" id="sDisp"><h2>Affichage 3D</h2><div class="body">
+    <div class="ctl"><div class="ctl-h"><label for="cRays" data-help="rays">Nombre de rayons</label><output id="oRays"></output></div><input type="range" id="cRays" min="3" max="41" step="2"></div>
+    <div class="seg"><button id="fanM" aria-pressed="true">Plan de coupe</button><button id="fan3" aria-pressed="false">Faisceau 3D</button></div><span class="qslot" data-help="fan"></span>
+    <div class="checks">
+      <label class="check"><input type="checkbox" id="xPhot" checked>Photons animés<span class="qslot" data-help="photons"></span></label>
+      <label class="check"><input type="checkbox" id="xFront">Fronts d'onde<span class="qslot" data-help="fronts"></span></label>
+      <label class="check"><input type="checkbox" id="xCut" checked>Tube en coupe<span class="qslot" data-help="cut"></span></label>
+      <label class="check"><input type="checkbox" id="xLab" checked>Étiquettes</label>
+      <label class="check"><input type="checkbox" id="xExt" checked>Prolonger après le foyer<span class="qslot" data-help="ext"></span></label>
+      <label class="check"><input type="checkbox" id="xRGB" checked>Rayons colorés<span class="qslot" data-help="rgb"></span></label>
+    </div>
+    <div class="ctl"><div class="ctl-h"><label for="cSpeed" data-help="speed">Vitesse de la lumière (animation)</label><output id="oSpeed"></output></div><input type="range" id="cSpeed" min="0.1" max="3" step="0.05"></div>
+  </div></section>
+</aside>
+<div class="stage" id="stage">
+  <canvas id="gl"></canvas>
+  <div class="labels" id="labels"></div>
+  <div class="hud tl"><div class="inst-name" id="instName"></div><div class="inst-spec" id="instSpec"></div><div class="legend" id="legend"></div></div>
+  <div class="hud tr" id="views">
+    <button class="vbtn" data-view="side" aria-pressed="true" title="1">Coupe</button>
+    <button class="vbtn" data-view="iso" title="2">3/4</button>
+    <button class="vbtn" data-view="front" title="3">Face</button>
+    <button class="vbtn" data-view="focus" title="4">Zoom foyer</button>
+    <button class="vbtn" data-view="eye" title="5">Zoom sortie</button>
+    <button class="vbtn" id="bOrtho" title="Projection orthographique (schéma)">Ortho</button><span class="qslot" data-help="views"></span>
+  </div>
+  <div class="sweep" id="sweepBar">
+    <span class="lbl">Balayage</span>
+    <select id="sweepParam" aria-label="Paramètre à balayer"></select>
+    <button class="play" id="sweepPlay" title="Lancer / arrêter le balayage (Espace)" aria-label="Lancer le balayage"><svg viewBox="0 0 14 14" fill="currentColor" id="playIco"><path d="M3 1.5v11l9-5.5z"/></svg></button><span class="qslot" data-help="sweep"></span>
+  </div>
+  <div class="lesson" id="lesson" hidden></div>
+  <div class="busy" id="busy" hidden>Calcul de la combinaison optique…</div>
+</div>
+<aside class="side right" id="right"><div class="rgrid">
+  <section class="sec" id="sImg"><h2 data-help="img">Image de l'étoile <span class="tag" id="tagImg"></span></h2><div class="body">
+    <div class="card-h"><div class="seg"><button id="imPsf" aria-pressed="true">Image simulée</button><button id="imSpot" aria-pressed="false">Points d'impact</button></div><label class="check" title="Renforcer les faibles intensités (anneaux, aigrettes)"><input type="checkbox" id="xGam" checked>Anneaux<span class="qslot" data-help="gam"></span></label></div>
+    <div class="canvas-box"><canvas id="cvImg"></canvas><div class="ov" id="ovImg1"></div><div class="ov r" id="ovImg2"></div><div class="ov b" id="ovImg3"></div>
+      <div class="zoom"><button id="zIn" title="Zoom avant">+</button><button id="zOut" title="Zoom arrière">−</button><button class="w" id="zFit">Ajuster</button></div></div>
+    <div class="pills" id="pills"></div>
+  </div></section>
+  <section class="sec" id="sSkyV"><h2 data-help="sky"><span id="skyTitle">Vue à l'oculaire</span></h2><div class="body">
+    <div class="row" id="skyPicker"></div>
+    <div class="canvas-box"><canvas id="cvSky"></canvas><div class="ov" id="ovSky1"></div><div class="ov r" id="ovSky2"></div><div class="ov b" id="ovSky3"></div></div>
+  </div></section>
+  <section class="sec" id="sData"><h2 data-help="data">Caractéristiques</h2><div class="body"><dl class="kv" id="kv"></dl></div></section>
+  <section class="sec" id="sNotes"><h2 data-help="notes">Ce qui se passe</h2><div class="body"><ul class="notes" id="notes"></ul></div></section>
+  <section class="sec" id="sAbout"><h2>À propos de cette formule</h2><div class="body"><p class="about" id="about"></p></div></section>
+</div></aside>
+</div>
+</div>
+<div class="modal" id="modal" hidden><div class="box" role="dialog" aria-labelledby="mTitle">
+  <h2 id="mTitle">LEÇONS</h2>
+  <p class="lead">Chaque leçon règle l'instrument, lance une animation et explique ce que l'on observe. Idéal à projeter en classe : on peut à tout moment reprendre la main sur les réglages.</p>
+  <div class="lgrid" id="lgrid"></div>
+  <div class="keys"><span><kbd>Espace</kbd> balayage</span><span><kbd>F</kbd> mise au point auto</span><span><kbd>1</kbd>–<kbd>5</kbd> vues</span><span><kbd>N</kbd> vision nocturne</span><span><kbd>L</kbd> leçons</span><span><kbd>Échap</kbd> fermer</span><span>Glisser : tourner · clic droit ou Maj : déplacer · molette : zoom</span></div>
+</div></div>
+<div class="night" id="night" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+'use strict';
+/* =====================================================================
+   OPTIK — moteur de lancer de rayons (unités : mm, longueurs d'onde : µm)
+   Lumière incidente se propageant vers +z. Surfaces coniques + asphériques,
+   réfraction de Snell avec dispersion réelle (Sellmeier), miroirs, lentilles idéales.
+   ===================================================================== */
+const V = {
+  add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],
+  sub:(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],
+  mul:(a,s)=>[a[0]*s,a[1]*s,a[2]*s],
+  dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+  cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+  len:a=>Math.hypot(a[0],a[1],a[2]),
+  nrm:a=>{const l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l];},
+  rot:(p,k,ang)=>{const c=Math.cos(ang),s=Math.sin(ang),d=V.dot(k,p),x=V.cross(k,p);
+    return [p[0]*c+x[0]*s+k[0]*d*(1-c),p[1]*c+x[1]*s+k[1]*d*(1-c),p[2]*c+x[2]*s+k[2]*d*(1-c)];}
+};
+function makeFrame(w, up){
+  w=V.nrm(w); up=up||[0,1,0];
+  if(Math.abs(V.dot(up,w))>0.99) up=[1,0,0];
+  const u=V.nrm(V.cross(up,w)); const v=V.cross(w,u);
+  return {u,v,w};
+}
+function rotFrame(F, axis, ang){ return {u:V.rot(F.u,axis,ang), v:V.rot(F.v,axis,ang), w:V.rot(F.w,axis,ang)}; }
+const AM = Math.PI/180/60; // arcminute en radians
+const AS = Math.PI/180/3600;
+
+/* ---------- Verres (Sellmeier, catalogue Schott / Ohara) ---------- */
+const GLASS = {
+  'N-BK7':  {B:[1.03961212,0.231792344,1.01046945], C:[0.00600069867,0.0200179144,103.560653], name:'N-BK7', role:'crown', tint:0xbfe6ff},
+  'F2':     {B:[1.34533359,0.209073176,0.937357162], C:[0.00997743871,0.0470450767,111.886764], name:'F2', role:'flint', tint:0x9fb4ff},
+  'N-FK51A':{B:[0.971247817,0.216901417,0.904651666], C:[0.00472301995,0.0153575612,168.68133], name:'FK51 (ED)', role:'ED', tint:0xb8ffd8},
+  'CaF2':   {B:[0.5675888,0.4710914,3.8484723], C:[0.0025264, 0.0100783, 1200.556], name:'Fluorite / FPL-53', role:'ED', tint:0xd6ffc8},
+  'BAF10':  {B:[1.5851495,0.143559385,1.08521269], C:[0.00926681282,0.0424489805,105.613573], name:'BaF10', role:'flint baryum', tint:0xc9b8ff},
+  'SF11':   {B:[1.73759695,0.313747346,1.89878101], C:[0.013188707,0.0623068142,155.23629], name:'SF11', role:'flint dense', tint:0xa0a0ff}
+};
+const _nCache = new Map();
+function nIdx(g, lam){
+  if(!g || g==='air') return 1;
+  const key=g+lam; let v=_nCache.get(key); if(v!==undefined) return v;
+  const G=GLASS[g], l2=lam*lam; let s=1;
+  for(let i=0;i<3;i++) s+=G.B[i]*l2/(l2-G.C[i]);
+  v=Math.sqrt(s); _nCache.set(key,v); return v;
+}
+const LAM = {g:0.4358, F:0.4861, e:0.5461, d:0.5876, C:0.6563};
+function abbe(g){ const nd=nIdx(g,LAM.d), nF=nIdx(g,LAM.F), nC=nIdx(g,LAM.C), ng=nIdx(g,LAM.g);
+  return {nd, V:(nd-1)/(nF-nC), P:(ng-nF)/(nF-nC)}; }
+
+/* ---------- Surfaces ---------- */
+function S(o){
+  const s=Object.assign({kind:'refract',c:0,k:0,a2:0,a4:0,a6:0,ap:1e9,hole:0,mat:'air'},o);
+  s.asph=!!(s.a2||s.a4||s.a6);
+  if(!s.F) s.F=makeFrame([0,0,1]);
+  return s;
+}
+function sagD(s, r2){
+  let z=0, dzr=0; const c=s.c;
+  if(c!==0){ const q=1-(1+s.k)*c*c*r2; if(q<0) return null; const sq=Math.sqrt(q); z=c*r2/(1+sq); dzr=c/sq; }
+  if(s.asph){ z+=s.a2*r2+s.a4*r2*r2+s.a6*r2*r2*r2; dzr+=2*s.a2+4*s.a4*r2+6*s.a6*r2*r2; }
+  return [z,dzr];
+}
+function sagAt(s, r){ const d=sagD(s,r*r); return d?d[0]:null; }
+function intersect(s, p, d){
+  let t=null; const c=s.c;
+  if(c===0){ if(Math.abs(d[2])<1e-14) return null; t=-p[2]/d[2]; }
+  else{
+    const k1=1+s.k;
+    const A=c*(d[0]*d[0]+d[1]*d[1]+k1*d[2]*d[2]);
+    const B=2*(c*(p[0]*d[0]+p[1]*d[1]+k1*p[2]*d[2])-d[2]);
+    const C=c*(p[0]*p[0]+p[1]*p[1]+k1*p[2]*p[2])-2*p[2];
+    let r1,r2;
+    if(Math.abs(A)<1e-15){ if(Math.abs(B)<1e-15) return null; r1=-C/B; r2=null; }
+    else{ const disc=B*B-4*A*C; if(disc<0) return null; const sq=Math.sqrt(disc); const q=-0.5*(B+(B>=0?sq:-sq)); r1=q/A; r2=q!==0?C/q:null; }
+    let bz=Infinity;
+    for(const r of [r1,r2]){ if(r===null||!(r>1e-9)) continue; const z=Math.abs(p[2]+r*d[2]); if(z<bz){bz=z;t=r;} }
+    if(t===null) return null;
+  }
+  if(s.asph){
+    for(let i=0;i<30;i++){
+      const x=p[0]+t*d[0], y=p[1]+t*d[1], z=p[2]+t*d[2];
+      const sd=sagD(s,x*x+y*y); if(!sd) return null;
+      const g=z-sd[0]; if(Math.abs(g)<1e-11) break;
+      const dg=d[2]-sd[1]*(x*d[0]+y*d[1]); if(Math.abs(dg)<1e-14) return null;
+      t-=g/dg;
+    }
+  }
+  return t>1e-9?t:null;
+}
+/* Trace un rayon (coordonnées monde). noBlock : ignore diaphragmes et obstructions. */
+function traceRay(surfs, p, d, lam, noBlock){
+  const pts=[p], ns=[]; let n=1, status='out', img=null;
+  for(let i=0;i<surfs.length;i++){
+    const s=surfs[i];
+    if(noBlock && s.kind==='obstruct') continue;
+    const F=s.F, rp=V.sub(p,s.pos);
+    const lp=[V.dot(rp,F.u),V.dot(rp,F.v),V.dot(rp,F.w)], ld=[V.dot(d,F.u),V.dot(d,F.v),V.dot(d,F.w)];
+    const t=intersect(s,lp,ld);
+    if(t===null){ if(s.kind==='obstruct') continue; status='miss'; break; }
+    const x=lp[0]+t*ld[0], y=lp[1]+t*ld[1], z=lp[2]+t*ld[2];
+    const hit=[p[0]+t*d[0],p[1]+t*d[1],p[2]+t*d[2]];
+    const r2=x*x+y*y;
+    if(s.kind==='obstruct'){
+      let bl=r2<s.block*s.block;
+      if(!bl && s.spider && r2<s.spider.R*s.spider.R){
+        for(const a of s.spider.angles){ const ca=Math.cos(a), sa=Math.sin(a);
+          if(x*ca+y*sa>0 && Math.abs(-x*sa+y*ca)<s.spider.w/2){bl=true;break;} }
+      }
+      if(!bl && s.outer && r2>s.outer*s.outer) bl=true;
+      if(bl){ pts.push(hit); ns.push(n); status='blocked'; break; }
+      continue;
+    }
+    let blocked=false;
+    if(!noBlock){
+      if(s.ell){ const ex=x/s.ell[0], ey=y/s.ell[1]; if(ex*ex+ey*ey>1) blocked=true; }
+      else if(r2>s.ap*s.ap) blocked=true;
+      if(s.hole && r2<s.hole*s.hole) blocked=true;
+    }
+    pts.push(hit); ns.push(n); p=hit;
+    if(blocked){ status='blocked'; break; }
+    if(s.kind==='image'){ img={x,y,dx:ld[0],dy:ld[1],dz:ld[2]}; status='image'; break; }
+    if(s.kind==='pass') continue;
+    if(s.kind==='ideal'){
+      const sg=ld[2]>=0?1:-1;
+      const nl=V.mul(V.nrm([ld[0]/ld[2]-x/s.f, ld[1]/ld[2]-y/s.f, 1]),sg);
+      d=V.nrm([F.u[0]*nl[0]+F.v[0]*nl[1]+F.w[0]*nl[2], F.u[1]*nl[0]+F.v[1]*nl[1]+F.w[1]*nl[2], F.u[2]*nl[0]+F.v[2]*nl[1]+F.w[2]*nl[2]]);
+      continue;
+    }
+    let nl;
+    if(s.asph){ const sd=sagD(s,r2); if(!sd){status='miss';break;} nl=[-x*sd[1],-y*sd[1],1]; }
+    else nl=[-s.c*x,-s.c*y,1-s.c*(1+s.k)*z];
+    let N=V.nrm([F.u[0]*nl[0]+F.v[0]*nl[1]+F.w[0]*nl[2], F.u[1]*nl[0]+F.v[1]*nl[1]+F.w[1]*nl[2], F.u[2]*nl[0]+F.v[2]*nl[1]+F.w[2]*nl[2]]);
+    let cosi=V.dot(N,d); if(cosi<0){N=V.mul(N,-1);cosi=-cosi;}
+    if(s.kind==='mirror'){ d=V.sub(d,V.mul(N,2*cosi)); }
+    else{
+      const n2=nIdx(s.mat,lam), eta=n/n2, k2=1-eta*eta*(1-cosi*cosi);
+      if(k2<0){ status='tir'; break; }
+      d=V.nrm(V.add(V.mul(d,eta),V.mul(N,Math.sqrt(k2)-eta*cosi))); n=n2;
+    }
+  }
+  return {pts, ns, status, img, p, d, n};
+}
+/* rayon collimaté venant d'une étoile à fieldDeg du centre, passant par (px,py) de la pupille */
+function starRay(sys, px, py, fieldDeg){
+  const th=fieldDeg*Math.PI/180, d=[0,Math.sin(th),Math.cos(th)];
+  const L=(sys.pupilZ-sys.startZ)/d[2];
+  return {p:[px-d[0]*L, py-d[1]*L, sys.pupilZ-d[2]*L], d};
+}
+function solve3(A,b){
+  const det=m=>m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])-m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])+m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+  const D=det(A); if(Math.abs(D)<1e-30) return null;
+  const out=[];
+  for(let c=0;c<3;c++){ const M=A.map((r,i)=>r.map((v,j)=>j===c?b[i]:v)); out.push(det(M)/D); }
+  return out;
+}
+/* point de convergence (moindres carrés) d'un faisceau de droites */
+function lsqPoint(lines){
+  const A=[[0,0,0],[0,0,0],[0,0,0]], b=[0,0,0]; let md=[0,0,0];
+  for(const {p,d} of lines){
+    for(let i=0;i<3;i++) for(let j=0;j<3;j++){ const m=(i===j?1:0)-d[i]*d[j]; A[i][j]+=m; b[i]+=m*p[j]; }
+    md=V.add(md,d);
+  }
+  const P=solve3(A,b); return P?{P, A:V.nrm(md)}:null;
+}
+function focusOf(surfs, sys, lam, field){
+  const lines=[]; const R=sys.R;
+  for(const f of [0.4,0.6,0.8]) for(let a=0;a<8;a++){
+    const an=a*Math.PI/4+0.3; const r=starRay(sys,R*f*Math.cos(an),R*f*Math.sin(an),field||0);
+    const tr=traceRay(surfs,r.p,r.d,lam,true);
+    if(tr.status==='out') lines.push({p:tr.p,d:tr.d});
+  }
+  if(lines.length<6) return null;
+  return lsqPoint(lines);
+}
+/* focale effective (rayon paraxial) */
+function eflOf(surfs, sys, A, lam){
+  const h=sys.R*0.01; const r=starRay(sys,0,h,0);
+  const tr=traceRay(surfs,r.p,r.d,lam||LAM.e,true); if(tr.status!=='out') return NaN;
+  const along=V.dot(tr.d,A); const perp=V.len(V.sub(tr.d,V.mul(A,along)));
+  return h/perp;
+}
+/* abscisse (le long de A depuis P0) où un rayon de hauteur relative rho coupe l'axe */
+function axisCrossing(surfs, sys, P0, A, rho, lam){
+  const r=starRay(sys,0,sys.R*rho,0);
+  const tr=traceRay(surfs,r.p,r.d,lam,true); if(tr.status!=='out') return NaN;
+  // point le plus proche de l'axe (P0,A)
+  const w0=V.sub(tr.p,P0), a=V.dot(tr.d,tr.d), b=V.dot(tr.d,A), c=1, d=V.dot(tr.d,w0), e=V.dot(A,w0);
+  const den=a*c-b*b; if(Math.abs(den)<1e-14) return NaN;
+  return (a*e-b*d)/den;
+}
+/* tache au meilleur foyer (éventail méridien, axe) */
+function spotBest(surfs, sys, wls, P0, A, nh, field){
+  const up=makeFrame(A); const es=[], ms=[];
+  nh=nh||8;
+  for(const lam of wls) for(let i=0;i<nh;i++){
+    const rho=Math.sqrt((i+0.5)/nh)*0.985;
+    for(const sgn of [1,-1]){
+      const r=starRay(sys,0,sgn*sys.R*rho,field||0);
+      const tr=traceRay(surfs,r.p,r.d,lam,false);
+      if(tr.status!=='out') continue;
+      const dA=V.dot(tr.d,A); if(dA<=0) continue;
+      const t=V.dot(V.sub(P0,tr.p),A)/dA; const q=V.sub(V.add(tr.p,V.mul(tr.d,t)),P0);
+      es.push([V.dot(q,up.u),V.dot(q,up.v)]); ms.push([V.dot(tr.d,up.u)/dA,V.dot(tr.d,up.v)/dA]);
+    }
+  }
+  const n=es.length; if(n<4) return {rms:1e9, dz:0, n};
+  let mx=0,my=0,ex=0,ey=0; for(let i=0;i<n;i++){ex+=es[i][0];ey+=es[i][1];mx+=ms[i][0];my+=ms[i][1];}
+  ex/=n;ey/=n;mx/=n;my/=n;
+  let num=0,den=0;
+  for(let i=0;i<n;i++){ const a=es[i][0]-ex,b=es[i][1]-ey,c=ms[i][0]-mx,d=ms[i][1]-my; num+=a*c+b*d; den+=c*c+d*d; }
+  const dz=den>0?-num/den:0; let s2=0;
+  for(let i=0;i<n;i++){ const a=es[i][0]-ex+dz*(ms[i][0]-mx), b=es[i][1]-ey+dz*(ms[i][1]-my); s2+=a*a+b*b; }
+  return {rms:Math.sqrt(s2/n), dz, n};
+}
+
+/* ---------- Nelder-Mead ---------- */
+function nelderMead(f, x0, step, maxEval){
+  const n=x0.length; let P=[x0.slice()]; let Fv=[f(x0)]; let ev=1;
+  for(let i=0;i<n;i++){ const x=x0.slice(); x[i]+=step[i]; P.push(x); Fv.push(f(x)); ev++; }
+  while(ev<maxEval){
+    const idx=[...P.keys()].sort((a,b)=>Fv[a]-Fv[b]); P=idx.map(i=>P[i]); Fv=idx.map(i=>Fv[i]);
+    if(Math.abs(Fv[n]-Fv[0])<1e-12*(Math.abs(Fv[0])+1e-12)) break;
+    const c=new Array(n).fill(0); for(let i=0;i<n;i++) for(let j=0;j<n;j++) c[j]+=P[i][j]/n;
+    const lerp=(t)=>c.map((v,j)=>v+t*(P[n][j]-v));
+    const xr=lerp(-1), fr=f(xr); ev++;
+    if(fr<Fv[0]){ const xe=lerp(-2), fe=f(xe); ev++; if(fe<fr){P[n]=xe;Fv[n]=fe;}else{P[n]=xr;Fv[n]=fr;} }
+    else if(fr<Fv[n-1]){ P[n]=xr; Fv[n]=fr; }
+    else{ const xc=fr<Fv[n]?lerp(-0.5):lerp(0.5), fc=f(xc); ev++;
+      if(fc<Math.min(fr,Fv[n])){P[n]=xc;Fv[n]=fc;}
+      else{ for(let i=1;i<=n;i++){ P[i]=P[i].map((v,j)=>P[0][j]+0.5*(v-P[0][j])); Fv[i]=f(P[i]); ev++; } }
+    }
+  }
+  let b=0; for(let i=1;i<=n;i++) if(Fv[i]<Fv[b]) b=i;
+  return {x:P[b], f:Fv[b]};
+}
+function optimize(f, x0, step, evals, restarts){
+  let r=nelderMead(f,x0,step,evals);
+  for(let k=0;k<(restarts||2);k++){ const r2=nelderMead(f,r.x,step.map(s=>s*0.3),evals); if(r2.f<=r.f) r=r2; }
+  return r;
+}
+
+/* ---------- Objectifs de lunettes ---------- */
+function sagR(c,r){ if(c===0) return 0; const q=1-c*c*r*r; if(q<=0.02) return null; return c*r*r/(1+Math.sqrt(q)); }
+function lensStack(glasses, curv, D, z0){
+  const R=D/2, Ra=R*1.03;
+  const th=[]; let ok=true;
+  for(let i=0;i<glasses.length;i++){
+    const air=glasses[i]==='air';
+    const emin=air?0.25+0.002*D:1.2+0.02*D, tmin=air?0.25+0.002*D:1.6+0.03*D;
+    const sf=sagR(curv[i],Ra), sb=sagR(curv[i+1],Ra); if(sf===null||sb===null){ok=false;th.push(tmin);continue;}
+    th.push(Math.max(tmin, emin+sf-sb));
+  }
+  const surfs=[]; let z=z0;
+  for(let i=0;i<=glasses.length;i++){
+    surfs.push(S({kind:'refract', c:curv[i], pos:[0,0,z], ap:R*1.03, mat:i<glasses.length?glasses[i]:'air', group:'obj'}));
+    if(i<glasses.length) z+=th[i];
+  }
+  return {surfs, th, ok, zEnd:z};
+}
+const REFR = {
+  single:{glasses:['N-BK7']},
+  achro:{glasses:['N-BK7','air','F2']},
+  ed:{glasses:['N-FK51A','air','F2']},
+  apo:{glasses:['CaF2','air','N-BK7','air','F2']}
+};
+function thinPowers(all, phi){
+  const glasses=all.filter(g=>g!=='air'); const pw=thinPowersG(glasses,phi); let k=0;
+  return all.map(g=>g==='air'?0:pw[k++]);
+}
+function thinPowersG(glasses, phi){
+  const ab=glasses.map(abbe);
+  if(glasses.length===1) return [phi];
+  if(glasses.length===2){ const [a,b]=ab; return [phi*a.V/(a.V-b.V), -phi*b.V/(a.V-b.V)]; }
+  const A=[[1,1,1],ab.map(g=>1/g.V),ab.map(g=>g.P/g.V)];
+  return solve3(A,[phi,0,0]);
+}
+const _designCache=new Map();
+const _lastDesign={ // conceptions de départ précalculées (courbures × F)
+  single:{D:60,F:900,curv:[1.678897,-0.249439].map(c=>c/900)},
+  achro:{D:102,F:1000,curv:[1.671328,-2.781228,-2.751507,-0.653063].map(c=>c/1000)},
+  ed:{D:80,F:600,curv:[1.695851,-1.902605,-2.009446,-0.800067].map(c=>c/600)},
+  apo:{D:130,F:910,curv:[2.717376,-3.372297,-3.304156,-0.543859,4.026254,4.44483].map(c=>c/910)}
+};
+function designRefractor(type, D, F, quick){
+  const key=type+'|'+D.toFixed(1)+'|'+F.toFixed(1);
+  if(_designCache.has(key)) return _designCache.get(key);
+  const glasses=REFR[type].glasses; const phi=1/F;
+  let x0, evals, restarts;
+  const prev=_lastDesign[type];
+  if(quick && prev) return {glasses, curv:prev.curv.map(c=>c*prev.F/F), quick:true};
+  if(prev && Math.abs(prev.F/prev.D - F/D)<4){
+    // démarrage à chaud depuis le dernier calcul, mis à l'échelle
+    x0=prev.curv.map(c=>c*prev.F); evals=glasses.length>3?500:300; restarts=1;
+  } else {
+    const pw=thinPowers(glasses,phi);
+    const c=[]; const n0=nIdx(glasses[0],LAM.d);
+    c[0]=glasses.length===1? pw[0]/(n0-1)*0.6 : pw[0]/(2*(n0-1));
+    for(let i=0;i<glasses.length;i++){ const n=nIdx(glasses[i],LAM.d); c[i+1]=glasses[i]==='air'?c[i]:c[i]-pw[i]/(n-1); }
+    x0=c.map(v=>v*F); evals=glasses.length>3?1600:900; restarts=3;
+  }
+  const wls = glasses.length>3? [LAM.g,LAM.F,LAM.e,LAM.C] : type==='single'?[LAM.e]:[LAM.F,LAM.e,LAM.C];
+  const sys={R:D/2, pupilZ:0, startZ:-20};
+  const airy=1.22*0.00055*F/D;
+  const fieldW = type==='single'?0:0.25;
+  const merit=(x)=>{
+    const cv=x.map(v=>v/F);
+    const st=lensStack(glasses,cv,D,0); if(!st.ok) return 1e9;
+    const foc=focusOf(st.surfs,sys,LAM.e,0); if(!foc) return 1e9;
+    const efl=eflOf(st.surfs,sys,[0,0,1],LAM.e); if(!(efl>0)) return 1e9;
+    const sp=spotBest(st.surfs,sys,wls,foc.P,[0,0,1],7);
+    let m=(sp.rms/airy)**2 + 4e4*((efl-F)/F)**2;
+    if(fieldW){ const sp2=spotBest(st.surfs,sys,[LAM.e],foc.P,[0,0,1],6,0.35); m+=fieldW*(sp2.rms/airy)**2; }
+    return m;
+  };
+  const res=optimize(merit,x0,x0.map(v=>0.12*Math.max(0.3,Math.abs(v))), evals, restarts);
+  const out={glasses, curv:res.x.map(v=>v/F), merit:res.f};
+  _lastDesign[type]={D,F,curv:out.curv};
+  _designCache.set(key,out); if(_designCache.size>400) _designCache.delete(_designCache.keys().next().value);
+  return out;
+}
+
+/* ---------- Géométrie Cassegrain ---------- */
+function cassGeom(D,F,fp,B){
+  const f1=fp*D, m=F/f1, d=(m*f1-B)/(1+m), s=f1-d, sp=d+B, R2=2*s*sp/(sp-s);
+  return {f1,m,d,s,sp,R2};
+}
+const TYPES = {
+  single:{family:'refr', name:'Lunette à lentille simple', short:'Lentille simple', D:60, F:900},
+  achro:{family:'refr', name:'Lunette achromatique', short:'Achromatique', D:102, F:1000},
+  ed:{family:'refr', name:'Lunette ED (doublet)', short:'Doublet ED', D:80, F:600},
+  apo:{family:'refr', name:'Lunette apochromatique (triplet)', short:'Triplet APO', D:130, F:910},
+  newton:{family:'newton', name:'Télescope de Newton', short:'Newton', D:200, F:1000},
+  cass:{family:'cass', name:'Cassegrain classique', short:'Cassegrain', D:200, F:3000, fp:3},
+  rc:{family:'cass', name:'Ritchey-Chrétien', short:'Ritchey-Chrétien', D:200, F:1600, fp:3},
+  dk:{family:'cass', name:'Dall-Kirkham', short:'Dall-Kirkham', D:200, F:2400, fp:3.5},
+  sct:{family:'cass', name:'Schmidt-Cassegrain', short:'Schmidt-Cass.', D:203, F:2032, fp:2},
+  mak:{family:'cass', name:'Maksutov-Cassegrain', short:'Maksutov', D:127, F:1500, fp:3}
+};
+function backFocus(D){ return 0.45*D+40; }
+function tiltGroup(surfs, pivot, ax, ay){
+  for(const s of surfs){
+    let p=V.sub(s.pos,pivot); let F=s.F;
+    p=V.rot(p,[1,0,0],ax); F=rotFrame(F,[1,0,0],ax);
+    p=V.rot(p,[0,1,0],ay); F=rotFrame(F,[0,1,0],ay);
+    s.pos=V.add(p,pivot); s.F=F;
+  }
+}
+
+/* Construit la partie « tube optique » (sans accessoire ni sortie).
+   nominal=true : sans désalignement ni déplacement de mise au point. */
+function buildRefractor(st, nominal){
+  const des=designRefractor(st.type,st.D,st.F,st.quick);
+  const L=lensStack(des.glasses,des.curv,st.D,0);
+  if(!nominal && (st.tPx||st.tPy)) tiltGroup(L.surfs,[0,0,L.zEnd/2],st.tPx*AM,st.tPy*AM);
+  const R=st.D/2;
+  return {surfs:L.surfs, R, pupilZ:0, startZ:-Math.max(160,st.F*0.22), obsR:0, spider:null,
+    parts:[{type:'lens', surfs:L.surfs, glasses:des.glasses, R:R*1.03, label:'Objectif'},
+           {type:'tube', z0:-Math.max(40,st.D*1.1), z1:Math.max(L.zEnd+50, st.F*0.78), R:R+8, cell:[L.zEnd+4]}],
+    design:des, labels:[{text:'Objectif', pos:[0,R+22,L.zEnd/2]}]};
+}
+function buildNewton(st, nominal){
+  const D=st.D, R=D/2, f1=st.F;
+  const h=R+18+55;                      // du diagonal au foyer (hors du tube)
+  const minor=D*h/f1+2*h*Math.tan(0.35*Math.PI/180)+2;
+  const a=minor/2;
+  const prim=S({kind:'mirror', c:-1/(2*f1), k:st.K, pos:[0,0,f1], ap:R, group:'primary'});
+  if(!nominal && (st.tPx||st.tPy)) tiltGroup([prim],[0,0,f1],st.tPx*AM,st.tPy*AM);
+  const w=V.nrm([0,1,1]);
+  let Fd={u:[1,0,0], v:V.cross(w,[1,0,0]), w};
+  if(!nominal){ if(st.tSx) Fd=rotFrame(Fd,Fd.u,st.tSx*AM); if(st.tSy) Fd=rotFrame(Fd,Fd.v,st.tSy*AM); }
+  const diag=S({kind:'mirror', c:0, pos:[0,0,h], F:Fd, ell:[a*1.02,a*Math.SQRT2*1.02], group:'secondary'});
+  const vaneW=Math.max(0.8,D*0.005);
+  const spider={R:R+8, w:vaneW, angles:[Math.PI/4,3*Math.PI/4,5*Math.PI/4,7*Math.PI/4]};
+  const obs=S({kind:'obstruct', pos:[0,0,h-a-2], block:a, spider});
+  const zFront=h-a-Math.max(60,D*0.5);
+  return {surfs:[obs,prim,diag], R, pupilZ:f1, startZ:zFront-Math.max(160,f1*0.25), obsR:a, spider:{n:4,w:vaneW},
+    parts:[{type:'mirror', s:prim, R, thick:D/7, label:'Miroir primaire'},
+           {type:'diag', s:diag, a, thick:Math.max(4,a*0.35)},
+           {type:'spider', z:h-a-2, R:R+8, w:vaneW, block:a, angles:spider.angles},
+           {type:'tube', z0:zFront, z1:f1+D/7+18, R:R+10, cell:[f1+D/7+6]}],
+    labels:[{text:'Miroir primaire', pos:[0,-R-26,f1]},{text:'Miroir secondaire (plan)', pos:[0,-a-30,h]}]};
+}
+const _cassCache=new Map();
+const _lastCass={ sct:[-0.7533,0.99,-0.004,0.36], mak:[-8.832858,-8.463849,-5.815836,2.312125] };
+function designCass(type, D, F, fp, quick){
+  const key=type+'|'+D.toFixed(1)+'|'+F.toFixed(1)+'|'+fp.toFixed(2);
+  if(_cassCache.has(key)) return _cassCache.get(key);
+  if(quick && (type==='sct'||type==='mak'||type==='dk')){ const last=_cassCache.get(_lastKey[type]); if(last) return quickCass(type,D,F,fp,last); }
+  const B=backFocus(D), g=cassGeom(D,F,fp,B);
+  let out={g, B, K1:-1, K2:0, c2:-1/g.R2, d:g.d, a:[0,0,0], c1m:0};
+  const R=D/2;
+  if(type==='cass'){ out.K1=-1; out.K2=-(((g.m+1)/(g.m-1))**2); }
+  else if(type==='rc'){ const Bw=g.sp, M=g.m; out.K1=-1-2/(M**3)*Bw/g.d; out.K2=-1-2/((M-1)**3)*(M*(2*M-1)+Bw/g.d); }
+  else if(type==='dk'){
+    out.K2=0; const sys={R, pupilZ:g.d, startZ:-50};
+    const merit=x=>{ const o=Object.assign({},out,{K1:x[0]}); const surfs=cassSurfs(type,D,o,true,0,null).surfs;
+      const foc=focusOf(surfs,sys,LAM.e,0); if(!foc) return 1e9; return spotBest(surfs,sys,[LAM.e],foc.P,foc.A,8).rms; };
+    out.K1=optimize(merit,[-0.7],[0.2],120,1).x[0];
+  }
+  else if(type==='sct'){
+    out.K1=0; out.K2=0;
+    const n=nIdx('N-BK7',LAM.e), S4=1/(4*(n-1)*(2*g.f1)**3);
+    const sys={R, pupilZ:-13, startZ:-60};
+    const airy=1.22*0.00055*F/D; const c20=out.c2;
+    const mk=x=>Object.assign({},out,{a:[x[1]*S4*R*R, x[0]*S4, x[2]*S4/(R*R)], c2:c20*(1+0.05*x[3])});
+    const merit=x=>{ const o=mk(x);
+      const surfs=cassSurfs(type,D,o,true,0,null).surfs;
+      const foc=focusOf(surfs,sys,LAM.e,0); if(!foc) return 1e9;
+      const efl=eflOf(surfs,sys,foc.A,LAM.e); if(!(efl>0)) return 1e9;
+      return (spotBest(surfs,sys,[LAM.F,LAM.e,LAM.C],foc.P,foc.A,8).rms/airy)**2 + 3e4*((efl-F)/F)**2; };
+    let best=optimize(merit,_lastCass.sct,[0.2,0.2,0.1,0.1],350,1);
+    if(best.f>30){ for(const s0 of [1,-1]){ const r=optimize(merit,[s0,-s0*0.75,0,0],[0.5,0.5,0.3,0.3],700,2); if(r.f<best.f) best=r; } }
+    const o=mk(best.x); out.a=o.a; out.c2=o.c2; _lastCass.sct=best.x;
+    out.qx=best.x;
+  }
+  else if(type==='mak'){
+    out.K1=0; out.K2=0;
+    const t=D*0.1, n=nIdx('N-BK7',LAM.e);
+    const Rm2=-g.R2*0.9, Rm1=Rm2-t*(n*n-1)/(n*n);
+    const x0=[F/Rm1, F/Rm2, -F/g.R2, g.d/D];
+    const airy=1.22*0.00055*F/D;
+    const mk=x=>Object.assign({},out,{c1m:x[0]/F, c2m:x[1]/F, c2:x[2]/F, d:x[3]*D});
+    const merit=x=>{
+      const o=mk(x);
+      if(o.d<D*0.8) return 1e9;
+      const built=cassSurfs(type,D,o,true,0,null); const sys={R, pupilZ:-t, startZ:-t-60};
+      const foc=focusOf(built.surfs,sys,LAM.e,0); if(!foc) return 1e9;
+      const efl=eflOf(built.surfs,sys,foc.A,LAM.e); if(!(efl>0)) return 1e9;
+      const bf=foc.P[2]-o.d;
+      const sp=spotBest(built.surfs,sys,[LAM.F,LAM.e,LAM.C],foc.P,foc.A,8);
+      return (sp.rms/airy)**2 + 3e4*((efl-F)/F)**2 + 20*((bf-B)/D)**2;
+    };
+    let best=optimize(merit,_lastCass.mak,[0.15,0.15,0.1,0.02],450,1);
+    if(best.f>30){ for(const k of [1,0.8,1.2]){ const xs=x0.slice(); xs[0]*=k; xs[1]*=k; const r=optimize(merit,xs,[0.4,0.4,0.3,0.05],1200,3); if(r.f<best.f) best=r; } }
+    Object.assign(out,mk(best.x)); out.meritMak=best.f; _lastCass.mak=best.x; out.qx=best.x;
+  }
+  _cassCache.set(key,out); _lastKey[type]=key; if(_cassCache.size>300) _cassCache.delete(_cassCache.keys().next().value);
+  return out;
+}
+const _lastKey={};
+function quickCass(type,D,F,fp,last){
+  const B=backFocus(D), g=cassGeom(D,F,fp,B);
+  const o=Object.assign({},last,{g,B});
+  if(type==='sct'){ const R=D/2, n=nIdx('N-BK7',LAM.e), S4=1/(4*(n-1)*(2*g.f1)**3), x=last.qx;
+    o.a=[x[1]*S4*R*R, x[0]*S4, x[2]*S4/(R*R)]; o.c2=(-1/g.R2)*(1+0.05*x[3]); o.d=g.d; }
+  else if(type==='mak'){ const x=last.qx; o.c1m=x[0]/F; o.c2m=x[1]/F; o.c2=x[2]/F; o.d=x[3]*D; }
+  else { o.c2=-1/g.R2; o.d=g.d; }
+  o.quick=true; return o;
+}
+function cassSurfs(type, D, o, nominal, shift, st){
+  const R=D/2, g=o.g, d=o.d;
+  const sR = Math.abs(1/o.c2);
+  // empreinte du faisceau sur le secondaire
+  const f1=g.f1;
+  let beamS = R*(f1-d)/f1;
+  const r2 = beamS + d*Math.tan(0.3*Math.PI/180) + 2;
+  const sp=d+o.B, beamP=beamS*o.B/sp;
+  const hole=Math.max(beamP+ o.B*Math.tan(0.3*Math.PI/180)+3, D*0.1);
+  const surfs=[]; const parts=[]; const labels=[];
+  let spider=null, obsBlock=r2*1.05;
+  const zP=d+(shift||0);
+  if(type==='sct'){
+    const c1=S({kind:'refract', pos:[0,0,-13], a2:o.a[0], a4:o.a[1], a6:o.a[2], ap:R*1.04, mat:'N-BK7', group:'corr'});
+    const c2s=S({kind:'refract', pos:[0,0,-8], ap:R*1.04, mat:'air', group:'corr'});
+    surfs.push(c1,c2s);
+    parts.push({type:'lens', surfs:[c1,c2s], glasses:['N-BK7'], R:R*1.04, label:'Lame de Schmidt', corrector:true});
+    labels.push({text:'Lame de Schmidt', pos:[0,R+26,-10]});
+  }
+  let menT=0;
+  if(type==='mak'){
+    menT=D*0.1;
+    const m1=S({kind:'refract', c:o.c1m, pos:[0,0,-menT], ap:R*1.03, mat:'N-BK7', group:'corr'});
+    const m2=S({kind:'refract', c:o.c2m, pos:[0,0,0], ap:R*1.03, mat:'air', group:'corr'});
+    surfs.push(m1, S({kind:'obstruct', pos:[0,0,-menT*0.3], block:obsBlock}), m2);
+    parts.push({type:'lens', surfs:[m1,m2], glasses:['N-BK7'], R:R*1.03, label:'Ménisque'});
+    labels.push({text:'Ménisque correcteur', pos:[0,R+26,-menT/2]});
+  } else {
+    if(type!=='sct') spider={R:R+8, w:Math.max(0.8,D*0.005), angles:[Math.PI/4,3*Math.PI/4,5*Math.PI/4,7*Math.PI/4]};
+    surfs.push(S({kind:'obstruct', pos:[0,0,type==='sct'?-6:-r2*0.3-4], block:obsBlock, spider}));
+  }
+  const prim=S({kind:'mirror', c:-1/(2*f1), k:o.K1, pos:[0,0,zP], ap:R, hole, group:'primary'});
+  const sec=S({kind:'mirror', c:o.c2, k:o.K2, pos:[0,0,type==='mak'?2:0], ap:r2, group:'secondary'});
+  if(!nominal && st){
+    if(st.tPx||st.tPy) tiltGroup([prim],[0,0,zP],st.tPx*AM,st.tPy*AM);
+    if(st.tSx||st.tSy) tiltGroup([sec],[0,0,0],st.tSx*AM,st.tSy*AM);
+  }
+  surfs.push(prim,sec);
+  parts.push({type:'mirror', s:prim, R, hole, thick:D/8, label:'Miroir primaire'});
+  parts.push({type:'mirror', s:sec, R:r2, thick:-Math.max(type==='mak'?3:6,r2*(type==='mak'?0.12:0.35)), secondary:true});
+  if(spider) parts.push({type:'spider', z:-r2*0.3-4, R:R+8, w:spider.w, block:obsBlock, angles:spider.angles});
+  labels.push({text:'Miroir primaire', pos:[0,-R-26,zP]});
+  labels.push({text:'Miroir secondaire', pos:[0,-r2-34,-6]});
+  const zFront = type==='mak'? -menT-D*0.15 : type==='sct'? -18 : -r2*0.3-Math.max(40,D*0.3);
+  parts.push({type:'tube', z0:zFront, z1:d+D/8+14, R:R+10, cell:[d+D/8+4], back:true, hole});
+  // baffle
+  return {surfs, parts, labels, r2, hole, spider, obsR:obsBlock, zFront, pupilZ: type==='sct'?-13 : type==='mak'? -menT : d};
+}
+function buildCass(st, nominal){
+  const o=designCass(st.type,st.D,st.F,st.fp,st.quick);
+  const shift = (!nominal && (st.type==='sct'||st.type==='mak'))? st.focus : 0;
+  const c=cassSurfs(st.type,st.D,o,nominal,shift,st);
+  const R=st.D/2;
+  return {surfs:c.surfs, R, pupilZ:c.pupilZ, startZ:c.zFront-Math.max(160,st.D*1.2), obsR:c.obsR,
+    spider:c.spider?{n:4,w:c.spider.w}:null, parts:c.parts, labels:c.labels, design:o};
+}
+function buildBase(st, nominal){
+  const fam=TYPES[st.type].family;
+  if(fam==='refr') return buildRefractor(st,nominal);
+  if(fam==='newton') return buildNewton(st,nominal);
+  return buildCass(st,nominal);
+}
+
+/* ---------- Accessoires ---------- */
+const ACCESSORIES = {
+  none:{name:'Aucun'},
+  barlow2:{name:'Barlow ×2 achromatique', A:2, x:70, achro:true},
+  barlow2s:{name:'Barlow ×2 lentille simple', A:2, x:70, achro:false},
+  barlow3:{name:'Barlow ×3 achromatique', A:3, x:60, achro:true},
+  reducer:{name:'Réducteur de focale ×0,63', A:0.63, x:100, achro:true},
+  diag:{name:'Renvoi coudé 90°'}
+};
+function thinLensGroup(f, achro, R, P, A){
+  // doublet mince (ou simple) de focale f, centré en P, axe A
+  let glasses, c;
+  if(achro){
+    glasses=['N-BK7','F2']; const pw=thinPowers(glasses,1/f);
+    const n1=nIdx('N-BK7',LAM.d), n2=nIdx('F2',LAM.d);
+    c=[pw[0]/(2*(n1-1))]; c[1]=-c[0]; c[2]=c[1]-pw[1]/(n2-1);
+  } else { glasses=['N-BK7']; const n1=nIdx('N-BK7',LAM.d); c=[1/(f*2*(n1-1))]; c[1]=-c[0]; }
+  const L=lensStack(glasses,c,2*R,0);
+  const F=makeFrame(A,[0,1,0]);
+  const half=L.zEnd/2;
+  for(const s of L.surfs){ const z=s.pos[2]-half; s.pos=V.add(P,V.mul(A,z)); s.F=F; s.group='acc'; s.ap=R; }
+  return {surfs:L.surfs, glasses};
+}
+function buildAccessory(st, foc){
+  const acc=ACCESSORIES[st.acc]||ACCESSORIES.none;
+  if(!foc || st.acc==='none') return {surfs:[],parts:[],labels:[]};
+  const {P,A}=foc;
+  if(st.acc==='diag'){
+    const L=Math.min(60, st.F*0.06+30);
+    const M=V.sub(P,V.mul(A,L));
+    const side=Math.abs(A[1])<0.9?[0,1,0]:[1,0,0];
+    const out=side; const nrm=V.nrm(V.sub(out,A));
+    const F=makeFrame(nrm,[1,0,0]);
+    const a=Math.max(8,L/(st.F/st.D)*0.8+4);
+    const s=S({kind:'mirror', pos:M, F, ell:[a*1.5,a*1.5*Math.SQRT2], group:'acc'});
+    return {surfs:[s], parts:[{type:'diag', s, a:a*1.5, thick:5, boxed:true}], labels:[{text:'Renvoi coudé', pos:V.add(M,V.mul(side,-34))}]};
+  }
+  const x=acc.x; const f=acc.A>1? -acc.A*x/(acc.A-1) : acc.A*x/(1-acc.A);
+  const Pl=V.sub(P,V.mul(A,x));
+  const R=acc.A>1?14:24;
+  const g=thinLensGroup(f,acc.achro,R,Pl,A);
+  return {surfs:g.surfs, parts:[{type:'lens', surfs:g.surfs, glasses:g.glasses, R, label:acc.name, barrel:true}],
+    labels:[{text:acc.A>1?'Barlow':'Réducteur', pos:V.add(Pl,[0,R+20,0])}]};
+}
+
+/* ---------- Système complet ---------- */
+const EYE_F=17;
+const WL = [
+  {key:'R', lam:0.6563, col:0xff5b4f, name:'rouge 656 nm'},
+  {key:'G', lam:0.5461, col:0x74f08c, name:'vert 546 nm'},
+  {key:'B', lam:0.4861, col:0x5f8dff, name:'bleu 486 nm'},
+  {key:'V', lam:0.4358, col:0xb36bff, name:'violet 436 nm'}
+];
+function compose(st){
+  const nom=buildBase(st,true);
+  let foc=focusOf(nom.surfs,nom,LAM.e,0);
+  const acc=buildAccessory(st,foc);
+  const optNom=nom.surfs.concat(acc.surfs);
+  if(acc.surfs.length) foc=focusOf(optNom,nom,LAM.e,0);
+  if(!foc) return null;
+  const efl=eflOf(optNom,nom,foc.A,LAM.e);
+  const real=buildBase(st,false);
+  const optics=real.surfs.concat(acc.surfs);
+  const A=foc.A, P=foc.P;
+  const up = Math.abs(A[1])>0.9? [0,0,-1] : [0,1,0];
+  const drawOff = (st.type==='sct'||st.type==='mak')?0:st.focus;
+  const res={st, nom, real, acc, foc, efl, optics, parts:real.parts.concat(acc.parts), labels:(real.labels||[]).concat(acc.labels||[])};
+  res.pupil={R:nom.R, pupilZ:nom.pupilZ, startZ:nom.startZ};
+  res.obsRatio = nom.obsR/nom.R;
+  res.spider = nom.spider;
+  const Ff=makeFrame(A,up);
+  if(st.out==='eye'){
+    const fe=st.fe; const G=efl/fe; const ep=st.D/G;
+    const Pe=V.add(P,V.mul(A,fe));
+    const eyep=S({kind:'ideal', f:fe, pos:Pe, F:Ff, ap:1e9, group:'eyepiece'});
+    // relief d'œil : croisement du rayon principal avec l'axe après l'oculaire
+    let er=fe*(1+fe/Math.max(efl,1));
+    const cr=starRay(nom,0,0,0.12);
+    const tr=traceRay(optNom.concat([eyep]),cr.p,cr.d,LAM.e,true);
+    if(tr.status==='out'){ const q=V.sub(tr.p,Pe); const h=V.dot(q,Ff.v), hx=V.dot(q,Ff.u); const along=V.dot(q,A);
+      const dv=V.dot(tr.d,Ff.v), da=V.dot(tr.d,A); if(Math.abs(dv)>1e-12){ const t=-h/dv; const e2=along+t*da; if(e2>0.2*fe && e2<4*fe) er=e2; } }
+    const eyePupil=st.eyePupil;
+    const off=V.mul(A,drawOff);
+    const eyePos=V.add(V.add(Pe,V.mul(A,er)),off);
+    const eyepR=S(Object.assign({},eyep,{pos:V.add(Pe,off)}));
+    const eyeLens=S({kind:'ideal', f:EYE_F, pos:eyePos, F:Ff, ap:eyePupil/2, group:'eye'});
+    const retina=S({kind:'image', pos:V.add(eyePos,V.mul(A,EYE_F)), F:Ff, group:'retina'});
+    res.surfs=optics.concat([eyepR,eyeLens,retina]);
+    const fieldR=fe*Math.tan(st.afov/2*Math.PI/180);
+    res.parts.push({type:'eyepiece', pos:V.add(Pe,off), A, fe, R:Math.max(6,fieldR*1.15), F:Ff});
+    res.parts.push({type:'eye', pos:eyePos, A, F:Ff, pupil:eyePupil});
+    res.parts.push({type:'focuser', P:V.add(P,off), A, R:Math.max(14,fieldR*1.2+4), len:Math.max(50,st.F*0.05), fe});
+    res.labels.push({text:'Oculaire '+fe+' mm', pos:V.add(V.add(Pe,off),V.mul(Ff.v,-Math.max(22,fieldR+18)))});
+    res.labels.push({text:'Œil', pos:V.add(eyePos,V.mul(Ff.v,-22))});
+    res.G=G; res.ep=ep; res.er=er;
+    res.N=EYE_F/Math.min(ep,eyePupil); res.plate=G*EYE_F; // mm par radian sur la rétine
+    res.imgKind='retina';
+  } else {
+    let Fi=Ff;
+    if(st.sTx) Fi=rotFrame(Fi,Fi.u,st.sTx*AM);
+    if(st.sTy) Fi=rotFrame(Fi,Fi.v,st.sTy*AM);
+    const Pi=V.add(P,V.mul(A,drawOff));
+    const sensor=S({kind:'image', pos:Pi, F:Fi, group:'sensor'});
+    res.surfs=optics.concat([sensor]);
+    res.parts.push({type:'sensor', s:sensor, w:st.sensor.w, h:st.sensor.h});
+    res.parts.push({type:'focuser', P:Pi, A, R:Math.max(18,Math.hypot(st.sensor.w,st.sensor.h)/2+4), len:Math.max(50,st.F*0.05), camera:true});
+    res.labels.push({text:'Capteur', pos:V.add(Pi,V.mul(Ff.v,-Math.max(28,st.sensor.h)))});
+    res.N=efl/st.D; res.plate=efl; res.imgKind='sensor';
+  }
+  res.focusP=P; res.axis=A; res.frame=Ff;
+  return res;
+}
+/* décalage de mise au point optimal (mm, même signe que le réglage) */
+function bestFocus(res, st){
+  const sys=res.pupil; const wls=st.mono?[LAM.e]:[LAM.F,LAM.e,LAM.C];
+  if(st.type==='sct'||st.type==='mak'){
+    // recherche du déplacement du primaire qui ramène le foyer au plan nominal
+    const target=res.foc.P, A=res.foc.A;
+    const g=sh=>{ const b=buildBase(Object.assign({},st,{focus:sh}),false); const f=focusOf(b.surfs.concat(res.acc.surfs),sys,LAM.e,st.field); if(!f) return NaN; return V.dot(V.sub(f.P,target),A); };
+    let a=-3,b=3,ga=g(a),gb=g(b);
+    if(!(ga*gb<0)) return 0;
+    for(let i=0;i<40;i++){ const m=(a+b)/2, gm=g(m); if(ga*gm<=0){b=m;gb=gm;}else{a=m;ga=gm;} }
+    return (a+b)/2;
+  }
+  // tirage : moindres carrés sur les droites de sortie
+  const lines=[]; const R=sys.R;
+  for(const lam of wls) for(let i=0;i<14;i++){ const rho=Math.sqrt((i+0.5)/14)*0.97, an=i*2.39996;
+    const r=starRay(sys,R*rho*Math.cos(an),R*rho*Math.sin(an),st.field);
+    const tr=traceRay(res.optics,r.p,r.d,lam,false);
+    if(tr.status==='out') lines.push(tr); }
+  if(lines.length<4) return 0;
+  const A=res.axis, fr=res.frame, P0=res.focusP;
+  const es=[],ms=[];
+  for(const tr of lines){ const dA=V.dot(tr.d,A); if(dA<=0) continue; const t=V.dot(V.sub(P0,tr.p),A)/dA; const q=V.sub(V.add(tr.p,V.mul(tr.d,t)),P0);
+    es.push([V.dot(q,fr.u),V.dot(q,fr.v)]); ms.push([V.dot(tr.d,fr.u)/dA,V.dot(tr.d,fr.v)/dA]); }
+  const n=es.length; let ex=0,ey=0,mx=0,my=0; for(let i=0;i<n;i++){ex+=es[i][0];ey+=es[i][1];mx+=ms[i][0];my+=ms[i][1];}
+  ex/=n;ey/=n;mx/=n;my/=n; let num=0,den=0;
+  for(let i=0;i<n;i++){ const a=es[i][0]-ex,b=es[i][1]-ey,c=ms[i][0]-mx,d=ms[i][1]-my; num+=a*c+b*d; den+=c*c+d*d; }
+  return den>0?-num/den:0;
+}
+/* Diagnostics sur le système nominal : foyers par couleur, aberration sphérique */
+function diagnostics(res, st){
+  const nomOpt=res.nom.surfs.concat(res.acc.surfs); const sys=res.pupil; const P0=res.foc.P, A=res.foc.A;
+  const foci={};
+  for(const w of WL){ const f=focusOf(nomOpt,sys,w.lam,0); foci[w.key]=f?V.dot(V.sub(f.P,P0),A):NaN; }
+  const par=axisCrossing(nomOpt,sys,P0,A,0.12,LAM.e), mar=axisCrossing(nomOpt,sys,P0,A,0.97,LAM.e);
+  const lam=LAM.e/1000, N=res.efl/st.D;
+  const dof=2*lam*N*N; // ±2λN² (mm)
+  return {foci, lsa:mar-par, dof, N};
+}
+/* échantillonnage de la pupille (tournesol) */
+function sunflower(n){ const pts=[]; const ga=Math.PI*(3-Math.sqrt(5)); for(let i=0;i<n;i++){ const r=Math.sqrt((i+0.5)/n); pts.push([r*Math.cos(i*ga), r*Math.sin(i*ga)]); } return pts; }
+const _sf=new Map();
+function analyzeImage(res, st, nRays){
+  const key=nRays; if(!_sf.has(key)) _sf.set(key,sunflower(nRays));
+  const pts=_sf.get(key); const sys=res.pupil; const R=sys.R;
+  const wls=st.mono?[WL[1]]:WL;
+  const out={}; let sx=0,sy=0,sn=0; let total=0, got=0;
+  for(const w of wls){
+    const arr=new Float32Array(pts.length*2); let k=0;
+    for(const p of pts){
+      const r=starRay(sys,p[0]*R,p[1]*R,st.field); total++;
+      const tr=traceRay(res.surfs,r.p,r.d,w.lam,false);
+      if(tr.status==='image'){ arr[k++]=tr.img.x*1000; arr[k++]=tr.img.y*1000; got++; }
+    }
+    out[w.key]=arr.subarray(0,k);
+    if(w.key==='G'||st.mono){ for(let i=0;i<k;i+=2){sx+=arr[i];sy+=arr[i+1];sn++;} }
+  }
+  const cx=sn?sx/sn:0, cy=sn?sy/sn:0;
+  let s2=0; const g=out.G; for(let i=0;i<g.length;i+=2){ s2+=(g[i]-cx)**2+(g[i+1]-cy)**2; }
+  // RMS polychromatique
+  let s3=0,n3=0; for(const w of wls){ const a=out[w.key]; for(let i=0;i<a.length;i+=2){ s3+=(a[i]-cx)**2+(a[i+1]-cy)**2; n3++; } }
+  return {hits:out, cx, cy, rmsG:g.length?Math.sqrt(s2/(g.length/2)):NaN, rmsPoly:n3?Math.sqrt(s3/n3):NaN, trans:total?got/total:0};
+}
+if(typeof module!=='undefined') module.exports={V,S,traceRay,compose,designRefractor,designCass,diagnostics,analyzeImage,bestFocus,TYPES,WL,LAM,abbe,focusOf,buildBase};
+
+</script>
+<script>
+'use strict';
+/* =====================================================================
+   OPTIK — textes d'aide des boutons « ? »
+   Clé = valeur de l'attribut data-help dans shell.html (ou clé KV_HELP
+   pour les lignes du tableau « Caractéristiques »).
+   t : titre de la bulle · h : texte (HTML autorisé : <b>, <br>, <i>)
+   ===================================================================== */
+const HELP = {
+  /* ----- Panneau gauche ----- */
+  instr:{t:'Instrument', h:"Trois familles. Les <b>lunettes</b> dévient la lumière avec des lentilles. Les <b>télescopes</b> la concentrent avec des miroirs. Les <b>catadioptriques</b> associent des miroirs et une lame ou un ménisque de verre correcteur.<br>Chaque bouton charge une formule avec des dimensions typiques, que vous pouvez ensuite modifier."},
+  D:{t:'Diamètre', h:"Diamètre utile de l'objectif ou du miroir primaire. Il fixe :<br>• la <b>lumière captée</b>, proportionnelle à D² : doubler le diamètre, c'est capter 4 fois plus de lumière ;<br>• la <b>finesse maximale</b> : deux étoiles plus proches que 116 / D secondes d'arc (D en mm) se confondent.<br>Tapez une valeur ou utilisez le curseur."},
+  F:{t:'Focale', h:"Distance à laquelle l'instrument forme l'image d'une étoile. Elle fixe l'<b>échelle de l'image</b> (au foyer, 1″ mesure F / 206 µm) et le <b>grossissement</b> (focale ÷ focale de l'oculaire).<br>Le rapport <b>F/D</b>, affiché en haut de la section, décrit l'ouverture du cône de lumière : F/4 est un cône ouvert, dit « rapide », F/12 un cône fin."},
+  fp:{t:'Ouverture du primaire', h:"Rapport focale / diamètre du seul miroir primaire. Le secondaire convexe multiplie ensuite cette focale par le facteur <b>m</b> affiché dessous.<br>Un primaire plus ouvert raccourcit le tube, mais il demande un secondaire plus grossissant et une collimation plus précise."},
+  K:{t:'Forme du miroir (conique K)', h:"La forme du miroir se décrit par sa conique K : <b>0 = sphère</b>, <b>−1 = parabole</b>, inférieure à −1 = hyperbole, entre −1 et 0 = ellipse.<br>Seule la parabole concentre en un seul point tous les rayons parallèles à l'axe. Essayez K = 0 et le « Zoom foyer » pour voir l'aberration sphérique."},
+  focus:{t:'Mise au point', h:"Déplace le porte-oculaire ou la caméra le long de l'axe. Le <b>repère vert</b> indique le meilleur foyer calculé.<br>− et + avancent d'une profondeur de foyer, −− et ++ de dix. « Intra-focale » : avant le foyer ; « extra-focale » : après.<br>Sur un Schmidt-Cassegrain ou un Maksutov, c'est le <b>miroir primaire</b> qui se déplace, et un dixième de millimètre suffit à déplacer le foyer de plusieurs millimètres."},
+  col:{t:'Collimation', h:"Alignement des miroirs ou de l'objectif. Les vis inclinent les pièces en <b>minutes d'arc</b> (1′ = 1/60 de degré).<br>• Un <b>primaire incliné</b> dévie le faisceau de deux fois son angle : l'étoile au centre du champ prend une forme de comète (coma).<br>• Un <b>secondaire plan incliné</b> ne déforme pas l'image mais la décale.<br>« Dérégler au hasard » propose un exercice : retrouver le réglage en observant l'image de l'étoile."},
+  acc:{t:'Accessoire', h:"Pièce optique placée avant le foyer.<br>• <b>Barlow</b> : lentille divergente qui allonge la focale (×2, ×3).<br>• <b>Réducteur</b> : lentille convergente qui la raccourcit, pour un champ plus large et une image plus lumineuse.<br>• <b>Renvoi coudé</b> : miroir à 45° qui plie le faisceau pour observer confortablement."},
+  out:{t:'Oculaire ou caméra', h:"<b>Oculaire + œil</b> : l'oculaire agit comme une loupe. Il renvoie un faisceau parallèle, que le cristallin refocalise sur la rétine. On raisonne en grossissement, pupille de sortie et champ apparent.<br><b>Caméra</b> : le capteur est placé directement au foyer. On raisonne en focale, taille des pixels et échantillonnage."},
+  fe:{t:'Focale de l’oculaire', h:"Grossissement = focale du télescope ÷ focale de l'oculaire. Plus l'oculaire est court, plus on grossit, mais l'image devient plus sombre et plus sensible à la turbulence."},
+  afov:{t:'Champ apparent', h:"Angle sous lequel l'œil voit le cercle lumineux de l'oculaire, de 42° pour un modèle simple à 100° pour un ultra grand champ.<br>Champ réel sur le ciel = champ apparent ÷ grossissement."},
+  eyep:{t:'Pupille de l’œil', h:"Ouverture de l'iris dans l'obscurité : environ 7 mm pour un œil jeune, 5 mm vers 60 ans.<br>Si la <b>pupille de sortie</b> du télescope est plus large, une partie de la lumière n'entre pas dans l'œil : on le voit dans la vue 3D, où les rayons du bord sont arrêtés."},
+  sensor:{t:'Capteur', h:"Taille des pixels et dimensions de la puce.<br><b>Échantillonnage</b> (secondes d'arc par pixel) = 206 × taille du pixel (µm) ÷ focale (mm). L'idéal : 2 à 3 pixels dans la tache de turbulence."},
+  tilt:{t:'Tilt du capteur', h:"Inclinaison du capteur par rapport au plan où se forme l'image. Défaut fréquent en astrophotographie : les étoiles sont nettes d'un côté de l'image et floues de l'autre.<br>L'effet se voit surtout avec une étoile hors de l'axe."},
+  field:{t:'Position dans le champ', h:"Distance de l'étoile au centre du champ, en degrés. Sur l'axe, beaucoup d'instruments sont parfaits. En s'en écartant apparaissent la <b>coma</b> (étoile en comète), l'<b>astigmatisme</b> et la <b>courbure de champ</b>. Leur importance dépend de la formule."},
+  light:{t:'Lumière', h:"<b>Blanche</b> : quatre couleurs calculées séparément (rouge 656 nm, vert 546 nm, bleu 486 nm, violet 436 nm), pour voir l'aberration chromatique.<br><b>Verte seule</b> : une seule longueur d'onde. L'image est plus fine et le calcul plus rapide."},
+  target:{t:'Cible', h:"Étoile simple, ou étoile double pour tester le <b>pouvoir séparateur</b> : deux étoiles plus proches que la limite de Dawes (116 / D secondes d'arc) se confondent en une seule tache."},
+  sep:{t:'Écart de l’étoile double', h:"Distance angulaire entre les deux étoiles, en secondes d'arc. Comparez-la au pouvoir séparateur affiché dans « Caractéristiques »."},
+  seeing:{t:'Turbulence', h:"L'air agité par la chaleur étale l'image de l'étoile. On mesure ce « seeing » par la taille de l'étoile obtenue, en secondes d'arc.<br>0 = instrument dans l'espace, 1″ = excellente nuit, 2 à 3″ = nuit ordinaire. Au-delà d'environ 150 mm de diamètre, c'est souvent la turbulence qui limite la netteté, pas l'instrument."},
+  rays:{t:'Nombre de rayons', h:"Nombre de rayons tracés dans la vue 3D, pour chaque couleur. Davantage de rayons fait mieux voir les <b>caustiques</b>, les zones où les rayons se croisent, mais la vue devient chargée.<br>Sans effet sur l'image de l'étoile, qui utilise toujours environ 1 500 rayons par couleur."},
+  fan:{t:'Plan de coupe ou faisceau 3D', h:"<b>Plan de coupe</b> : rayons dans le plan vertical qui contient l'axe, comme sur un schéma de manuel.<br><b>Faisceau 3D</b> : rayons répartis sur toute l'ouverture, pour voir le cône de lumière en volume. Tournez la vue pour en profiter."},
+  photons:{t:'Photons animés', h:"Points qui avancent le long des rayons. Ils progressent à chemin optique constant : dans le verre, ils <b>ralentissent</b>, à la vitesse c / n, où n est l'indice du verre."},
+  fronts:{t:'Fronts d’onde', h:"Relie les photons partis au même instant : ce sont les fronts d'onde. Plans à l'entrée, ils se courbent en calottes sphériques centrées sur le foyer. C'est la vision « ondulatoire » de la focalisation.<br>Disponible avec l'éventail « Plan de coupe »."},
+  cut:{t:'Tube en coupe', h:"Coupe tout l'instrument en deux, comme sur un dessin technique, pour voir l'intérieur. Les faces coupées des lentilles et des miroirs sont colorées."},
+  ext:{t:'Prolonger après le foyer', h:"Prolonge légèrement les rayons au-delà du capteur. On voit ainsi où ils se croisent quand la mise au point n'est pas faite."},
+  rgb:{t:'Rayons colorés', h:"Un rayon par couleur (rouge, vert, bleu). Sur un miroir, les trois se superposent et paraissent blancs. Sur une lentille, ils se séparent. Décoché : rayons blancs."},
+  speed:{t:'Vitesse de l’animation', h:"Règle la vitesse des photons à l'écran, sans aucun effet sur les calculs."},
+  /* ----- Vue 3D ----- */
+  views:{t:'Points de vue', h:"<b>Coupe</b> : de côté. <b>3/4</b> : en perspective. <b>Face</b> : depuis le ciel, on voit le secondaire et l'araignée. <b>Zoom foyer</b> : convergence des rayons. <b>Zoom sortie</b> : oculaire et œil, ou capteur. <b>Ortho</b> : sans perspective, comme un schéma.<br>À la souris : glisser pour tourner, clic droit ou Maj pour déplacer, molette pour zoomer. Touches 1 à 5."},
+  sweep:{t:'Balayage', h:"Fait varier automatiquement un réglage en va-et-vient, pour montrer son effet en classe : mise au point, diamètre, turbulence… Touche Espace pour lancer ou arrêter."},
+  /* ----- Panneau droit ----- */
+  img:{t:'Image de l’étoile', h:"Une seule étoile, très agrandie, telle qu'elle arrive sur le capteur ou la rétine. Elle combine les impacts réels des rayons, la <b>diffraction</b> par l'ouverture (obstruction et araignée comprises) et la <b>turbulence</b>.<br>• <b>Cercle vert pointillé</b> : bord du disque d'Airy, la plus petite tache possible.<br>• <b>Strehl</b> : intensité du pic comparée à un instrument parfait (1 = parfait, au-dessus de 0,8 aucun défaut visible).<br>• <b>Croix laiton</b> : axe optique, affiché si l'étoile en est décalée.<br>• <b>Quadrillage</b> : pixels du capteur, en mode caméra.<br>Zoom avec +, − et la molette.<br><b>Image simulée</b> : ce que l'on verrait réellement. <b>Points d'impact</b> : un point par rayon, sans diffraction. C'est le « spot diagram » des opticiens, idéal pour reconnaître une aberration : comète pour la coma, halo pour l'aberration sphérique, couleurs séparées pour le chromatisme."},
+  gam:{t:'Anneaux', h:"Renforce les faibles lumières pour rendre visibles les anneaux de diffraction et les aigrettes, qui sont en réalité peu lumineux. Décochez pour voir les intensités réelles."},
+  sky:{t:'Vue au télescope', h:"Le ciel à l'échelle réelle, avec la netteté calculée : diffraction, aberrations et turbulence.<br>• <b>À l'oculaire</b> : le cercle du champ de l'oculaire. La luminosité baisse quand la pupille de sortie diminue.<br>• <b>À la caméra</b> : le rectangle du capteur, avec les vrais pixels quand ils sont visibles.<br>Tailles : Jupiter ≈ 44″, Saturne ≈ 42″ avec ses anneaux, la Lune ≈ 31′."},
+  data:{t:'Caractéristiques', h:"Valeurs calculées pour les réglages actuels. La focale et les défauts viennent du lancer de rayons, pas de formules approchées. Les « ? » de chaque ligne expliquent chaque grandeur."},
+  notes:{t:'Ce qui se passe', h:"Explications rédigées à partir de l'état réel de l'instrument : mise au point, couleurs, aberrations, collimation, grossissement, turbulence. Pastille verte : tout va bien. Orange : défaut visible. Rouge : défaut important."},
+  /* ----- Lignes du tableau « Caractéristiques » ----- */
+  kvD:{t:'Diamètre utile', h:"Diamètre de l'ouverture qui reçoit la lumière."},
+  kvF:{t:'Focale résultante', h:"Focale effective de tout l'instrument, accessoire compris, calculée par un rayon tracé très près de l'axe. Avec une Barlow ×2, elle double."},
+  kvN:{t:'Rapport F/D', h:"Focale ÷ diamètre. Pour la photographie, il fixe le temps de pose : un F/4 demande environ 4 fois moins de temps qu'un F/8 pour un objet étendu."},
+  kvObs:{t:'Obstruction centrale', h:"Part du diamètre masquée par le miroir secondaire. En surface, elle retire peu de lumière (30 % du diamètre = 9 % de la lumière). Mais elle renforce les anneaux de diffraction et baisse le contraste des détails fins."},
+  kvLight:{t:'Lumière captée', h:"Rapport entre la surface de l'instrument et celle d'une pupille d'œil de 7 mm, obstruction déduite. C'est le gain de luminosité pour les étoiles."},
+  kvDawes:{t:'Pouvoir séparateur (Dawes)', h:"Écart minimal entre deux étoiles de même éclat pour les voir séparées : 116 / D secondes d'arc (D en mm). Limite pratique déterminée par des observateurs, légèrement inférieure au critère de Rayleigh (138 / D)."},
+  kvMag:{t:'Magnitude limite', h:"Éclat de l'étoile la plus faible visible à l'oculaire sous un ciel noir, estimé par 2,1 + 5 log₁₀(D). Plus le nombre est grand, plus on voit des étoiles faibles. L'œil nu atteint environ 6."},
+  kvScale:{t:'Échelle au foyer', h:"Taille qu'occupe une seconde d'arc sur le capteur : focale ÷ 206 265, exprimée en µm."},
+  kvDof:{t:'Profondeur de foyer', h:"Tolérance de mise au point : ±2 λ (F/D)². Elle est minuscule pour un instrument rapide (±18 µm à F/4) et plus confortable à F/12 (±160 µm)."},
+  kvG:{t:'Grossissement', h:"Focale du télescope ÷ focale de l'oculaire."},
+  kvTrue:{t:'Champ réel', h:"Portion du ciel visible dans l'oculaire : champ apparent ÷ grossissement. La pleine Lune mesure environ 31′."},
+  kvEp:{t:'Pupille de sortie', h:"Diamètre du faisceau qui sort de l'oculaire : D ÷ grossissement. Au-delà de la pupille de l'œil, de la lumière est perdue. En dessous de 0,5 mm, l'image devient sombre et floue."},
+  kvGu:{t:'Grossissement utile', h:"Plage raisonnable. Le minimum, D / 7, donne une pupille de sortie de 7 mm. Le maximum, environ 2 × D (en mm), marque la limite au-delà de laquelle on agrandit le flou sans voir plus de détails."},
+  kvGr:{t:'Grossissement résolvant', h:"Grossissement à partir duquel l'œil perçoit tous les détails que l'instrument sépare, environ 1,2 × D. C'est souvent le meilleur grossissement pour les étoiles doubles."},
+  kvSamp:{t:'Échantillonnage', h:"Portion du ciel couverte par un pixel : 206 × taille du pixel (µm) ÷ focale (mm), en secondes d'arc."},
+  kvFov:{t:'Champ du capteur', h:"Portion du ciel couverte par tout le capteur. La pleine Lune mesure environ 31′."},
+  kvPix:{t:'Pixel idéal', h:"Taille de pixel qui place 2 à 3 pixels dans la tache de turbulence : assez pour des étoiles rondes, sans diluer le signal."},
+  kvAiry:{t:'Disque d’Airy', h:"Diamètre de la tache de diffraction au foyer, 2,44 λ F/D, et nombre de pixels qu'il couvre. En planétaire, on vise 2 à 3 pixels, souvent avec une Barlow."},
+  kvRB:{t:'Écart des foyers rouge–bleu', h:"Distance le long de l'axe entre le foyer du rouge (656 nm) et celui du bleu (486 nm). Nulle pour un miroir. C'est ce qu'un achromat corrige en premier."},
+  kvVG:{t:'Écart des foyers violet–vert', h:"Distance entre le foyer du violet (436 nm) et celui du vert (546 nm). C'est le « spectre secondaire », responsable du halo violet des achromats, et ce que corrigent les verres ED et les apochromats."},
+  kvSA:{t:'Aberration sphérique longitudinale', h:"Écart de foyer entre les rayons qui passent près du centre et ceux qui passent au bord. Au-delà de la profondeur de foyer, aucune mise au point ne donne une étoile nette."}
+};
+/* Correspondance libellé du tableau → clé d'aide (préfixe du libellé) */
+const KV_HELP = [
+  ['Diamètre utile','kvD'],['Focale résultante','kvF'],['Rapport F/D','kvN'],['Obstruction','kvObs'],['Lumière captée','kvLight'],
+  ['Pouvoir séparateur','kvDawes'],['Magnitude limite','kvMag'],['Échelle au foyer','kvScale'],['Profondeur de foyer','kvDof'],
+  ['Grossissement utile','kvGu'],['Grossissement résolvant','kvGr'],['Grossissement','kvG'],['Champ réel','kvTrue'],['Pupille de sortie','kvEp'],
+  ['Échantillonnage','kvSamp'],['Champ du capteur','kvFov'],['Pixel idéal','kvPix'],['Disque d','kvAiry'],
+  ['Écart foyers rouge','kvRB'],['Écart foyers violet','kvVG'],['Aberration sphérique','kvSA']
+];
+
+</script>
+<script>
+'use strict';
+(function(){
+const $=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const fr=(x,d=1)=>{ if(x===null||!isFinite(x)) return '—'; return x.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}); };
+const sgn=(x,d)=> (x>0?'+':x<0?'−':'')+fr(Math.abs(x),d);
+const nice=x=>{ const p=Math.pow(10,Math.floor(Math.log10(x))); const m=x/p; return (m<1.5?1:m<3.5?2:m<7.5?5:10)*p; };
+
+/* ================= Données ================= */
+const SENSORS={
+  imx571:{name:'APS-C · Sony IMX571 · 3,76 µm', px:3.76, w:23.5, h:15.7},
+  imx455:{name:'Plein format · IMX455 · 3,76 µm', px:3.76, w:36, h:24},
+  imx585:{name:'1/1,2″ · IMX585 · 2,9 µm', px:2.9, w:11.2, h:6.3},
+  imx462:{name:'Planétaire · IMX462 · 2,9 µm', px:2.9, w:5.6, h:3.2}
+};
+const FES=[40,32,25,17,12,9,6,4,2.5];
+const DEF={type:'newton', D:200, F:1000, fp:3, K:-1, tPx:0,tPy:0,tSx:0,tSy:0, focus:0, field:0, acc:'none',
+  out:'eye', fe:10, afov:52, eyePupil:7, sensor:'imx571', sT:0, mono:false, target:'single', sep:1.5, seeing:0.5,
+  nRays:11, fan:'m', photons:true, fronts:false, cut:true, labels:true, extend:true, rgb:true, speed:1,
+  sky:'moon', imgMode:'psf', gam:true, W:60, ortho:false};
+let S=Object.assign({},DEF);
+
+const ABOUT={
+  single:"Une seule lentille convergente, comme celles de <em>Galilée (1609)</em> et de Kepler. Le verre dévie davantage le bleu que le rouge : chaque couleur a son propre foyer. C'est l'aberration chromatique, énorme ici. Pour la rendre supportable, les lunettes du XVIIᵉ siècle atteignaient F/D = 50 et plusieurs dizaines de mètres de long.",
+  achro:"Doublet de <em>Fraunhofer</em> : une lentille convergente en verre crown (BK7) suivie d'une divergente en flint (F2). Leurs dispersions différentes ramènent le rouge et le bleu au même foyer. Le vert et surtout le violet restent décalés : c'est le <em>spectre secondaire</em>, visible en halo violet autour de la Lune, de Jupiter ou de Vénus.",
+  ed:"Doublet utilisant un verre à très faible dispersion (<em>ED</em>, type FK51 / FPL-51). Le spectre secondaire est divisé par deux ou trois par rapport à l'achromat : le halo violet devient discret. Un bon compromis prix/qualité pour l'astrophotographie.",
+  apo:"Triplet <em>apochromatique</em> avec un élément en fluorite ou FPL-53. Avec trois verres, on peut réunir trois couleurs au même foyer et réduire fortement le spectre secondaire : l'image est pratiquement exempte de couleurs parasites.",
+  newton:"<em>Isaac Newton, 1668.</em> Un miroir primaire parabolique concentre la lumière, un petit miroir plan incliné à 45° la renvoie sur le côté du tube. Un miroir réfléchit toutes les couleurs de la même façon : aucune aberration chromatique. La contrepartie est la <em>coma</em> hors de l'axe, d'autant plus forte que le F/D est petit, et la collimation régulière.",
+  cass:"<em>Laurent Cassegrain, 1672.</em> Primaire parabolique percé en son centre, secondaire convexe hyperbolique qui multiplie la focale. On obtient une grande focale dans un tube court, idéal pour les planètes. Le champ corrigé reste petit (coma comparable à un Newton de même F/D).",
+  rc:"<em>George Ritchey et Henri Chrétien, 1910.</em> Deux miroirs hyperboliques calculés pour supprimer à la fois l'aberration sphérique et la coma. Le champ net est large : c'est la formule du télescope spatial Hubble, du VLT et de la plupart des grands observatoires.",
+  dk:"<em>Horace Dall et Allan Kirkham, 1930.</em> Primaire elliptique et secondaire sphérique : facile à fabriquer et à tester, excellent au centre du champ, mais avec une forte coma dès qu'on s'en écarte. Formule prisée pour l'observation planétaire.",
+  sct:"Les deux miroirs sont <em>sphériques</em>, donc faciles à produire en série. L'aberration sphérique est corrigée par une lame de verre au profil asphérique très subtil placée à l'entrée (<em>Bernhard Schmidt, 1930</em>). La mise au point se fait en déplaçant le miroir primaire : une fraction de millimètre suffit.",
+  mak:"<em>Dmitri Maksoutov, 1941.</em> Un ménisque de verre épais, aux deux faces sphériques, corrige l'aberration sphérique du primaire sphérique en restant presque achromatique. Image très contrastée, instrument robuste qui ne se décollime presque jamais, mais long à se mettre en température."
+};
+const ICON={
+  refr:n=>`<svg viewBox="0 0 38 18" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4.5" width="28" height="9" rx="1"/>${[0,1,2].slice(0,n).map(i=>`<ellipse cx="${5.2+i*2.2}" cy="9" rx="1.1" ry="4.3" fill="currentColor" fill-opacity=".35"/>`).join('')}<rect x="31" y="7.5" width="5" height="3"/></svg>`,
+  newton:`<svg viewBox="0 0 38 18" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4.5" width="30" height="10" rx="1"/><path d="M31 5.2q-1.8 4.3 0 8.6" stroke-width="1.8"/><path d="M8 8.5l2 2"/><rect x="7.5" y="1" width="3" height="3.5"/></svg>`,
+  cass:`<svg viewBox="0 0 38 18" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4.5" width="27" height="9" rx="1"/><path d="M28.5 5.2q-1.2 1.8-1.5 2.8M27 10q.3 1 1.5 2.8" stroke-width="1.8"/><path d="M6 7.5q.6 1.5 0 3" stroke-width="1.8"/><rect x="30" y="7.5" width="5" height="3"/></svg>`,
+  sct:`<svg viewBox="0 0 38 18" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4.5" width="27" height="9" rx="1"/><path d="M3.5 4.5v9" stroke-width="1.8" stroke-dasharray="1.2 .8"/><path d="M28.5 5.2q-1.2 1.8-1.5 2.8M27 10q.3 1 1.5 2.8" stroke-width="1.8"/><path d="M6 7.5q.6 1.5 0 3" stroke-width="1.8"/><rect x="30" y="7.5" width="5" height="3"/></svg>`,
+  mak:`<svg viewBox="0 0 38 18" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4.5" width="27" height="9" rx="1"/><path d="M4.4 4.6q-1.6 4.4 0 8.8M6 4.6q-1.6 4.4 0 8.8" stroke-width="1.1"/><path d="M28.5 5.2q-1.2 1.8-1.5 2.8M27 10q.3 1 1.5 2.8" stroke-width="1.8"/><rect x="30" y="7.5" width="5" height="3"/></svg>`
+};
+const FAMS=[
+  {t:'Lunettes (réfracteurs)', items:[['single',ICON.refr(1)],['achro',ICON.refr(2)],['ed',ICON.refr(2)],['apo',ICON.refr(3)]]},
+  {t:'Télescopes (réflecteurs)', items:[['newton',ICON.newton],['cass',ICON.cass],['rc',ICON.cass],['dk',ICON.cass]]},
+  {t:'Catadioptriques', items:[['sct',ICON.sct],['mak',ICON.mak]]}
+];
+function ranges(){
+  const t=S.type, fam=TYPES[t].family; let Dr,Nr,fpr=null;
+  if(fam==='refr'){ Dr=[30,200]; Nr=t==='single'?[6,30]:[3.3,16]; }
+  else if(fam==='newton'){ Dr=[76,500]; Nr=[2.8,12]; }
+  else { Dr=t==='mak'?[90,250]:[100,400];
+    Nr={cass:[10,24],rc:[6,12],dk:[10,20],sct:[6,15],mak:[10,16]}[t];
+    fpr={cass:[2.5,4.5],rc:[2.5,4],dk:[3,4.5],sct:[1.8,2.8],mak:[2.5,3.8]}[t]; }
+  return {Dr,Nr,fpr};
+}
+function constrain(){
+  const r=ranges();
+  S.D=clamp(S.D,r.Dr[0],r.Dr[1]);
+  S.F=clamp(S.F,S.D*r.Nr[0],S.D*r.Nr[1]);
+  if(r.fpr){ S.fp=clamp(S.fp,r.fpr[0],r.fpr[1]); if(S.F/S.D/S.fp<1.8) S.fp=Math.max(r.fpr[0],S.F/S.D/1.8); }
+}
+const primaryFocus=()=>S.type==='sct'||S.type==='mak';
+function est(quick){
+  return {type:S.type,D:S.D,F:S.F,fp:S.fp,K:S.K,tPx:S.tPx,tPy:S.tPy,tSx:S.tSx,tSy:S.tSy,focus:S.focus,field:S.field,
+    acc:S.acc,out:S.out==='eye'?'eye':'cam',fe:S.fe,afov:S.afov,eyePupil:S.eyePupil,sensor:SENSORS[S.sensor],sTx:S.sT,sTy:0,mono:S.mono,quick:!!quick};
+}
+
+/* ================= Three.js : scène ================= */
+const canvas=$('gl'), stage=$('stage');
+const renderer=new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.localClippingEnabled=true;
+renderer.setClearColor(0x070a10,1);
+const scene=new THREE.Scene();
+const persp=new THREE.PerspectiveCamera(38,1,0.5,2e5);
+const ortho=new THREE.OrthographicCamera(-1,1,1,-1,-1e5,1e5);
+scene.add(new THREE.HemisphereLight(0xaab8d0,0x1a1410,0.75));
+const dl=new THREE.DirectionalLight(0xffffff,0.9); dl.position.set(0.6,1,0.35); scene.add(dl);
+const dl2=new THREE.DirectionalLight(0x88a8ff,0.35); dl2.position.set(-0.5,-0.3,-1); scene.add(dl2);
+// fond étoilé
+{ const g=new THREE.BufferGeometry(), n=1600, p=new Float32Array(n*3), c=new Float32Array(n*3); let s=7;
+  const rnd=()=>{s=(s*16807)%2147483647; return s/2147483647;};
+  for(let i=0;i<n;i++){ const u=rnd()*2-1, th=rnd()*Math.PI*2, r=6e4, q=Math.sqrt(1-u*u);
+    p[i*3]=r*q*Math.cos(th); p[i*3+1]=r*u; p[i*3+2]=r*q*Math.sin(th); const b=0.25+0.75*Math.pow(rnd(),3); const w=rnd();
+    c[i*3]=b*(0.8+0.2*w); c[i*3+1]=b*0.85; c[i*3+2]=b*(1-0.2*w); }
+  g.setAttribute('position',new THREE.BufferAttribute(p,3)); g.setAttribute('color',new THREE.BufferAttribute(c,3));
+  scene.add(new THREE.Points(g,new THREE.PointsMaterial({size:1.6,sizeAttenuation:false,vertexColors:true,depthWrite:false}))); }
+const gOpt=new THREE.Group(), gRay=new THREE.Group(), gPh=new THREE.Group(); scene.add(gOpt,gRay,gPh);
+const clip=new THREE.Plane(new THREE.Vector3(1,0,0),0);
+const MAT={
+  tube:new THREE.MeshStandardMaterial({color:0x202a39,roughness:0.75,metalness:0.25,side:THREE.DoubleSide,transparent:true,opacity:0.92}),
+  tubeIn:new THREE.MeshStandardMaterial({color:0x0c0f14,roughness:1,metalness:0,side:THREE.BackSide}),
+  brass:new THREE.MeshStandardMaterial({color:0xc39445,roughness:0.35,metalness:0.7}),
+  brassT:new THREE.MeshStandardMaterial({color:0xc39445,roughness:0.4,metalness:0.6,transparent:true,opacity:0.22,side:THREE.DoubleSide,depthWrite:false}),
+  black:new THREE.MeshStandardMaterial({color:0x14181f,roughness:0.6,metalness:0.3,transparent:true,opacity:0.5,side:THREE.DoubleSide,depthWrite:false}),
+  mirror:new THREE.MeshPhongMaterial({color:0xaeb9c8,specular:0xffffff,shininess:140,side:THREE.DoubleSide}),
+  mirrorBody:new THREE.MeshPhongMaterial({color:0x6d7888,specular:0x333333,shininess:30,transparent:true,opacity:0.8,side:THREE.DoubleSide}),
+  vane:new THREE.MeshStandardMaterial({color:0x2c3444,roughness:0.6,metalness:0.4}),
+  chip:new THREE.MeshPhongMaterial({color:0x2a2156,specular:0x9988ff,shininess:120}),
+  eye:new THREE.MeshPhongMaterial({color:0xf2efe8,transparent:true,opacity:0.16,depthWrite:false,side:THREE.DoubleSide}),
+  iris:new THREE.MeshPhongMaterial({color:0x5a7d6a,side:THREE.DoubleSide}),
+  line:new THREE.LineBasicMaterial({color:0x3a4a62,transparent:true,opacity:0.8}),
+  axis:new THREE.LineDashedMaterial({color:0x56657d,dashSize:8,gapSize:6,transparent:true,opacity:0.55}),
+  rays:new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:0.9,blending:THREE.AdditiveBlending,depthWrite:false}),
+  fronts:new THREE.LineBasicMaterial({color:0xe8fff0,transparent:true,opacity:0.75,blending:THREE.AdditiveBlending,depthWrite:false})
+};
+const glassMats=new Map();
+function glassMat(tint){ if(!glassMats.has(tint)) glassMats.set(tint,{
+  m:new THREE.MeshPhongMaterial({color:tint,specular:0xffffff,shininess:100,transparent:true,opacity:0.2,side:THREE.DoubleSide,depthWrite:false}),
+  l:new THREE.LineBasicMaterial({color:tint,transparent:true,opacity:0.95}),
+  cap:new THREE.MeshBasicMaterial({color:tint,transparent:true,opacity:0.3,side:THREE.DoubleSide,depthWrite:false})});
+  const g=glassMats.get(tint); if(g.m.clippingPlanes!==curClip()){ g.m.clippingPlanes=curClip(); g.m.needsUpdate=true; } return g; }
+const capMirror=new THREE.MeshBasicMaterial({color:0x5d6878,transparent:true,opacity:0.85,side:THREE.DoubleSide,depthWrite:false});
+const lineMirror=new THREE.LineBasicMaterial({color:0xe6edf7}), lineBody=new THREE.LineBasicMaterial({color:0x8793a5,transparent:true,opacity:0.8});
+// Coupe : tout l'instrument est coupé par le même plan x = 0 ; les faces de coupe (gSec) sont dans ce plan.
+const _noClip=[], _clip=[clip];
+const curClip=()=>S.cut?_clip:_noClip;
+function setClip(){ const cp=curClip();
+  const mats=[MAT.tube,MAT.tubeIn,MAT.brass,MAT.brassT,MAT.black,MAT.mirror,MAT.mirrorBody,MAT.vane,MAT.chip,MAT.eye,MAT.iris];
+  for(const g of glassMats.values()) mats.push(g.m);
+  for(const m of mats){ if(m.clippingPlanes!==cp){ m.clippingPlanes=cp; m.needsUpdate=true; } } }
+let gSec=null;
+const v3=a=>new THREE.Vector3(a[0],a[1],a[2]);
+const Y=new THREE.Vector3(0,1,0);
+function orient(obj,pos,w){ obj.position.copy(v3(pos)); obj.quaternion.setFromUnitVectors(Y,v3(w).normalize()); return obj; }
+function polyline(pts,mat,closed){ const g=new THREE.BufferGeometry().setFromPoints(pts.map(v3)); return closed?new THREE.LineLoop(g,mat):new THREE.Line(g,mat); }
+function clearGroup(g){ for(let i=g.children.length-1;i>=0;i--){ const o=g.children[i]; o.traverse(c=>{ if(c.geometry) c.geometry.dispose(); }); g.remove(o); } }
+// direction de coupe : dans le plan x = 0 et perpendiculaire à l'axe w de la pièce
+function secDir(w, fallback){ const d=V.cross([1,0,0],w); return V.len(d)<1e-6?fallback:V.nrm(d); }
+function profileSection(s, rMin, rMax, zfun){ // points monde dans le plan de coupe
+  const out=[]; const n=40; const sd=secDir(s.F.w,s.F.v);
+  for(let i=0;i<=n;i++){ const r=-rMax+2*rMax*i/n; if(Math.abs(r)<rMin) continue; const z=zfun(Math.abs(r));
+    out.push(V.add(V.add(s.pos,V.mul(sd,r)),V.mul(s.F.w,z))); }
+  return out;
+}
+function addCap(pts, origin, w, mat){ // polygone plan (points monde du plan de coupe) rempli
+  const sd=secDir(w,makeFrame(w).v);
+  const sh=new THREE.Shape(pts.map(q=>{ const d=V.sub(q,origin); return new THREE.Vector2(V.dot(d,sd),V.dot(d,w)); }));
+  const m=new THREE.Mesh(new THREE.ShapeGeometry(sh),mat);
+  m.applyMatrix4(new THREE.Matrix4().makeBasis(v3(sd),v3(w),v3(V.cross(sd,w)))); m.position.copy(v3(origin)); gSec.add(m);
+}
+function sagSafe(s,r){ const z=sagAt(s,r); return z===null?(s.c?1/s.c:0):z; }
+function addLens(p){
+  const tintG=p.glasses.map(g=>GLASS[g]?GLASS[g].tint:0xffffff);
+  for(let i=0,gi=0;i<p.surfs.length-1;i++){
+    const g=p.glasses[i]; if(g==='air') continue;
+    const sA=p.surfs[i], sB=p.surfs[i+1], R=p.R, zB=V.dot(V.sub(sB.pos,sA.pos),sA.F.w);
+    const pts=[]; const n=36;
+    for(let k=0;k<=n;k++){ const r=R*k/n; pts.push(new THREE.Vector2(Math.max(r,1e-3),sagSafe(sA,r))); }
+    for(let k=n;k>=0;k--){ const r=R*k/n; pts.push(new THREE.Vector2(Math.max(r,1e-3),zB+sagSafe(sB,r))); }
+    const gm=glassMat(tintG[i]);
+    const mesh=new THREE.Mesh(new THREE.LatheGeometry(pts,64),gm.m); orient(mesh,sA.pos,sA.F.w); gOpt.add(mesh);
+    const front=profileSection(sA,0,R,r=>sagSafe(sA,r)), back=profileSection(sA,0,R,r=>zB+sagSafe(sB,r)).reverse();
+    const sec=front.concat(back); gSec.add(polyline(sec,gm.l,true)); addCap(sec,sA.pos,sA.F.w,gm.cap);
+  }
+  if(p.barrel){ const s0=p.surfs[0], sN=p.surfs[p.surfs.length-1]; const L=V.dot(V.sub(sN.pos,s0.pos),s0.F.w)+14;
+    const g=new THREE.CylinderGeometry(p.R+2,p.R+2,L,40,1,true); g.translate(0,L/2-7,0);
+    gOpt.add(orient(new THREE.Mesh(g,MAT.brassT),s0.pos,s0.F.w)); }
+}
+function addMirror(p){
+  const s=p.s, R=p.R, h=Math.max(p.hole||0,0.001), t=p.thick; const n=40;
+  const zE=sagSafe(s,R), zBack=(t>0?Math.max(zE,0):Math.min(zE,0))+t;
+  const pts=[];
+  for(let k=0;k<=n;k++){ const r=h+(R-h)*k/n; pts.push(new THREE.Vector2(r,sagSafe(s,r))); }
+  pts.push(new THREE.Vector2(R,zBack)); pts.push(new THREE.Vector2(h,zBack)); pts.push(new THREE.Vector2(h,sagSafe(s,h)));
+  const body=new THREE.Mesh(new THREE.LatheGeometry(pts,72),MAT.mirrorBody); orient(body,s.pos,s.F.w); gOpt.add(body);
+  // face réfléchissante
+  const fpts=[]; for(let k=0;k<=n;k++){ const r=h+(R-h)*k/n; fpts.push(new THREE.Vector2(r,sagSafe(s,r)-Math.sign(t)*0.15)); }
+  const face=new THREE.Mesh(new THREE.LatheGeometry(fpts,72),MAT.mirror); orient(face,s.pos,s.F.w); gOpt.add(face);
+  // coupe : une demi-section de chaque côté du trou central
+  const sd=secDir(s.F.w,s.F.v), P=(r,z)=>V.add(V.add(s.pos,V.mul(sd,r)),V.mul(s.F.w,z));
+  for(const sg of [1,-1]){
+    const face=[]; for(let k=0;k<=n;k++){ const r=h+(R-h)*k/n; face.push(P(sg*r,sagSafe(s,r))); }
+    const poly=face.concat([P(sg*R,zBack),P(sg*h,zBack)]);
+    addCap(poly,s.pos,s.F.w,capMirror); gSec.add(polyline(poly,lineBody,true)); gSec.add(polyline(face,lineMirror));
+  }
+}
+function addDiag(p){
+  const s=p.s, a=p.a, t=p.thick;
+  const g=new THREE.CylinderGeometry(1,1,t,56); g.translate(0,-t/2,0); g.scale(a,1,a*Math.SQRT2);
+  const m=new THREE.Mesh(g,[MAT.mirrorBody,MAT.mirror,MAT.mirrorBody]);
+  const M=new THREE.Matrix4().makeBasis(v3(s.F.u),v3(s.F.w),v3(V.cross(s.F.u,s.F.w)));
+  m.applyMatrix4(M); m.position.copy(v3(s.pos)); gOpt.add(m);
+  const e=[]; for(let k=0;k<=48;k++){ const an=k/48*Math.PI*2; e.push(V.add(s.pos,V.add(V.mul(s.F.u,a*Math.cos(an)),V.mul(s.F.v,a*Math.SQRT2*Math.sin(an))))); }
+  gOpt.add(polyline(e,new THREE.LineBasicMaterial({color:0xe6edf7}),true));
+  if(p.boxed){ const bx=new THREE.Mesh(new THREE.BoxGeometry(a*2.6,a*2.6,a*2.6),MAT.black); bx.position.copy(v3(s.pos)); gOpt.add(bx); }
+}
+function addSpider(p){
+  for(const an of p.angles){ const L=p.R-p.block; const b=new THREE.Mesh(new THREE.BoxGeometry(p.w,L,2.5),MAT.vane);
+    b.position.set(Math.cos(an)*(p.block+L/2),Math.sin(an)*(p.block+L/2),p.z); b.rotation.z=an-Math.PI/2; gOpt.add(b); }
+  const hub=new THREE.Mesh(new THREE.CylinderGeometry(p.block*0.96,p.block*0.96,Math.max(4,p.block*0.4),40),MAT.vane);
+  hub.rotation.x=Math.PI/2; hub.position.set(0,0,p.z-Math.max(4,p.block*0.4)/2); gOpt.add(hub);
+}
+function addTube(p){
+  const len=p.z1-p.z0, R=p.R;
+  const g=new THREE.CylinderGeometry(R,R,len,96,1,true); g.rotateX(Math.PI/2); g.translate(0,0,(p.z0+p.z1)/2);
+  gOpt.add(new THREE.Mesh(g,MAT.tube));
+  const gi=new THREE.CylinderGeometry(R-0.8,R-0.8,len,96,1,true); gi.rotateX(Math.PI/2); gi.translate(0,0,(p.z0+p.z1)/2);
+  gOpt.add(new THREE.Mesh(gi,MAT.tubeIn));
+  for(const z of [p.z0,p.z1].concat(p.cell||[])){ const t=new THREE.Mesh(new THREE.TorusGeometry(R+0.6,1.6,8,96),MAT.brass); t.position.z=z; gOpt.add(t); }
+  if(p.back){ const g2=new THREE.RingGeometry(p.hole+2,R,80); g2.translate(0,0,0); const m=new THREE.Mesh(g2,MAT.tube); m.position.z=p.z1; gOpt.add(m); }
+  const ax=polyline([[0,0,p.z0-80],[0,0,p.z1+40]],MAT.axis); ax.computeLineDistances(); gOpt.add(ax);
+}
+function addFocuser(p, tube){
+  // longueur : du tube jusqu'au foyer
+  let len=p.len;
+  if(tube){ if(Math.abs(p.A[2])>0.9) len=Math.max(20,p.P[2]-tube.z1+6); else len=Math.max(20,Math.abs(V.dot(p.P,p.A))-tube.R+6); }
+  const g=new THREE.CylinderGeometry(p.R,p.R,len,48,1,true); g.translate(0,-len/2+3,0);
+  gOpt.add(orient(new THREE.Mesh(g,MAT.brassT),p.P,p.A));
+  for(const off of [-len+3,3]){ const c=[]; const F=makeFrame(p.A); for(let k=0;k<=48;k++){ const a=k/48*Math.PI*2; c.push(V.add(V.add(p.P,V.mul(p.A,off)),V.add(V.mul(F.u,p.R*Math.cos(a)),V.mul(F.v,p.R*Math.sin(a))))); }
+    gOpt.add(polyline(c,new THREE.LineBasicMaterial({color:0xc39445,transparent:true,opacity:0.7}),true)); }
+}
+function addEyepiece(p){
+  const L=p.fe*1.25+10, R=p.R;
+  const g=new THREE.CylinderGeometry(R,R,L,40,1,true); g.translate(0,-p.fe+L/2,0);
+  gOpt.add(orient(new THREE.Mesh(g,MAT.black),p.pos,p.A));
+  const t=Math.max(1.2,R*0.35), pts=[]; for(let k=0;k<=20;k++){ const r=R*0.92*k/20; pts.push(new THREE.Vector2(Math.max(r,1e-3),-t/2*(1-(r/R/0.92)**2))); }
+  for(let k=20;k>=0;k--){ const r=R*0.92*k/20; pts.push(new THREE.Vector2(Math.max(r,1e-3),t/2*(1-(r/R/0.92)**2))); }
+  const gm=glassMat(0xbfe6ff); gOpt.add(orient(new THREE.Mesh(new THREE.LatheGeometry(pts,48),gm.m),p.pos,p.A));
+  const sd=secDir(p.A,p.F.v), sec=[];
+  for(let k=0;k<=20;k++){ const r=-R*0.92+R*1.84*k/20; sec.push(V.add(V.add(p.pos,V.mul(sd,r)),V.mul(p.A,-t/2*(1-(r/R/0.92)**2)))); }
+  for(let k=20;k>=0;k--){ const r=-R*0.92+R*1.84*k/20; sec.push(V.add(V.add(p.pos,V.mul(sd,r)),V.mul(p.A,t/2*(1-(r/R/0.92)**2)))); }
+  gSec.add(polyline(sec,gm.l,true)); addCap(sec,p.pos,p.A,gm.cap);
+}
+function addEye(p){
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(12,32,20),MAT.eye); ball.position.copy(v3(V.add(p.pos,V.mul(p.A,11)))); gOpt.add(ball);
+  const ir=new THREE.Mesh(new THREE.RingGeometry(p.pupil/2,5.8,40),MAT.iris); orient(ir,p.pos,p.A); ir.rotateX(Math.PI/2); gOpt.add(ir);
+  const ret=[]; for(let k=0;k<=24;k++){ const a=-0.9+1.8*k/24; ret.push(V.add(V.add(p.pos,V.mul(p.A,11+12*Math.cos(a))),V.mul(p.F.v,12*Math.sin(a)))); }
+  gOpt.add(polyline(ret,new THREE.LineBasicMaterial({color:0xd08a8a,transparent:true,opacity:0.8})));
+}
+function addSensor(p){
+  const s=p.s; const b=new THREE.Mesh(new THREE.BoxGeometry(p.w,p.h,1.2),MAT.chip);
+  const M=new THREE.Matrix4().makeBasis(v3(s.F.u),v3(s.F.v),v3(s.F.w)); b.applyMatrix4(M); b.position.copy(v3(V.add(s.pos,V.mul(s.F.w,0.6)))); gOpt.add(b);
+  const body=new THREE.Mesh(new THREE.BoxGeometry(p.w+26,p.h+26,34),MAT.black); body.applyMatrix4(M); body.position.copy(v3(V.add(s.pos,V.mul(s.F.w,18)))); gOpt.add(body);
+}
+function buildScene(){
+  clearGroup(gOpt); setClip(); gSec=new THREE.Group(); gSec.visible=S.cut; gOpt.add(gSec);
+  const tube=res.parts.find(p=>p.type==='tube');
+  for(const p of res.parts){
+    if(p.type==='lens') addLens(p); else if(p.type==='mirror') addMirror(p); else if(p.type==='diag') addDiag(p);
+    else if(p.type==='spider') addSpider(p); else if(p.type==='tube') addTube(p);
+    else if(p.type==='focuser'){ if(S.acc!=='diag') addFocuser(p,tube); }
+    else if(p.type==='eyepiece') addEyepiece(p); else if(p.type==='eye') addEye(p); else if(p.type==='sensor') addSensor(p);
+  }
+  buildLabels();
+}
+
+/* ================= Rayons & photons ================= */
+let rayData=[]; // {pts:[[x,y,z]...], cum:[opl], total, phase, col:[r,g,b], idx, wl}
+let phase={T:0}, phPoints=null, frLines=null;
+const WLD={R:WL[0],G:WL[1],B:WL[2],V:WL[3]};
+function rayColor(key){ const c=new THREE.Color(WLD[key].col); return [c.r,c.g,c.b]; }
+function buildRays(){
+  clearGroup(gRay); clearGroup(gPh); rayData=[];
+  const sys=res.pupil, R=sys.R;
+  const samples=[];
+  if(S.fan==='m'){ const n=S.nRays; for(let i=0;i<n;i++) samples.push([0,-0.97*R+1.94*R*(n===1?0.5:i/(n-1))]); }
+  else { samples.push([0,0]); const rings=Math.max(2,Math.round(S.nRays/8)); const per=Math.max(6,Math.round(S.nRays*0.8));
+    for(let k=1;k<=rings;k++){ const r=0.97*R*k/rings, m=Math.round(per*k/rings)+2; for(let j=0;j<m;j++){ const a=j/m*Math.PI*2+k*0.3; samples.push([r*Math.cos(a),r*Math.sin(a)]); } } }
+  const keys=S.mono?['G']:(S.rgb?['R','G','B']:['G']);
+  const white=!S.mono&&!S.rgb;
+  const pos=[], col=[];
+  const extLen=S.out==='eye'? 12 : Math.max(15,S.F*0.02);
+  keys.forEach(key=>{
+    const w=WLD[key]; const c=white?[0.95,0.9,0.75]:rayColor(key);
+    samples.forEach((sp,idx)=>{
+      const r=starRay(sys,sp[0],sp[1],S.field);
+      const tr=traceRay(res.surfs,r.p,r.d,w.lam,false);
+      const pts=tr.pts.slice(); const ns=tr.ns.slice();
+      let dim=1, extPts=null;
+      if(tr.status==='blocked') dim=0.32;
+      if(tr.status==='out'||tr.status==='miss'||tr.status==='tir') { pts.push(V.add(tr.p,V.mul(tr.d,extLen*3))); ns.push(tr.n); }
+      if(tr.status==='image' && S.extend && S.out!=='eye'){ extPts=[tr.p,V.add(tr.p,V.mul(tr.d,extLen))]; }
+      for(let i=0;i<pts.length-1;i++){ const a=pts[i], b=pts[i+1]; pos.push(a[0],a[1],a[2],b[0],b[1],b[2]);
+        const k=(i===0?0.55:1)*dim; col.push(c[0]*k,c[1]*k,c[2]*k,c[0]*dim,c[1]*dim,c[2]*dim); }
+      if(extPts){ const a=extPts[0], b=extPts[1]; pos.push(a[0],a[1],a[2],b[0],b[1],b[2]); col.push(c[0]*0.35,c[1]*0.35,c[2]*0.35,0,0,0); }
+      // longueurs optiques
+      const cum=[0]; for(let i=0;i<pts.length-1;i++) cum.push(cum[i]+V.len(V.sub(pts[i+1],pts[i]))*(ns[i]||1));
+      rayData.push({pts,cum,total:cum[cum.length-1],phase:V.dot(r.p,r.d),col:c,idx,key,dim});
+    });
+  });
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  MAT.rays.opacity=clamp(1.25-samples.length*keys.length/90,0.35,0.95);
+  gRay.add(new THREE.LineSegments(g,MAT.rays));
+  // photons
+  const nPh=16;
+  let sMin=Infinity,sMax=-Infinity; for(const r of rayData){ sMin=Math.min(sMin,r.phase); sMax=Math.max(sMax,r.phase+r.total); }
+  phase.sMin=sMin; phase.span=sMax-sMin; phase.nPh=nPh;
+  const pg=new THREE.BufferGeometry(); pg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(rayData.length*nPh*3),3));
+  pg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(rayData.length*nPh*3),3));
+  phPoints=new THREE.Points(pg,new THREE.PointsMaterial({size:6,sizeAttenuation:false,vertexColors:true,map:dotTex,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+  gPh.add(phPoints);
+  const fg=new THREE.BufferGeometry(); fg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(Math.max(6,rayData.length*nPh*6)),3));
+  frLines=new THREE.LineSegments(fg,MAT.fronts); gPh.add(frLines);
+  updatePhotons(0);
+}
+const dotTex=(()=>{ const c=document.createElement('canvas'); c.width=c.height=32; const x=c.getContext('2d');
+  const g=x.createRadialGradient(16,16,0,16,16,16); g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.35,'rgba(255,255,255,.7)'); g.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=g; x.fillRect(0,0,32,32); const t=new THREE.CanvasTexture(c); return t; })();
+function posAt(r,l){ // position au chemin optique l le long du rayon
+  const c=r.cum; if(l<0||l>r.total) return null;
+  let lo=0,hi=c.length-1; while(hi-lo>1){ const m=(lo+hi)>>1; if(c[m]<=l) lo=m; else hi=m; }
+  const t=(l-c[lo])/((c[hi]-c[lo])||1); const a=r.pts[lo], b=r.pts[hi];
+  return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
+}
+function updatePhotons(dt){
+  if(!phPoints) return;
+  const on=S.photons||S.fronts; gPh.visible=on; if(!on) return;
+  phase.T=(phase.T+dt*phase.span/7*S.speed)%phase.span;
+  const P=phPoints.geometry.attributes.position.array, C=phPoints.geometry.attributes.color.array;
+  const nPh=phase.nPh, sp=phase.span/nPh; let k=0;
+  const grid=[]; // grid[ph][rayIndex] positions for fronts (clé G)
+  for(let i=0;i<rayData.length;i++){ const r=rayData[i];
+    for(let j=0;j<nPh;j++){ const s=phase.sMin+((phase.T+j*sp)%phase.span); const q=posAt(r,s-r.phase);
+      if(q && S.photons){ P[k*3]=q[0];P[k*3+1]=q[1];P[k*3+2]=q[2]; C[k*3]=r.col[0]*r.dim;C[k*3+1]=r.col[1]*r.dim;C[k*3+2]=r.col[2]*r.dim; }
+      else { P[k*3]=P[k*3+1]=P[k*3+2]=0; C[k*3]=C[k*3+1]=C[k*3+2]=0; }
+      k++;
+      if(S.fronts && (r.key==='G') && S.fan==='m'){ (grid[j]||(grid[j]=[]))[r.idx]=q; }
+    } }
+  phPoints.geometry.attributes.position.needsUpdate=true; phPoints.geometry.attributes.color.needsUpdate=true;
+  const F=frLines.geometry.attributes.position.array; let m=0;
+  if(S.fronts && S.fan==='m'){
+    const gap=2.2*1.94*res.pupil.R/Math.max(1,S.nRays-1);
+    for(const row of grid){ if(!row) continue; for(let i=0;i<row.length-1;i++){ const a=row[i], b=row[i+1]; if(!a||!b) continue;
+      if(V.len(V.sub(a,b))>gap*1.5 && V.len(V.sub(a,b))>0.05*res.pupil.R*4) continue;
+      if(m+6>F.length) break; F[m++]=a[0];F[m++]=a[1];F[m++]=a[2];F[m++]=b[0];F[m++]=b[1];F[m++]=b[2]; } }
+  }
+  for(let i=m;i<F.length;i++) F[i]=0;
+  frLines.geometry.attributes.position.needsUpdate=true; frLines.geometry.setDrawRange(0,m/3);
+}
+
+/* ================= Étiquettes ================= */
+let labelEls=[];
+function buildLabels(){
+  const box=$('labels'); box.innerHTML=''; labelEls=[];
+  if(!S.labels) return;
+  const list=res.labels.slice();
+  list.push({text:'Foyer', pos:res.focusP, cls:'focus'});
+  for(const l of list){ const d=document.createElement('div'); d.className='lab'+(l.cls?' '+l.cls:''); d.textContent=l.text; box.appendChild(d); labelEls.push({el:d,pos:v3(l.pos)}); }
+}
+function updateLabels(){
+  if(!labelEls.length) return; const cam=activeCam(); const w=stage.clientWidth, h=stage.clientHeight;
+  for(const l of labelEls){ const p=l.pos.clone().project(cam); if(p.z>1||p.z<-1||Math.abs(p.x)>1.1||Math.abs(p.y)>1.1){ l.el.style.display='none'; continue; }
+    l.el.style.display=''; l.el.style.left=((p.x+1)/2*w)+'px'; l.el.style.top=((1-p.y)/2*h)+'px'; }
+}
+
+/* ================= Caméra orbitale ================= */
+const orb={target:new THREE.Vector3(),r:1500,th:-Math.PI/2,ph:Math.PI/2};
+let orbGoal=null;
+function activeCam(){ return S.ortho?ortho:persp; }
+function applyCam(){
+  const off=new THREE.Vector3(Math.sin(orb.ph)*Math.sin(orb.th),Math.cos(orb.ph),Math.sin(orb.ph)*Math.cos(orb.th)).multiplyScalar(orb.r);
+  for(const c of [persp,ortho]){ c.position.copy(orb.target).add(off); c.up.set(0,1,0); c.lookAt(orb.target); }
+  persp.near=Math.max(0.05,orb.r/400); persp.far=orb.r*400+2e5; persp.updateProjectionMatrix();
+  const hh=orb.r*Math.tan(persp.fov/2*Math.PI/180), a=persp.aspect;
+  ortho.left=-hh*a; ortho.right=hh*a; ortho.top=hh; ortho.bottom=-hh; ortho.near=-orb.r*50; ortho.far=orb.r*50; ortho.updateProjectionMatrix();
+}
+function bounds(){ const b=new THREE.Box3(); b.expandByObject(gOpt); b.expandByPoint(v3(res.focusP)); return b; }
+function setView(v, instant){
+  document.querySelectorAll('#views [data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===v?'true':'false'));
+  S.view=v;
+  const b=bounds(); const c=b.getCenter(new THREE.Vector3()); const size=b.getSize(new THREE.Vector3());
+  const fit=d=>d/2/Math.tan(persp.fov/2*Math.PI/180)/Math.min(1,persp.aspect*0.9);
+  let g;
+  const A=res.axis, P=v3(V.add(res.focusP,V.mul(A,primaryFocus()?0:S.focus)));
+  if(v==='side') g={target:c,r:fit(Math.max(size.z,size.y*1.4))*1.08,th:-Math.PI/2,ph:Math.PI/2};
+  else if(v==='iso') g={target:c,r:fit(Math.max(size.z,size.y))*1.15,th:-2.25,ph:1.05};
+  else if(v==='front') g={target:new THREE.Vector3(0,0,c.z),r:fit(Math.max(size.x,size.y))*1.25+size.z/2,th:Math.PI+0.2,ph:Math.PI/2-0.12};
+  else if(v==='focus'){ const N=res.efl/S.D; g={target:P,r:clamp(N*3.2,5,120),th:-Math.PI/2,ph:Math.PI/2}; }
+  else if(v==='eye'){ let t=P, r=80; if(S.out==='eye'){ t=v3(V.add(res.focusP,V.mul(A,S.fe+(primaryFocus()?0:S.focus)))); r=S.fe*3+70; } else { r=Math.max(60,SENSORS[S.sensor].w*4); }
+    g={target:t,r,th:-Math.PI/2,ph:Math.PI/2}; }
+  if(instant||reduceMotion){ orb.target.copy(g.target); orb.r=g.r; orb.th=g.th; orb.ph=g.ph; orbGoal=null; applyCam(); }
+  else orbGoal={from:{target:orb.target.clone(),r:orb.r,th:orb.th,ph:orb.ph},to:g,t:0};
+}
+const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function stepCam(dt){ if(!orbGoal) return; orbGoal.t=Math.min(1,orbGoal.t+dt/0.7); const e=1-Math.pow(1-orbGoal.t,3); const f=orbGoal.from,t=orbGoal.to;
+  orb.target.lerpVectors(f.target,t.target,e); orb.r=Math.exp(Math.log(f.r)+(Math.log(t.r)-Math.log(f.r))*e); orb.th=f.th+(t.th-f.th)*e; orb.ph=f.ph+(t.ph-f.ph)*e;
+  applyCam(); if(orbGoal.t>=1) orbGoal=null; }
+{ const ptrs=new Map(); let mode=null, last=null, pinch=null;
+  canvas.addEventListener('contextmenu',e=>e.preventDefault());
+  canvas.addEventListener('pointerdown',e=>{ canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); orbGoal=null;
+    mode=(e.button===2||e.shiftKey)?'pan':'rot'; last={x:e.clientX,y:e.clientY};
+    if(ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch={d:Math.hypot(a.x-b.x,a.y-b.y),cx:(a.x+b.x)/2,cy:(a.y+b.y)/2}; } });
+  canvas.addEventListener('pointermove',e=>{ if(!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(ptrs.size===2&&pinch){ const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); orb.r*=pinch.d/Math.max(1,d);
+      const cx=(a.x+b.x)/2, cy=(a.y+b.y)/2; pan(cx-pinch.cx,cy-pinch.cy); pinch={d,cx,cy}; applyCam(); return; }
+    const dx=e.clientX-last.x, dy=e.clientY-last.y; last={x:e.clientX,y:e.clientY};
+    if(mode==='rot'){ orb.th-=dx*0.006; orb.ph=clamp(orb.ph-dy*0.006,0.03,Math.PI-0.03); } else pan(dx,dy);
+    applyCam(); });
+  const end=e=>{ ptrs.delete(e.pointerId); if(ptrs.size<2) pinch=null; };
+  canvas.addEventListener('pointerup',end); canvas.addEventListener('pointercancel',end);
+  canvas.addEventListener('wheel',e=>{ e.preventDefault(); orbGoal=null; orb.r*=Math.exp(e.deltaY*0.0012); orb.r=clamp(orb.r,0.5,3e4); applyCam(); },{passive:false});
+  function pan(dx,dy){ const cam=activeCam(); const k=2*orb.r*Math.tan(persp.fov/2*Math.PI/180)/stage.clientHeight;
+    const right=new THREE.Vector3().setFromMatrixColumn(cam.matrix,0), up=new THREE.Vector3().setFromMatrixColumn(cam.matrix,1);
+    orb.target.addScaledVector(right,-dx*k).addScaledVector(up,dy*k); }
+}
+function resize(){ const w=stage.clientWidth, h=stage.clientHeight; if(!w||!h) return; renderer.setSize(w,h,false); persp.aspect=w/h; applyCam(); }
+new ResizeObserver(resize).observe(stage);
+
+/* ================= FFT & image de l'étoile ================= */
+const NG=256; const COS=new Float64Array(NG/2), SIN=new Float64Array(NG/2);
+for(let k=0;k<NG/2;k++){ COS[k]=Math.cos(2*Math.PI*k/NG); SIN[k]=Math.sin(2*Math.PI*k/NG); }
+function fft1(re,im,inv){ const n=NG;
+  for(let i=1,j=0;i<n;i++){ let bit=n>>1; for(;j&bit;bit>>=1) j^=bit; j^=bit; if(i<j){ let t=re[i];re[i]=re[j];re[j]=t; t=im[i];im[i]=im[j];im[j]=t; } }
+  for(let size=2;size<=n;size<<=1){ const half=size>>1, step=n/size;
+    for(let i=0;i<n;i+=size) for(let k=0;k<half;k++){ const wr=COS[k*step], wi=inv?SIN[k*step]:-SIN[k*step]; const a=i+k,b=a+half;
+      const tr=re[b]*wr-im[b]*wi, ti=re[b]*wi+im[b]*wr; re[b]=re[a]-tr; im[b]=im[a]-ti; re[a]+=tr; im[a]+=ti; } }
+}
+const tRe=new Float64Array(NG), tIm=new Float64Array(NG);
+function fft2(re,im,inv){
+  for(let y=0;y<NG;y++){ const o=y*NG; for(let x=0;x<NG;x++){tRe[x]=re[o+x];tIm[x]=im[o+x];} fft1(tRe,tIm,inv); for(let x=0;x<NG;x++){re[o+x]=tRe[x];im[o+x]=tIm[x];} }
+  for(let x=0;x<NG;x++){ for(let y=0;y<NG;y++){tRe[y]=re[y*NG+x];tIm[y]=im[y*NG+x];} fft1(tRe,tIm,inv); for(let y=0;y<NG;y++){re[y*NG+x]=tRe[y];im[y*NG+x]=tIm[y];} }
+  if(inv){ const s=1/(NG*NG); for(let i=0;i<re.length;i++){re[i]*=s;im[i]*=s;} }
+}
+const psfCache=new Map();
+function pupilPSF(eps, spider, vaneRel){
+  const key=eps.toFixed(3)+'|'+(spider?vaneRel.toFixed(4):'0'); if(psfCache.has(key)) return psfCache.get(key);
+  const re=new Float64Array(NG*NG), im=new Float64Array(NG*NG); const rp=40, c=NG/2, ss=3;
+  const angs=[Math.PI/4,3*Math.PI/4]; const vw=vaneRel*2*rp;
+  for(let y=c-rp-1;y<=c+rp+1;y++) for(let x=c-rp-1;x<=c+rp+1;x++){ let v=0;
+    for(let sy=0;sy<ss;sy++) for(let sx=0;sx<ss;sx++){ const X=x-c+(sx+0.5)/ss-0.5, Yy=y-c+(sy+0.5)/ss-0.5, r=Math.hypot(X,Yy);
+      if(r>rp||r<eps*rp) continue; let ok=true;
+      if(spider) for(const a of angs){ if(Math.abs(-X*Math.sin(a)+Yy*Math.cos(a))<vw/2){ok=false;break;} }
+      if(ok) v++; }
+    re[y*NG+x]=v/(ss*ss); }
+  fft2(re,im,false);
+  const psf=new Float32Array(NG*NG); let mx=0;
+  for(let y=0;y<NG;y++) for(let x=0;x<NG;x++){ const i=y*NG+x, v=re[i]*re[i]+im[i]*im[i]; const j=((y+c)%NG)*NG+((x+c)%NG); psf[j]=v; if(v>mx) mx=v; }
+  for(let i=0;i<psf.length;i++) psf[i]/=mx;
+  psfCache.set(key,psf); if(psfCache.size>12) psfCache.delete(psfCache.keys().next().value);
+  return psf;
+}
+const kCache=new Map();
+function kernelSpec(lam, N, p, eps, spider, vaneRel, sig){
+  const key=[lam,N.toFixed(3),p.toPrecision(4),eps.toFixed(3),spider?vaneRel.toFixed(4):0,sig.toFixed(3)].join('|'); if(kCache.has(key)) return kCache.get(key);
+  const psf=pupilPSF(eps,spider,vaneRel); const s0=lam*N*80/NG; const q=p/s0; const c=NG/2;
+  const re=new Float64Array(NG*NG), im=new Float64Array(NG*NG); let sum=0;
+  if(q>18){ re[0]=1; sum=1; }
+  else for(let dy=-c;dy<c;dy++){ const fy=c+dy*q; if(fy<0||fy>=NG-1) continue; const y0=fy|0, ty=fy-y0;
+    for(let dx=-c;dx<c;dx++){ const fx=c+dx*q; if(fx<0||fx>=NG-1) continue; const x0=fx|0, tx=fx-x0;
+      const v=(psf[y0*NG+x0]*(1-tx)+psf[y0*NG+x0+1]*tx)*(1-ty)+(psf[(y0+1)*NG+x0]*(1-tx)+psf[(y0+1)*NG+x0+1]*tx)*ty;
+      if(v<=0) continue; const i=((dy+NG)%NG)*NG+((dx+NG)%NG); re[i]=v; sum+=v; } }
+  if(sum<=0){ re[0]=1; sum=1; }
+  for(let i=0;i<re.length;i++) re[i]/=sum;
+  fft2(re,im,false);
+  const s2=sig*sig;
+  for(let ky=0;ky<NG;ky++){ const fy=(ky<c?ky:ky-NG)/NG; for(let kx=0;kx<NG;kx++){ const fx=(kx<c?kx:kx-NG)/NG; const g=Math.exp(-2*Math.PI*Math.PI*s2*(fx*fx+fy*fy)); const i=ky*NG+kx; re[i]*=g; im[i]*=g; } }
+  // pic spatial (pour le rapport de Strehl)
+  const r2=Float64Array.from(re), i2=Float64Array.from(im); fft2(r2,i2,true); let pk=0; for(let i=0;i<r2.length;i++) if(r2[i]>pk) pk=r2[i];
+  const out={re,im,peak:pk}; kCache.set(key,out); if(kCache.size>24) kCache.delete(kCache.keys().next().value);
+  return out;
+}
+function convolvePair(ha, hb, ka, kb){ // deux canaux réels empaquetés dans un FFT complexe
+  const re=ha, im=hb||new Float64Array(NG*NG); fft2(re,im,false);
+  const oR=new Float64Array(NG*NG), oI=new Float64Array(NG*NG);
+  for(let ky=0;ky<NG;ky++){ const my=((NG-ky)%NG)*NG; for(let kx=0;kx<NG;kx++){ const i=ky*NG+kx, j=my+((NG-kx)%NG);
+    const xr=re[i],xi=im[i],yr=re[j],yi=-im[j];
+    const Ar=(xr+yr)/2, Ai=(xi+yi)/2; const Dr=xr-yr, Di=xi-yi; const Br=Di/2, Bi=-Dr/2;
+    const Pr=Ar*ka.re[i]-Ai*ka.im[i], Pi=Ar*ka.im[i]+Ai*ka.re[i];
+    let Qr=0,Qi=0; if(kb){ Qr=Br*kb.re[i]-Bi*kb.im[i]; Qi=Br*kb.im[i]+Bi*kb.re[i]; }
+    oR[i]=Pr-Qi; oI[i]=Pi+Qr; } }
+  fft2(oR,oI,true); return [oR,oI];
+}
+function splat(h, arr, cx, cy, p, ox, oy, wgt){
+  const c=NG/2;
+  for(let i=0;i<arr.length;i+=2){ const u=(arr[i]-cx+ox)/p+c-0.5, v=c-(arr[i+1]-cy+oy)/p-0.5; const x0=Math.floor(u), y0=Math.floor(v);
+    if(x0<0||y0<0||x0>=NG-1||y0>=NG-1) continue; const tx=u-x0, ty=v-y0, k=y0*NG+x0;
+    h[k]+=(1-tx)*(1-ty)*wgt; h[k+1]+=tx*(1-ty)*wgt; h[k+NG]+=(1-tx)*ty*wgt; h[k+NG+1]+=tx*ty*wgt; }
+}
+let AN=null; // dernier résultat d'analyse
+const offImg=document.createElement('canvas'); offImg.width=offImg.height=NG; const offCtx=offImg.getContext('2d');
+const offSingle=document.createElement('canvas'); offSingle.width=offSingle.height=NG; const offSCtx=offSingle.getContext('2d');
+let needFit=true;
+function runAnalysis(){
+  const st=est(false);
+  const a=analyzeImage(res,st,S.mono?2400:1500);
+  const plateUmAs=res.plate*1000*AS; // µm par seconde d'arc
+  const airyR=1.22*0.5461*res.N;
+  if(needFit){ needFit=false; const base=Math.max(12*airyR, 7*(isFinite(a.rmsPoly)?a.rmsPoly:0)); S.W=nice(clamp(base,4,30000)); }
+  const W=S.W, p=W/NG;
+  const eps=res.obsRatio||0, spider=!!res.spider, vaneRel=res.spider?res.spider.w/S.D:0;
+  const sigSee=S.seeing/2.3548*plateUmAs/p; const sig=Math.sqrt(sigSee*sigSee+0.45*0.45);
+  const keys=S.mono?['G']:['R','G','B','V'];
+  const sepUm=S.target==='double'?S.sep*plateUmAs:0; const pa=0.5;
+  const ox=sepUm*Math.cos(pa)/2, oy=sepUm*Math.sin(pa)/2;
+  const lin={}, single={};
+  const H={};
+  for(const k of keys){ H[k]=new Float64Array(NG*NG); splat(H[k],a.hits[k],a.cx,a.cy,p,0,0,1); }
+  const K={}; for(const k of keys) K[k]=kernelSpec(WLD[k].lam,res.N,p,eps,spider,vaneRel,sig);
+  const pairs=S.mono?[['G',null]]:[['R','G'],['B','V']];
+  for(const [x,y] of pairs){ const o=convolvePair(H[x],y?H[y]:null,K[x],y?K[y]:null); single[x]=o[0]; if(y) single[y]=o[1]; }
+  // étoile double : superposition décalée
+  const shiftPx=[ox/p, -oy/p];
+  for(const k of keys){ if(!sepUm){ lin[k]=single[k]; continue; }
+    const s=single[k], o=new Float64Array(NG*NG);
+    addShift(o,s,-shiftPx[0],-shiftPx[1],1); addShift(o,s,shiftPx[0],shiftPx[1],0.85); lin[k]=o; }
+  const nG=a.hits.G.length/2; const ideal=nG*K.G.peak;
+  let pkG=0; for(let i=0;i<single.G.length;i++) if(single.G[i]>pkG) pkG=single.G[i];
+  const strehl=ideal>0?Math.min(1,pkG/ideal):0;
+  const normRef=keys.reduce((s,k)=>s+a.hits[k].length/2*K[k].peak,0)/keys.length;
+  paintImage(offCtx,lin,keys,normRef);
+  paintImage(offSCtx,single,keys,normRef);
+  AN={a,W,p,airyR,strehl,plateUmAs,sepUm,ox,oy,sigSee:S.seeing/2.3548};
+  drawImagePanel(); drawSky(); updatePills(); updateNotes();
+}
+function addShift(o,s,dx,dy,w){ const ix=Math.floor(dx), iy=Math.floor(dy), tx=dx-ix, ty=dy-iy;
+  const ws=[[0,0,(1-tx)*(1-ty)],[1,0,tx*(1-ty)],[0,1,(1-tx)*ty],[1,1,tx*ty]];
+  for(const [ax,ay,ww] of ws){ const sx=ix+ax, sy=iy+ay; if(ww<1e-6) continue;
+    for(let y=0;y<NG;y++){ const yy=y-sy; if(yy<0||yy>=NG) continue; for(let x=0;x<NG;x++){ const xx=x-sx; if(xx<0||xx>=NG) continue; o[y*NG+x]+=s[yy*NG+xx]*ww*w; } } } }
+function paintImage(ctx,lin,keys,normRef){
+  const img=ctx.createImageData(NG,NG), d=img.data;
+  const M=S.mono?null:{R:[0.8,0.1,0],G:[0.05,0.8,0.05],B:[0,0.1,0.6],V:[0.15,0,0.35]};
+  let mx=0; const n=NG*NG; const out=new Float32Array(n*3);
+  for(let i=0;i<n;i++){ let r=0,g=0,b=0;
+    if(S.mono){ const v=Math.max(0,lin.G[i]); r=v*0.45;g=v;b=v*0.55; }
+    else for(const k of keys){ const v=Math.max(0,lin[k][i]), m=M[k]; r+=v*m[0]; g+=v*m[1]; b+=v*m[2]; }
+    out[i*3]=r;out[i*3+1]=g;out[i*3+2]=b; const q=Math.max(r,g,b); if(q>mx) mx=q; }
+  const norm=Math.max(mx,normRef*0.06)||1; const gm=S.gam?0.42:1;
+  for(let i=0;i<n;i++){ for(let c=0;c<3;c++) d[i*4+c]=255*Math.pow(clamp(out[i*3+c]/norm,0,1),gm); d[i*4+3]=255; }
+  ctx.putImageData(img,0,0);
+}
+function fitCanvas(cv){ const r=cv.getBoundingClientRect(); const dpr=Math.min(window.devicePixelRatio||1,2); const w=Math.round(r.width*dpr), h=Math.round(r.height*dpr);
+  if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; } return {w,h,dpr}; }
+function drawImagePanel(){
+  if(!AN) return; const cv=$('cvImg'), {w,h,dpr}=fitCanvas(cv); const ctx=cv.getContext('2d');
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,w,h);
+  const k=w/AN.W; // px canvas par µm
+  if(S.imgMode==='psf'){ ctx.imageSmoothingEnabled=true; ctx.drawImage(offImg,0,0,w,h); }
+  else { ctx.globalCompositeOperation='lighter'; const keys=S.mono?['G']:['R','G','B','V'];
+    const n=keys.reduce((s,q)=>s+AN.a.hits[q].length/2,0); const rr=Math.max(0.8,1.3*dpr), al=clamp(900/n,0.12,0.8);
+    for(const q of keys){ const arr=AN.a.hits[q]; const c=new THREE.Color(WLD[q].col); ctx.fillStyle=`rgba(${c.r*255|0},${c.g*255|0},${c.b*255|0},${al})`;
+      for(const [sx,sy] of (AN.sepUm?[[-AN.ox,-AN.oy],[AN.ox,AN.oy]]:[[0,0]])) for(let i=0;i<arr.length;i+=2){ const x=w/2+(arr[i]-AN.a.cx+sx)*k, y=h/2-(arr[i+1]-AN.a.cy+sy)*k; ctx.fillRect(x-rr/2,y-rr/2,rr,rr); } }
+    ctx.globalCompositeOperation='source-over'; }
+  // grille de pixels du capteur
+  if(S.out==='cam'){ const px=SENSORS[S.sensor].px*k; if(px>=6){ ctx.strokeStyle='rgba(120,150,200,.16)'; ctx.lineWidth=1; ctx.beginPath();
+    const ox=(w/2-AN.a.cx*k)%px, oy=(h/2+AN.a.cy*k)%px; for(let x=ox;x<w;x+=px){ctx.moveTo(x,0);ctx.lineTo(x,h);} for(let y=oy;y<h;y+=px){ctx.moveTo(0,y);ctx.lineTo(w,y);} ctx.stroke(); } }
+  // disque d'Airy
+  const ra=AN.airyR*k; if(ra>3&&ra<w){ ctx.setLineDash([4*dpr,4*dpr]); ctx.strokeStyle='rgba(116,240,140,.55)'; ctx.lineWidth=dpr; ctx.beginPath(); ctx.arc(w/2,h/2,ra,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]); }
+  // axe optique
+  const ax=w/2-AN.a.cx*k, ay=h/2+AN.a.cy*k; if(ax>-10&&ax<w+10&&ay>-10&&ay<h+10&&(Math.abs(AN.a.cx)+Math.abs(AN.a.cy))*k>6){ ctx.strokeStyle='rgba(214,168,90,.8)'; ctx.lineWidth=dpr; ctx.beginPath(); ctx.moveTo(ax-6*dpr,ay);ctx.lineTo(ax+6*dpr,ay);ctx.moveTo(ax,ay-6*dpr);ctx.lineTo(ax,ay+6*dpr); ctx.stroke(); }
+  // échelle
+  const asW=AN.W/AN.plateUmAs; let bar, lab;
+  if(S.out==='cam'){ bar=nice(AN.W/4); lab=(bar>=1000?fr(bar/1000,bar>=10000?0:1)+' mm':fr(bar,bar<10?1:0)+' µm')+' · '+fmtAs(bar/AN.plateUmAs); }
+  else { const b2=nice(asW/4); bar=b2*AN.plateUmAs; lab=fmtAs(b2)+' sur le ciel'; }
+  const bl=bar*k; ctx.fillStyle='rgba(221,228,238,.85)'; ctx.fillRect(w-12*dpr-bl,h-38*dpr,bl,2*dpr);
+  ctx.font=`${11*dpr}px JetBrains Mono, monospace`; ctx.textAlign='right'; ctx.fillText(lab,w-12*dpr,h-44*dpr);
+  $('ovImg1').textContent=(S.out==='cam'?'Capteur · champ '+fmtUm(AN.W):'Rétine · champ ')+' '+fmtAs(asW);
+  $('ovImg2').textContent='Strehl ≈ '+fr(AN.strehl,2);
+  $('ovImg3').textContent='Airy ⌀ '+fmtAs(2*AN.airyR/AN.plateUmAs)+(S.out==='cam'?' · '+fr(2*AN.airyR,1)+' µm':'');
+  $('tagImg').textContent=S.imgMode==='psf'?'diffraction + géométrie':'optique géométrique';
+}
+function fmtUm(u){ return u>=1000?fr(u/1000,u>=10000?1:2)+' mm':fr(u,u<10?1:0)+' µm'; }
+function fmtAs(a){ if(a>=3600) return fr(a/3600,2)+'°'; if(a>=120) return fr(a/60,1)+'′'; return fr(a,a<10?2:1)+'″'; }
+
+/* ================= Vue au télescope ================= */
+const planetCache={};
+function prerender(kind){
+  if(planetCache[kind]) return planetCache[kind];
+  const c=document.createElement('canvas'); const x=c.getContext('2d'); let s=11; const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647;};
+  if(kind==='jupiter'){ c.width=512;c.height=480; x.save(); x.beginPath(); x.ellipse(256,240,250,234,0,0,Math.PI*2); x.clip();
+    const bands=[[0,'#c9b89a'],[0.14,'#b79f7f'],[0.22,'#e6dcc6'],[0.33,'#a8815d'],[0.4,'#c7a47e'],[0.46,'#efe6d3'],[0.54,'#f3ecdc'],[0.6,'#b8875e'],[0.68,'#9c7353'],[0.75,'#e4d8c0'],[0.86,'#b8a484'],[1,'#a99a82']];
+    const g=x.createLinearGradient(0,6,0,474); bands.forEach(b=>g.addColorStop(b[0],b[1])); x.fillStyle=g; x.fillRect(0,0,512,480);
+    for(let i=0;i<260;i++){ const y=40+rnd()*400; x.fillStyle=`rgba(${120+rnd()*80|0},${90+rnd()*50|0},${60+rnd()*40|0},${0.08+rnd()*0.12})`; x.beginPath(); x.ellipse(rnd()*512,y,8+rnd()*40,1.5+rnd()*3,0,0,Math.PI*2); x.fill(); }
+    x.fillStyle='rgba(190,95,60,.8)'; x.beginPath(); x.ellipse(330,300,34,17,0,0,Math.PI*2); x.fill(); x.fillStyle='rgba(230,170,130,.5)'; x.beginPath(); x.ellipse(330,300,22,10,0,0,Math.PI*2); x.fill();
+    const lg=x.createRadialGradient(256,240,120,256,240,256); lg.addColorStop(0,'rgba(0,0,0,0)'); lg.addColorStop(1,'rgba(0,0,0,.55)'); x.fillStyle=lg; x.fillRect(0,0,512,480); x.restore(); }
+  else if(kind==='saturn'){ c.width=1024;c.height=460; const cx=512,cy=230;
+    const ring=(r1,r2,col)=>{ x.save(); x.beginPath(); x.ellipse(cx,cy,r2,r2*0.36,0,0,Math.PI*2); x.ellipse(cx,cy,r1,r1*0.36,0,0,Math.PI*2,true); x.fillStyle=col; x.fill('evenodd'); x.restore(); };
+    const back=()=>{ ring(300,395,'rgba(214,196,160,.9)'); ring(395,405,'rgba(20,18,14,.9)'); ring(405,500,'rgba(190,172,138,.85)'); ring(235,300,'rgba(120,108,88,.55)'); };
+    x.save(); x.beginPath(); x.rect(0,0,1024,cy); x.clip(); back(); x.restore();
+    x.save(); x.beginPath(); x.ellipse(cx,cy,215,196,0,0,Math.PI*2); x.clip(); const g=x.createLinearGradient(0,34,0,426);
+    [[0,'#b8a27c'],[0.3,'#d9c59b'],[0.45,'#e9dcb9'],[0.55,'#dccaa0'],[0.7,'#c8b286'],[1,'#9d8966']].forEach(b=>g.addColorStop(b[0],b[1])); x.fillStyle=g; x.fillRect(0,0,1024,460);
+    const lg=x.createRadialGradient(cx,cy,90,cx,cy,215); lg.addColorStop(0,'rgba(0,0,0,0)'); lg.addColorStop(1,'rgba(0,0,0,.5)'); x.fillStyle=lg; x.fillRect(0,0,1024,460); x.restore();
+    x.save(); x.beginPath(); x.rect(0,cy,1024,cy); x.clip(); back(); x.restore(); }
+  else if(kind==='moon'){ c.width=c.height=1024; const R=500; x.save(); x.beginPath(); x.arc(512,512,R,0,Math.PI*2); x.clip();
+    x.fillStyle='#b9b4aa'; x.fillRect(0,0,1024,1024);
+    for(let i=0;i<14;i++){ x.fillStyle=`rgba(70,72,78,${0.25+rnd()*0.25})`; x.beginPath(); x.ellipse(200+rnd()*600,200+rnd()*560,50+rnd()*130,40+rnd()*110,rnd()*3,0,Math.PI*2); x.fill(); }
+    for(let i=0;i<900;i++){ const r=Math.pow(rnd(),3)*38+1.5, px=rnd()*1024, py=rnd()*1024;
+      x.strokeStyle=`rgba(245,242,235,${0.25+rnd()*0.3})`; x.lineWidth=Math.max(0.6,r*0.18); x.beginPath(); x.arc(px+r*0.12,py+r*0.12,r,Math.PI*0.9,Math.PI*1.9); x.stroke();
+      x.strokeStyle=`rgba(40,40,44,${0.3+rnd()*0.3})`; x.beginPath(); x.arc(px,py,r,Math.PI*-0.1,Math.PI*0.9); x.stroke(); }
+    // terminateur (phase ~ 60 %)
+    const tg=x.createLinearGradient(640,0,760,0); tg.addColorStop(0,'rgba(0,0,0,0)'); tg.addColorStop(1,'rgba(0,0,0,.97)'); x.fillStyle=tg; x.fillRect(640,0,384,1024); x.restore(); }
+  planetCache[kind]=c; return c;
+}
+const SKY=[['jupiter','Jupiter'],['saturn','Saturne'],['moon','Lune'],['double','Étoile double'],['cluster','Amas']];
+const cluster=(()=>{ let s=5; const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647;}; const a=[];
+  for(let i=0;i<220;i++){ const r=Math.pow(rnd(),0.8)*1500, t=rnd()*Math.PI*2; a.push([r*Math.cos(t),r*Math.sin(t),0.12+Math.pow(rnd(),5)*1.3]); } return a; })();
+const field=(()=>{ let s=91; const rnd=()=>{s=(s*16807)%2147483647;return s/2147483647;}; const a=[];
+  for(let i=0;i<260;i++) a.push([(rnd()-0.5)*14000,(rnd()-0.5)*14000,0.06+Math.pow(rnd(),6)*0.8]); return a; })();
+function drawSky(){
+  if(!AN) return; const cv=$('cvSky'), {w,h,dpr}=fitCanvas(cv); const ctx=cv.getContext('2d');
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,w,h);
+  const eye=S.out==='eye'; let k, fieldAs, fw, fh;
+  if(eye){ fieldAs=S.afov/res.G*3600; k=(w*0.94)/fieldAs; }
+  else { const sn=SENSORS[S.sensor]; fw=sn.w/res.efl*206265; fh=sn.h/res.efl*206265; k=Math.min(w*0.94/fw,h*0.94/fh); }
+  // flou total (secondes d'arc)
+  const geo=(isFinite(AN.a.rmsPoly)?AN.a.rmsPoly:0)/AN.plateUmAs;
+  const diff=0.44*0.55e-3/S.D*206265;
+  const sig=Math.sqrt(AN.sigSee**2+diff*diff+(geo*0.8)**2);
+  const bright=eye?clamp(Math.pow(Math.min(res.ep,S.eyePupil)/2.2,0.9),0.12,1.5):1;
+  ctx.save(); ctx.beginPath();
+  if(eye) ctx.arc(w/2,h/2,w*0.47,0,Math.PI*2); else ctx.rect(w/2-fw*k/2,h/2-fh*k/2,fw*k,fh*k);
+  ctx.clip();
+  // pixelisation du capteur
+  let tctx=ctx, tw=w, th=h, off=null, pixScale=1;
+  if(!eye){ const pxAs=SENSORS[S.sensor].px/1000/res.efl*206265; const pxc=pxAs*k; if(pxc>2.2){ pixScale=pxc; off=document.createElement('canvas'); off.width=Math.ceil(w/pxc); off.height=Math.ceil(h/pxc); tctx=off.getContext('2d'); tw=off.width; th=off.height; tctx.fillStyle='#000'; tctx.fillRect(0,0,tw,th); } }
+  const kk=k/pixScale, cx=tw/2, cy=th/2;
+  const starSpr=(x,y,b)=>{ // étoile ponctuelle
+    const sprAs=AN.W/AN.plateUmAs, size=sprAs*kk;
+    if(size>6){ tctx.globalAlpha=clamp(b,0,1); tctx.globalCompositeOperation='lighter'; tctx.drawImage(offSingle,cx+x*kk-size/2,cy-y*kk-size/2,size,size); tctx.globalAlpha=1; tctx.globalCompositeOperation='source-over'; }
+    else { const r=Math.max(0.7,sig*kk*1.6,0.9); const g=tctx.createRadialGradient(cx+x*kk,cy-y*kk,0,cx+x*kk,cy-y*kk,r*2.2); g.addColorStop(0,`rgba(255,250,240,${clamp(b*1.2,0,1)})`); g.addColorStop(1,'rgba(255,250,240,0)'); tctx.fillStyle=g; tctx.fillRect(cx+x*kk-r*2.2,cy-y*kk-r*2.2,r*4.4,r*4.4); } };
+  for(const s of field) starSpr(s[0],s[1],s[2]*bright*0.8);
+  const ext=(img,wAs,hAs,ox)=>{ const sp=sig*kk; tctx.save(); if('filter' in tctx) tctx.filter=`blur(${sp.toFixed(2)}px) brightness(${bright.toFixed(2)})`; tctx.drawImage(img,cx-wAs*kk/2+(ox||0)*kk,cy-hAs*kk/2,wAs*kk,hAs*kk); tctx.restore(); };
+  if(S.sky==='jupiter'){ ext(prerender('jupiter'),44.5,41.7); for(const [x,b] of [[95,0.9],[-150,0.85],[235,1],[-420,0.7]]) starSpr(x,0,b*bright); }
+  else if(S.sky==='saturn'){ ext(prerender('saturn'),42.3,19); starSpr(190,6,0.6*bright); }
+  else if(S.sky==='moon'){ ext(prerender('moon'),1865,1865,-560); }
+  else if(S.sky==='double'){ const sp=S.sep, pa=0.5; starSpr(-sp/2*Math.cos(pa),-sp/2*Math.sin(pa),1); starSpr(sp/2*Math.cos(pa),sp/2*Math.sin(pa),0.85); }
+  else if(S.sky==='cluster'){ for(const s of cluster) starSpr(s[0],s[1],s[2]*bright); }
+  if(off){ ctx.imageSmoothingEnabled=false; ctx.drawImage(off,0,0,tw*pixScale,th*pixScale); ctx.imageSmoothingEnabled=true; }
+  ctx.restore();
+  // bord du champ
+  ctx.strokeStyle='rgba(214,168,90,.35)'; ctx.lineWidth=dpr; ctx.beginPath();
+  if(eye) ctx.arc(w/2,h/2,w*0.47,0,Math.PI*2); else ctx.rect(w/2-fw*k/2,h/2-fh*k/2,fw*k,fh*k); ctx.stroke();
+  if(eye){ $('skyTitle').textContent='Vue à l’oculaire'; $('ovSky1').textContent='×'+fr(res.G,0); $('ovSky2').textContent='champ réel '+fmtAs(fieldAs); $('ovSky3').textContent='pupille de sortie '+fr(res.ep,res.ep<2?2:1)+' mm'; }
+  else { $('skyTitle').textContent='Image sur le capteur'; const pxAs=SENSORS[S.sensor].px/1000/res.efl*206265; $('ovSky1').textContent=fr(pxAs,2)+'″ par pixel'; $('ovSky2').textContent=fmtAs(fw)+' × '+fmtAs(fh); $('ovSky3').textContent=pixScale>1?'pixels visibles : sous-échantillonnage':''; }
+}
+
+/* ================= Interface ================= */
+function buildTypePicker(){
+  const box=$('typePicker'); box.innerHTML='';
+  for(const f of FAMS){ const d=document.createElement('div'); d.className='fam'; d.innerHTML=`<div class="fam-t">${f.t}</div>`; const g=document.createElement('div'); g.className='types';
+    for(const [t,ic] of f.items){ const b=document.createElement('button'); b.className='type'; b.dataset.type=t; b.innerHTML=ic+`<span>${TYPES[t].short}</span>`; b.title=TYPES[t].name; b.onclick=()=>selectType(t); g.appendChild(b); }
+    d.appendChild(g); box.appendChild(d); }
+}
+function chipRow(box,items,cur,on){ box.innerHTML=''; for(const [v,l] of items){ const b=document.createElement('button'); b.className='chip'; b.textContent=l; b.setAttribute('aria-pressed',String(v===cur)); b.onclick=()=>on(v); box.appendChild(b); } }
+function setP(inp){ const p=(inp.value-inp.min)/(inp.max-inp.min)*100; inp.style.setProperty('--p',p+'%'); }
+function bindRange(id, key, fmt, opts){
+  const el=$(id); opts=opts||{};
+  el.addEventListener('input',()=>{ S[key]=parseFloat(el.value); if(opts.map) opts.map(); constrain(); syncUI(); schedule(opts.quick?'quick':'normal'); if(opts.onInput) opts.onInput(); });
+  el.addEventListener('change',()=>{ if(opts.quick){ needFit=!!opts.fit; fullBuild(()=>{ analysisFlag=true; }); } });
+  return el;
+}
+function syncUI(){
+  const r=ranges(), fam=TYPES[S.type].family;
+  document.querySelectorAll('.type').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.type===S.type)));
+  const cD=$('cD'); cD.min=r.Dr[0]; cD.max=r.Dr[1]; cD.step=1; cD.value=S.D; const nD=$('nD'); nD.min=r.Dr[0]; nD.max=r.Dr[1]; if(document.activeElement!==nD) nD.value=Math.round(S.D);
+  const cF=$('cF'); cF.min=Math.round(S.D*r.Nr[0]); cF.max=Math.round(S.D*r.Nr[1]); cF.step=1; cF.value=S.F; const nF=$('nF'); nF.min=cF.min; nF.max=cF.max; if(document.activeElement!==nF) nF.value=Math.round(S.F);
+  $('tagFD').textContent='F/'+fr(S.F/S.D,1);
+  $('wFp').hidden=!r.fpr; if(r.fpr){ const c=$('cFp'); c.min=r.fpr[0]; c.max=Math.min(r.fpr[1],S.F/S.D/1.8); c.step=0.05; c.value=S.fp; $('oFp').textContent='F/'+fr(S.fp,2); $('oM').textContent='×'+fr(S.F/S.D/S.fp,2); }
+  $('wK').hidden=fam!=='newton'; $('cK').value=S.K; $('oK').textContent=fr(S.K,2)+(Math.abs(S.K+1)<0.005?' · parabole':Math.abs(S.K)<0.005?' · sphère':S.K<-1?' · hyperbole':S.K>0?' · ellipsoïde aplati':' · ellipsoïde');
+  // collimation
+  const refr=fam==='refr';
+  $('lPx').textContent=refr?'Objectif, basculement vertical':'Primaire, vis verticale';
+  $('lPy').textContent=refr?'Objectif, basculement horizontal':'Primaire, vis horizontale';
+  $('wSx').hidden=refr; $('wSy').hidden=refr;
+  for(const [id,k] of [['cPx','tPx'],['cPy','tPy'],['cSx','tSx'],['cSy','tSy']]){ $(id).value=S[k]; $('o'+id.slice(1)).textContent=sgn(S[k],1)+'′'; }
+  const col=Math.hypot(S.tPx,S.tPy)+Math.hypot(S.tSx,S.tSy); $('tagCol').textContent=col<0.01?'alignée':'déréglée';
+  $('tagCol').style.color=col<0.01?'var(--ok)':'var(--warn)';
+  // accessoires
+  chipRow($('accPicker'),Object.keys(ACCESSORIES).map(k=>[k,ACCESSORIES[k].name]),S.acc,v=>{S.acc=v; needFit=true; syncUI(); schedule('full',true);});
+  // sortie
+  $('oEye').setAttribute('aria-pressed',String(S.out==='eye')); $('oCam').setAttribute('aria-pressed',String(S.out==='cam'));
+  $('eyeBox').hidden=S.out!=='eye'; $('camBox').hidden=S.out!=='cam';
+  chipRow($('fePicker'),FES.map(f=>[f,fr(f,f%1?1:0)]),S.fe,v=>{S.fe=v; needFit=true; syncUI(); schedule('normal');});
+  $('oFe').textContent=fr(S.fe,S.fe%1?1:0)+' mm'; $('cAfov').value=String(S.afov); $('oAfov').textContent=S.afov+'°';
+  $('cEp').value=S.eyePupil; $('oEp').textContent=fr(S.eyePupil,1)+' mm';
+  $('cSensor').value=S.sensor; $('cSt').value=S.sT; $('oSt').textContent=sgn(S.sT,0)+'′';
+  $('cField').value=S.field; $('oField').textContent=fr(S.field,2)+'°';
+  $('lWhite').setAttribute('aria-pressed',String(!S.mono)); $('lMono').setAttribute('aria-pressed',String(S.mono));
+  $('tSingle').setAttribute('aria-pressed',String(S.target==='single')); $('tDouble').setAttribute('aria-pressed',String(S.target==='double'));
+  $('wSep').hidden=S.target!=='double'; $('cSep').value=S.sep; $('oSep').textContent=fr(S.sep,2)+'″';
+  $('cSee').value=S.seeing; $('oSee').textContent=S.seeing<0.05?'aucune (espace)':fr(S.seeing,1)+'″';
+  $('cRays').value=S.nRays; $('oRays').textContent=S.fan==='m'?S.nRays+' par couleur':'faisceau 3D';
+  $('fanM').setAttribute('aria-pressed',String(S.fan==='m')); $('fan3').setAttribute('aria-pressed',String(S.fan!=='m'));
+  $('xPhot').checked=S.photons; $('xFront').checked=S.fronts; $('xCut').checked=S.cut; $('xLab').checked=S.labels; $('xExt').checked=S.extend; $('xRGB').checked=S.rgb; $('xGam').checked=S.gam;
+  $('cSpeed').value=S.speed; $('oSpeed').textContent='×'+fr(S.speed,2);
+  $('imPsf').setAttribute('aria-pressed',String(S.imgMode==='psf')); $('imSpot').setAttribute('aria-pressed',String(S.imgMode!=='psf'));
+  chipRow($('skyPicker'),SKY,S.sky,v=>{S.sky=v; syncUI(); drawSky();});
+  $('bOrtho').setAttribute('aria-pressed',String(S.ortho));
+  $('about').innerHTML=ABOUT[S.type];
+  document.querySelectorAll('input[type=range]').forEach(setP);
+  buildSweepOptions();
+}
+function focusRange(){ if(primaryFocus()) return 0.6; const N=(res?res.efl:S.F)/S.D; return clamp(0.05*N*N,1.2,25); }
+function focusStep(){ const N=(res?res.efl:S.F)/S.D; const dof=2*0.00055*N*N; if(primaryFocus()){ const m=S.F/S.D/S.fp; return dof/(m*m+1); } return dof; }
+function syncFocusUI(){
+  const r=focusRange(), el=$('cFoc'); el.min=-r; el.max=r; el.step=r/1500; el.value=S.focus; setP(el);
+  const pf=primaryFocus();
+  $('lFoc').textContent=pf?'Position du miroir primaire':(S.out==='eye'?'Position du porte-oculaire':'Position de la caméra');
+  $('oFoc').textContent=sgn(S.focus,pf?3:2)+' mm';
+  const bm=$('bestMark'); if(isFinite(best)&&Math.abs(best)<=r){ bm.hidden=false; bm.style.left=((best+r)/(2*r)*100)+'%'; } else bm.hidden=true;
+  const d=S.focus-best; const dofMM=pf?focusStep():2*0.00055*Math.pow(res.efl/S.D,2);
+  const tag=$('tagFoc');
+  if(Math.abs(d)<=dofMM){ tag.textContent='net'; tag.style.color='var(--ok)'; }
+  else { tag.textContent=(pf?(d>0?'foyer rentré':'foyer sorti'):(d>0?'extra-focale':'intra-focale')); tag.style.color='var(--warn)'; }
+  let h='Repère vert : meilleur foyer. Profondeur de foyer ±'+fr(2*0.00055*Math.pow(res.efl/S.D,2)*1000,0)+' µm.';
+  if(pf){ const m=S.F/S.D/S.fp; h='Déplacer le primaire de 0,1 mm déplace le foyer d’environ '+fr((m*m+1)*0.1,1)+' mm (facteur m² + 1 = '+fr(m*m+1,0)+').'; }
+  $('hFoc').textContent=h;
+}
+
+/* ================= Construction ================= */
+let res=null, best=0, diag=null, diagKey='', needBuild=false, buildMode='normal', analysisFlag=false, lastAn=0;
+function schedule(mode, fit){ needBuild=true; if(mode==='full') buildMode='full'; else if(buildMode!=='full') buildMode=mode||'normal'; if(fit) needFit=true; }
+function build(){
+  needBuild=false; const mode=buildMode; buildMode='normal';
+  const quick=mode==='quick';
+  const t0=performance.now();
+  const st=est(quick);
+  const r=compose(st);
+  if(!r){ $('instSpec').textContent='Combinaison impossible avec ces réglages'; return; }
+  res=r;
+  best=bestFocus(res,st);
+  const key=[S.type,S.D,S.F,S.fp,S.K,S.acc,quick].join('|');
+  if(key!==diagKey){ diag=diagnostics(res,st); diagKey=key; }
+  buildScene(); buildRays(); updateHUD(); syncFocusUI(); updateData();
+  analysisFlag=true;
+  return performance.now()-t0;
+}
+function fullBuild(after){ // calcul potentiellement long (optimisation de l'objectif) : affiche un indicateur
+  $('busy').hidden=false;
+  setTimeout(()=>{ buildMode='full'; build(); $('busy').hidden=true; if(after) after(); },30);
+}
+function updateHUD(){
+  $('instName').textContent=TYPES[S.type].name;
+  const fe=res.efl, acc=S.acc!=='none'&&S.acc!=='diag';
+  $('instSpec').innerHTML=`Ø ${fr(S.D,0)} mm <span>·</span> F ${fr(fe,0)} mm <span>·</span> F/${fr(fe/S.D,1)}${acc?' <span>(avec '+ACCESSORIES[S.acc].name.toLowerCase()+')</span>':''}`;
+  const lg=$('legend'); const keys=S.mono?['G']:(S.rgb?['R','G','B']:[]);
+  lg.innerHTML=keys.map(k=>{ const c=new THREE.Color(WLD[k].col); return `<span><i style="background:#${c.getHexString()}"></i>${WLD[k].name}</span>`; }).join('')+(S.photons?'<span><i style="background:#fff;height:5px;width:5px;border-radius:50%"></i>photons (vitesse c/n dans le verre)</span>':'');
+  // note sur les verres
+  const d=res.real.design; let gn='';
+  if(TYPES[S.type].family==='refr'){ const gl=d.glasses.filter(g=>g!=='air').map(g=>GLASS[g].name); gn='Objectif calculé par lancer de rayons : <b>'+gl.join(' + ')+'</b>'+(d.glasses.includes('air')?' (lame d’air)':'')+'.'; }
+  else if(S.type==='newton') gn='Miroir secondaire plan : petit axe '+fr(res.nom.obsR*2,0)+' mm, obstruction <b>'+fr(res.obsRatio*100,0)+' %</b> du diamètre.';
+  else { const o=res.real.design; gn='Primaire K = '+fr(o.K1,2)+', secondaire K = '+fr(o.K2,2)+(S.type==='sct'?' (deux sphères + lame de Schmidt)':S.type==='mak'?' (sphères + ménisque BK7)':'')+'. Obstruction <b>'+fr(res.obsRatio*100,0)+' %</b>.'; }
+  $('glassNote').innerHTML=gn;
+  const acn={none:'',barlow2:'Lentille divergente achromatique placée 70 mm avant le foyer.',barlow2s:'Une seule lentille divergente en BK7 : elle ajoute sa propre aberration chromatique.',barlow3:'Lentille plus puissante placée 60 mm avant le foyer.',reducer:'Lentille convergente 100 mm avant le foyer : focale et champ plus larges, image plus lumineuse.',diag:'Miroir plan à 45° : visée confortable au zénith, image inversée gauche-droite.'};
+  $('accNote').textContent=acn[S.acc]+(acc?' Focale résultante : '+fr(res.efl,0)+' mm (×'+fr(res.efl/nativeEfl(),2)+').':'');
+}
+let _nat={key:'',v:0};
+function nativeEfl(){ const key=[S.type,S.D,S.F,S.fp,S.K].join('|'); if(_nat.key!==key){ const st=Object.assign(est(true),{acc:'none'}); const r=compose(st); _nat={key,v:r?r.efl:S.F}; } return _nat.v; }
+function kvRows(rows){ return rows.map(r=>{ if(r.grp) return `<div class="grp">${r.grp}</div>`; const h=KV_HELP.find(k=>r[0].startsWith(k[0])); return `<dt>${r[0]}${h?qBtn(h[1]):''}</dt><dd>${r[1]}</dd>`; }).join(''); }
+function updateData(){
+  const D=S.D, fe=res.efl, N=fe/D, eps=res.obsRatio;
+  const rows=[{grp:'Tube optique'},['Diamètre utile',fr(D,0)+' mm'],['Focale résultante',fr(fe,0)+' mm'],['Rapport F/D','F/'+fr(N,1)],
+    ['Obstruction centrale',eps>0?fr(eps*100,0)+' % <small>('+fr(eps*eps*100,0)+' % de surface)</small>':'aucune'],
+    ['Lumière captée','×'+fr((D/7)**2*(1-eps*eps),0)+' <small>vs œil</small>'],
+    ['Pouvoir séparateur (Dawes)',fr(116/D,2)+'″'],['Magnitude limite','≈ '+fr(2.1+5*Math.log10(D),1)],
+    ['Échelle au foyer',fr(fe/206.265,1)+' µm par ″'],['Profondeur de foyer','±'+fr(2*0.00055*N*N*1000,0)+' µm']];
+  if(S.out==='eye'){ const G=res.G;
+    rows.push({grp:'À l’oculaire'},['Grossissement','×'+fr(G,0)],['Champ réel',fmtAs(S.afov/G*3600)],['Pupille de sortie',fr(res.ep,2)+' mm'],
+      ['Grossissement utile','×'+fr(D/7,0)+' à ×'+fr(2*D,0)],['Grossissement résolvant','≈ ×'+fr(D*1.2,0)]); }
+  else { const sn=SENSORS[S.sensor]; const pxAs=sn.px/1000/fe*206265;
+    rows.push({grp:'Au capteur'},['Échantillonnage',fr(pxAs,2)+'″ / pixel'],['Champ du capteur',fmtAs(sn.w/fe*206265)+' × '+fmtAs(sn.h/fe*206265)],
+      ['Pixel idéal (turbulence '+fr(Math.max(S.seeing,0.5),1)+'″)',fr(Math.max(S.seeing,0.5)/3*fe/206.265,1)+' à '+fr(Math.max(S.seeing,0.5)/2*fe/206.265,1)+' µm'],
+      ['Disque d’Airy',fr(2*1.22*0.5461*N,1)+' µm = '+fr(2*1.22*0.5461*N/sn.px,1)+' px']); }
+  if(diag){ rows.push({grp:'Défauts sur l’axe (calculés)'});
+    const fc=diag.foci; const rb=Math.abs(fc.R-fc.B)*1000, vg=Math.abs(fc.V-fc.G)*1000;
+    rows.push(['Écart foyers rouge–bleu',fr(rb,0)+' µm'],['Écart foyers violet–vert',fr(vg,0)+' µm'],['Aberration sphérique longit.',fr(Math.abs(diag.lsa)*1000,0)+' µm']); }
+  $('kv').innerHTML=kvRows(rows);
+}
+function pill(cls,t){ return `<span class="pill ${cls}">${t}</span>`; }
+function updatePills(){
+  const a=AN.a, rel=a.rmsPoly/AN.airyR; let h='';
+  h+=rel<0.45?pill('ok','Limité par la diffraction'):rel<1.2?pill('warn','Légères aberrations'):pill('bad','Image floue');
+  const d=S.focus-best, dof=primaryFocus()?focusStep():2*0.00055*Math.pow(res.efl/S.D,2);
+  h+=Math.abs(d)<=dof?pill('ok','Au foyer'):pill('warn',(d>0?'Extra':'Intra')+'-focale');
+  if(diag && S.out){ const rb=Math.max(Math.abs(diag.foci.R-diag.foci.B),Math.abs(diag.foci.V-diag.foci.G)); if(!S.mono) h+=rb<diag.dof?pill('ok','Pas de chromatisme'):rb<4*diag.dof?pill('warn','Chromatisme faible'):pill('bad','Chromatisme fort'); }
+  if(Math.hypot(S.tPx,S.tPy)+Math.hypot(S.tSx,S.tSy)>0.01) h+=pill('warn','Collimation déréglée');
+  if(S.seeing>116/S.D*1.1) h+=pill('info','Limité par la turbulence');
+  if(S.target==='double'){ h+=S.sep>=116/S.D?pill('ok','Double séparable'):pill('bad','Sous la limite de Dawes'); }
+  $('pills').innerHTML=h;
+}
+function note(cls,t){ return `<li class="${cls}">${t}</li>`; }
+function updateNotes(){
+  if(!AN||!res) return; const out=[]; const N=res.efl/S.D; const fam=TYPES[S.type].family;
+  const d=S.focus-best, pf=primaryFocus(), dof=pf?focusStep():2*0.00055*N*N;
+  const rel=AN.a.rmsPoly/AN.airyR;
+  if(Math.abs(d)<=dof) out.push(note('ok','<b>Mise au point parfaite.</b> Toute la lumière se concentre dans le disque d’Airy, la plus petite tache permise par la nature ondulatoire de la lumière ('+fmtAs(2*AN.airyR/AN.plateUmAs)+' de diamètre).'));
+  else out.push(note('warn','<b>'+(pf?'Primaire décalé de '+fr(Math.abs(d),3)+' mm':'Défocalisation de '+fr(Math.abs(d),2)+' mm')+'</b> '+(d>0&&!pf?'au-delà du foyer (extra-focale)':!pf?'avant le foyer (intra-focale)':'')+' : l’étoile s’étale en un disque'+(res.obsRatio>0?' percé par l’ombre du secondaire'+(res.spider?' et barré par l’araignée':''):'')+'. Ce « test sur étoile » sert à juger la collimation.'));
+  if(diag && !S.mono){ const rb=Math.abs(diag.foci.R-diag.foci.B)*1000, vg=Math.abs(diag.foci.V-diag.foci.G)*1000, dofU=diag.dof*1000;
+    if(fam==='refr'||S.acc==='barlow2s'){ if(Math.max(rb,vg)>4*dofU) out.push(note('bad','<b>Aberration chromatique.</b> Le verre dévie plus le bleu que le rouge : les foyers rouge et bleu sont séparés de '+fr(rb,0)+' µm, le violet de '+fr(vg,0)+' µm, pour une profondeur de foyer de ±'+fr(dofU,0)+' µm. D’où le halo coloré autour de l’étoile.'));
+      else if(Math.max(rb,vg)>dofU) out.push(note('warn','<b>Spectre secondaire.</b> Rouge et bleu sont presque réunis ('+fr(rb,0)+' µm), mais le violet focalise '+fr(vg,0)+' µm plus loin : léger halo violet sur les objets brillants.'));
+      else out.push(note('ok','<b>Couleurs corrigées.</b> Toutes les couleurs focalisent à moins de ±'+fr(dofU,0)+' µm du même point : comportement apochromatique.')); }
+    else out.push(note('ok','<b>Aucune aberration chromatique</b> '+(S.type==='sct'||S.type==='mak'?'notable : le correcteur en verre est presque sans puissance':'  : un miroir réfléchit toutes les couleurs sous le même angle')+'.')); }
+  if(diag && Math.abs(diag.lsa)>2*diag.dof) out.push(note('bad','<b>Aberration sphérique.</b> Les rayons du bord focalisent '+fr(Math.abs(diag.lsa),2)+' mm '+(diag.lsa<0?'plus près':'plus loin')+' que ceux du centre : aucune position de mise au point ne donne une image nette.'+(fam==='newton'?' Seule la parabole (K = −1) réunit tous les rayons.':'')));
+  const tp=Math.hypot(S.tPx,S.tPy), ts=Math.hypot(S.tSx,S.tSy);
+  if(tp>0.01) out.push(note('warn','<b>'+(fam==='refr'?'Objectif basculé':'Primaire désaligné')+' de '+fr(tp,1)+'′.</b> '+(fam==='refr'?'Les rayons traversent l’objectif en biais':'Le faisceau réfléchi est dévié de '+fr(2*tp,1)+'′')+' : l’étoile au centre du champ se comporte comme une étoile hors de l’axe et prend une forme de comète (coma).'));
+  if(ts>0.01){ const off=Math.hypot(AN.a.cx,AN.a.cy)/1000; out.push(note('warn','<b>Secondaire incliné de '+fr(ts,1)+'′.</b> '+(fam==='newton'?'Un miroir plan ne déforme pas l’image mais la déplace : l’étoile est à '+fr(off,2)+' mm de l’axe du porte-oculaire, qui ne vise plus le centre du primaire.':'Le secondaire courbe décentré introduit de la coma et déplace l’image de '+fr(off,2)+' mm.'))); }
+  if(S.field>0.001) out.push(note('info','<b>Étoile à '+fr(S.field,2)+'° du centre.</b> Tache de '+fr(AN.a.rmsPoly,1)+' µm RMS contre un disque d’Airy de '+fr(AN.airyR,1)+' µm de rayon'+(fam==='newton'||S.type==='cass'||S.type==='dk'?' : la coma est le défaut typique de cette formule.':S.type==='rc'?' : le Ritchey-Chrétien est corrigé de la coma, reste l’astigmatisme et la courbure de champ.':'.')));
+  if(S.acc.startsWith('barlow')||S.acc==='reducer'){ const k=res.efl/nativeEfl(); out.push(note('info','<b>'+ACCESSORIES[S.acc].name+'.</b> La focale passe de '+fr(nativeEfl(),0)+' à '+fr(res.efl,0)+' mm (×'+fr(k,2)+') : F/'+fr(nativeEfl()/S.D,1)+' devient F/'+fr(res.efl/S.D,1)+'. Le diamètre ne change pas : la finesse maximale est la même, mais l’image est '+(k>1?'plus grande et '+fr(k*k,1)+' fois moins lumineuse par unité de surface':'plus petite et '+fr(1/(k*k),1)+' fois plus lumineuse')+'.')); }
+  if(S.out==='eye'){ const G=res.G, ep=res.ep;
+    if(ep>S.eyePupil) out.push(note('warn','<b>Pupille de sortie de '+fr(ep,1)+' mm</b>, plus large que la pupille de l’œil ('+fr(S.eyePupil,1)+' mm) : une partie de la lumière est perdue, tout se passe comme si le télescope ne faisait que '+fr(S.eyePupil*G,0)+' mm de diamètre.'));
+    else if(ep<0.6) out.push(note('warn','<b>Grossissement ×'+fr(G,0)+' excessif.</b> La pupille de sortie ('+fr(ep,2)+' mm) est si petite que l’image devient sombre et floue, et les corps flottants de l’œil apparaissent.'));
+    else out.push(note('ok','<b>Grossissement ×'+fr(G,0)+'</b> = focale / oculaire = '+fr(res.efl,0)+' / '+fr(S.fe,1)+'. Pupille de sortie '+fr(ep,1)+' mm : '+(ep>4?'idéal pour le ciel profond.':ep>1.5?'bon compromis.':'adapté aux planètes et étoiles doubles.')));
+    if(G>2.2*S.D) out.push(note('bad','<b>Au-delà de ×'+fr(2*S.D,0)+'</b> (2 × D en mm), le grossissement est « vide » : on agrandit le flou sans voir plus de détails.')); }
+  else { const pxAs=SENSORS[S.sensor].px/1000/res.efl*206265, see=Math.max(S.seeing,0.5);
+    const ratio=see/pxAs; out.push(note(ratio<1.6?'warn':ratio>4?'warn':'ok','<b>Échantillonnage '+fr(pxAs,2)+'″/pixel</b> pour une turbulence de '+fr(see,1)+'″ : '+(ratio<1.6?'sous-échantillonné, les étoiles deviennent des carrés.':ratio>4?'sur-échantillonné, le signal est dilué sur trop de pixels.':'bien adapté (2 à 3 pixels par tache de turbulence).'))); }
+  if(S.seeing>116/S.D*1.1 && S.seeing>0.05) out.push(note('info','<b>La turbulence ('+fr(S.seeing,1)+'″) dépasse le pouvoir séparateur ('+fr(116/S.D,2)+'″).</b> C’est l’atmosphère qui limite la netteté, pas l’instrument.'));
+  if(res.obsRatio>0.25) out.push(note('info','<b>Obstruction de '+fr(res.obsRatio*100,0)+' %.</b> Elle ne masque que '+fr(res.obsRatio**2*100,0)+' % de la lumière, mais déplace de l’énergie du disque d’Airy vers les anneaux : le contraste des détails fins baisse.'));
+  if(AN.a.trans<0.999 && S.out==='eye' && res.ep>S.eyePupil) {}
+  $('notes').innerHTML=out.join('');
+}
+
+/* ================= Balayage & leçons ================= */
+const SWEEPS={
+  focus:{name:'Mise au point', ok:()=>true, range:()=>{ const r=focusRange(); const a=Math.min(r,Math.max(focusStep()*(primaryFocus()?22:22),0.2)); return [best-a,best+a]; }},
+  D:{name:'Diamètre', ok:()=>true, range:()=>ranges().Dr, quick:true},
+  F:{name:'Focale', ok:()=>true, range:()=>{ const r=ranges().Nr; return [S.D*r[0],S.D*r[1]]; }, quick:true},
+  K:{name:'Forme du miroir (K)', ok:()=>TYPES[S.type].family==='newton', range:()=>[0.2,-1.3]},
+  fp:{name:'Ouverture du primaire', ok:()=>!!ranges().fpr, range:()=>{ const r=ranges().fpr; return [r[0],Math.min(r[1],S.F/S.D/1.8)]; }, quick:true},
+  tPx:{name:'Inclinaison du primaire', ok:()=>true, range:()=>[-12,12]},
+  tSx:{name:'Inclinaison du secondaire', ok:()=>TYPES[S.type].family!=='refr', range:()=>[-15,15]},
+  field:{name:'Position dans le champ', ok:()=>true, range:()=>[0,1]},
+  fe:{name:'Oculaire (grossissement)', ok:()=>S.out==='eye', range:()=>[40,3], log:true},
+  seeing:{name:'Turbulence', ok:()=>true, range:()=>[0.2,4]}
+};
+let sweep={on:false,param:'focus',t:0,from:0,to:1};
+function buildSweepOptions(){ const sel=$('sweepParam'); const cur=sweep.param; sel.innerHTML='';
+  for(const k in SWEEPS){ if(!SWEEPS[k].ok()) continue; const o=document.createElement('option'); o.value=k; o.textContent=SWEEPS[k].name; sel.appendChild(o); }
+  if(!SWEEPS[cur].ok()) sweep.param='focus'; sel.value=sweep.param; }
+function startSweep(param){ if(param) sweep.param=param; const sw=SWEEPS[sweep.param]; const r=sw.range(); sweep.from=r[0]; sweep.to=r[1];
+  // démarrer depuis la valeur courante
+  const cur=S[sweep.param]; const lin=v=>sw.log?Math.log(v):v; const u=clamp((lin(cur)-lin(r[0]))/((lin(r[1])-lin(r[0]))||1),0,1);
+  sweep.t=Math.acos(1-2*u)/Math.PI*0.5; sweep.on=true; $('sweepParam').value=sweep.param; setPlayIcon(); }
+function stopSweep(){ if(!sweep.on) return; sweep.on=false; setPlayIcon(); if(SWEEPS[sweep.param].quick){ fullBuild(); } else schedule('normal'); syncUI(); }
+function setPlayIcon(){ $('playIco').innerHTML=sweep.on?'<path d="M3 1.5h3v11H3zM8 1.5h3v11H8z"/>':'<path d="M3 1.5v11l9-5.5z"/>'; $('sweepPlay').setAttribute('aria-label',sweep.on?'Arrêter le balayage':'Lancer le balayage'); }
+function stepSweep(dt){
+  if(!sweep.on) return; const sw=SWEEPS[sweep.param]; sweep.t+=dt/9;
+  const u=0.5-0.5*Math.cos(sweep.t*2*Math.PI); let v;
+  if(sw.log) v=Math.exp(Math.log(sweep.from)+(Math.log(sweep.to)-Math.log(sweep.from))*u); else v=sweep.from+(sweep.to-sweep.from)*u;
+  S[sweep.param]=v;
+  if(sweep.param==='D'||sweep.param==='F'||sweep.param==='fp') constrain();
+  syncLight(); schedule(sw.quick?'quick':'normal');
+}
+function syncLight(){ // mise à jour légère pendant l'animation
+  for(const [id,k] of [['cD','D'],['cF','F']]){ $(id).value=S[k]; $('n'+id.slice(1)).value=Math.round(S[k]); setP($(id)); }
+  $('tagFD').textContent='F/'+fr(S.F/S.D,1);
+  $('cK').value=S.K; $('oK').textContent=fr(S.K,2); $('cPx').value=S.tPx; $('oPx').textContent=sgn(S.tPx,1)+'′'; $('cSx').value=S.tSx; $('oSx').textContent=sgn(S.tSx,1)+'′';
+  $('cField').value=S.field; $('oField').textContent=fr(S.field,2)+'°'; $('cSee').value=S.seeing; $('oSee').textContent=fr(S.seeing,1)+'″';
+  $('oFe').textContent=fr(S.fe,1)+' mm'; if(!$('wFp').hidden){ $('cFp').value=S.fp; $('oFp').textContent='F/'+fr(S.fp,2); }
+  ['cK','cPx','cSx','cField','cSee','cFp'].forEach(id=>setP($(id)));
+}
+const LESSONS=[
+  {k:'Les bases', t:'Le trajet de la lumière', p:{type:'achro',D:102,F:1000,out:'eye',fe:25,photons:true,fronts:true,fan:'m',nRays:13,acc:'none',field:0,seeing:1,sky:'moon'}, view:'side',
+   txt:'<p>Une étoile est si lointaine que ses rayons arrivent <b>parallèles</b>. L’objectif les courbe pour les réunir en un point : le <b>foyer</b>. La distance objectif–foyer est la <b>focale</b>.</p><p>Les lignes blanches sont des <b>fronts d’onde</b> : plans à l’entrée, ils deviennent des calottes sphériques centrées sur le foyer. Dans le verre, la lumière ralentit (vitesse c/n) : les photons du centre, qui traversent plus de verre, prennent du retard. C’est ce retard qui courbe le front d’onde.</p>'},
+  {k:'Les bases', t:'Diamètre : lumière et finesse', p:{type:'newton',D:150,F:1200,out:'cam',sensor:'imx585',seeing:0,photons:true,fronts:false,acc:'none',field:0,target:'double',sep:0.9}, view:'side', sweep:'D',
+   txt:'<p>Le diamètre <b>D</b> est la surface qui collecte la lumière : doubler D, c’est capter <b>4 fois</b> plus de photons.</p><p>C’est aussi D qui fixe la finesse : la tache de diffraction (disque d’Airy) mesure 1,22 λ/D. Regardez l’étoile double à 0,9″ : sous environ 130 mm, les deux étoiles se confondent. Au-dessus, elles se séparent.</p>'},
+  {k:'Les bases', t:'Focale et rapport F/D', p:{type:'newton',D:200,F:1000,out:'cam',sensor:'imx571',seeing:1.5,photons:true,acc:'none',field:0,target:'single'}, view:'side', sweep:'F',
+   txt:'<p>La focale fixe l’<b>échelle de l’image</b> : au foyer, une seconde d’arc mesure F/206 µm. Plus la focale est longue, plus Jupiter est grosse sur le capteur.</p><p>Le rapport <b>F/D</b> décrit l’ouverture du cône de lumière. F/4 est un cône très ouvert (« rapide », pour la photo du ciel profond), F/12 un cône fin (planétaire). Plus le cône est ouvert, plus la mise au point est critique : la profondeur de foyer vaut ±2 λ (F/D)².</p>'},
+  {k:'Les bases', t:'La mise au point et le test sur étoile', p:{type:'newton',D:200,F:1000,out:'eye',fe:10,seeing:0.5,photons:false,acc:'none',field:0,target:'single',gam:true,imgMode:'psf'}, view:'focus', sweep:'focus',
+   txt:'<p>Hors du foyer, l’étoile devient un disque de lumière. On y voit l’<b>ombre du miroir secondaire</b> et les quatre <b>bras de l’araignée</b> qui le tiennent.</p><p>Au foyer, les bras produisent les <b>aigrettes de diffraction</b> en croix, typiques des photos prises au Newton. Comparer les disques intra et extra-focaux est le test le plus sensible pour juger une optique.</p>'},
+  {k:'Aberrations', t:'L’aberration chromatique', p:{type:'single',D:60,F:900,out:'cam',sensor:'imx585',seeing:0.5,photons:false,fronts:false,rgb:true,acc:'none',field:0,target:'single',mono:false,nRays:9}, view:'focus', sweep:'focus',
+   btn:[['Passer à l’achromat',{type:'achro',D:60,F:900}],['Revenir à la lentille simple',{type:'single',D:60,F:900}]],
+   txt:'<p>Le verre ne dévie pas toutes les couleurs de la même façon (<b>dispersion</b>) : le bleu est plus dévié que le rouge, il focalise plus près de l’objectif.</p><p>Avec une lentille simple, les foyers rouge et bleu sont séparés de plus de 10 mm ! Où que l’on fasse la mise au point, une couleur est nette et les autres forment un halo.</p>'},
+  {k:'Aberrations', t:'Achromat, ED et apochromat', p:{type:'achro',D:100,F:800,out:'cam',sensor:'imx585',seeing:0.5,photons:false,rgb:true,acc:'none',field:0,target:'single',mono:false,nRays:9}, view:'focus',
+   btn:[['Achromat BK7 + F2',{type:'achro',D:100,F:800}],['Doublet ED',{type:'ed',D:100,F:800}],['Triplet APO',{type:'apo',D:100,F:800}]],
+   txt:'<p>En associant une lentille convergente en <b>crown</b> et une divergente en <b>flint</b>, Fraunhofer ramène le rouge et le bleu au même foyer : c’est l’<b>achromat</b>. Il reste un décalage du vert et surtout du violet, le <b>spectre secondaire</b>.</p><p>Les verres <b>ED</b> et la <b>fluorite</b> ont une dispersion inhabituelle qui réduit ce résidu. Comparez les trois objectifs de même diamètre et même focale : regardez le halo violet et les écarts de foyer dans « Caractéristiques ».</p>'},
+  {k:'Aberrations', t:'L’aberration sphérique', p:{type:'newton',D:200,F:800,K:0,out:'cam',sensor:'imx585',seeing:0.3,photons:false,acc:'none',field:0,target:'single',nRays:21}, view:'focus', sweep:'K',
+   txt:'<p>Avec un miroir <b>sphérique</b> (K = 0), les rayons du bord se croisent plus près du miroir que ceux du centre : ils dessinent une <b>caustique</b> au lieu d’un point.</p><p>La <b>parabole</b> (K = −1) est la seule surface qui réunit en un point tous les rayons parallèles à l’axe. Passer de la sphère à la parabole ne demande de creuser le centre que de quelques microns : c’est le délicat travail du <b>parabolisage</b>.</p>'},
+  {k:'Aberrations', t:'La coma hors de l’axe', p:{type:'newton',D:200,F:800,K:-1,out:'cam',sensor:'imx571',seeing:0.5,photons:false,acc:'none',field:0,target:'single',nRays:13}, view:'focus', sweep:'field',
+   btn:[['Newton F/4',{type:'newton',D:200,F:800}],['Ritchey-Chrétien F/8',{type:'rc',D:200,F:1600,fp:3}]],
+   txt:'<p>La parabole est parfaite… uniquement sur l’axe. Dès qu’on s’en écarte, les étoiles prennent une forme de <b>comète</b> : c’est la coma. Son étendue varie comme 1/(F/D)² : un Newton F/4 en souffre quatre fois plus qu’un F/8.</p><p>Les astrophotographes ajoutent un <b>correcteur de coma</b>. Le <b>Ritchey-Chrétien</b> la supprime par construction.</p>'},
+  {k:'Réglages', t:'La collimation d’un Newton', p:{type:'newton',D:200,F:1000,out:'eye',fe:6,seeing:0.5,photons:false,acc:'none',field:0,target:'single',tPx:0,tSx:0}, view:'side', sweep:'tPx',
+   btn:[['Dérégler au hasard',{rnd:true}],['Collimater',{tPx:0,tPy:0,tSx:0,tSy:0}]],
+   txt:'<p>Si le miroir primaire bascule, l’étoile au centre du champ devient une petite <b>comète</b> : le faisceau est dévié de <b>deux fois</b> l’angle d’inclinaison du miroir.</p><p>Exercice : cliquez sur « Dérégler au hasard », puis retrouvez les bons réglages avec les vis du primaire et du secondaire en observant l’image de l’étoile, légèrement défocalisée comme sur le terrain.</p>'},
+  {k:'Accessoires', t:'La lentille de Barlow', p:{type:'newton',D:200,F:1000,out:'eye',fe:10,acc:'barlow2',seeing:1,photons:true,field:0,target:'single',sky:'jupiter'}, view:'side',
+   btn:[['Sans Barlow',{acc:'none'}],['Barlow ×2',{acc:'barlow2'}],['Barlow ×3',{acc:'barlow3'}],['Barlow ×2 simple',{acc:'barlow2s'}]],
+   txt:'<p>Une Barlow est une lentille <b>divergente</b> placée avant le foyer. Elle ouvre le cône de lumière, qui converge plus loin : tout se passe comme si la focale était multipliée.</p><p>Avec le même oculaire, le grossissement double ou triple. Le diamètre ne change pas : la finesse maximale reste la même, mais l’image est plus sombre. Une Barlow à lentille simple ajoute sa propre aberration chromatique.</p>'},
+  {k:'Accessoires', t:'Grossissement et pupille de sortie', p:{type:'newton',D:200,F:1200,out:'eye',fe:25,acc:'none',seeing:1.2,photons:true,field:0,sky:'jupiter',eyePupil:7}, view:'eye', sweep:'fe',
+   txt:'<p><b>Grossissement = focale du télescope ÷ focale de l’oculaire.</b> Le faisceau qui sort de l’oculaire a pour diamètre la <b>pupille de sortie</b> = D ÷ G.</p><p>Au-delà de 7 mm, la pupille de sortie ne rentre plus dans l’œil (lumière perdue). Sous 0,5 mm, l’image devient sombre et floue. La plage utile va donc d’environ D/7 à 2 × D (en mm).</p>'},
+  {k:'Formules', t:'L’obstruction centrale', p:{type:'sct',D:203,F:2032,fp:2,out:'cam',sensor:'imx462',seeing:0,acc:'none',field:0,target:'single',gam:true,photons:false}, view:'side', sweep:'focus',
+   btn:[['Schmidt-Cassegrain',{type:'sct',D:203,F:2032,fp:2}],['Lunette APO',{type:'apo',D:130,F:910}],['Maksutov',{type:'mak',D:127,F:1500,fp:3}]],
+   txt:'<p>Dans un télescope à deux miroirs, le secondaire masque le centre du faisceau. Une obstruction de 30 % du diamètre ne retire que 9 % de la lumière, mais elle <b>renforce les anneaux de diffraction</b> au détriment du disque central.</p><p>Hors foyer, l’étoile devient un anneau : le « donut » caractéristique des Schmidt-Cassegrain.</p>'},
+  {k:'Formules', t:'La mise au point d’un Schmidt-Cassegrain', p:{type:'sct',D:203,F:2032,fp:2,out:'eye',fe:25,acc:'none',seeing:1,field:0,photons:true}, view:'side', sweep:'focus',
+   txt:'<p>Dans un Schmidt-Cassegrain, on ne déplace pas l’oculaire : c’est le <b>miroir primaire</b> qui avance ou recule. Le secondaire grossissant environ 5 fois, un déplacement du primaire est amplifié d’un facteur m² + 1 ≈ 26 au foyer.</p><p>Quelques dixièmes de millimètre suffisent à parcourir des centimètres de mise au point. C’est aussi pourquoi l’image peut « sauter » quand le miroir bascule légèrement sur son axe.</p>'},
+  {k:'Atmosphère', t:'La turbulence', p:{type:'newton',D:300,F:1500,out:'eye',fe:6,acc:'none',seeing:0.3,field:0,sky:'jupiter',target:'single'}, view:'side', sweep:'seeing',
+   txt:'<p>L’air agité par la chaleur se comporte comme une multitude de petites lentilles mouvantes : l’étoile danse et s’étale. C’est le <b>seeing</b>, mesuré en secondes d’arc.</p><p>Un 300 mm sépare 0,4″ en théorie. Mais par une nuit ordinaire (2 à 3″), il ne montre guère plus de détails qu’un 100 mm : c’est l’atmosphère qui commande.</p>'}
+];
+let lessonIdx=-1;
+function buildLessons(){ const g=$('lgrid'); g.innerHTML=''; LESSONS.forEach((l,i)=>{ const b=document.createElement('button'); b.className='lcard';
+  b.innerHTML=`<span class="n">${String(i+1).padStart(2,'0')} · ${l.k}</span><b>${l.t}</b><span>${TYPES[l.p.type].name}${l.sweep?' · animé':''}</span>`; b.onclick=()=>{ closeModal(); openLesson(i); }; g.appendChild(b); }); }
+function applyPatch(p, keepFocus){
+  if(p.rnd){ randomTilt(); return; }
+  const typeChange=p.type&&p.type!==S.type;
+  if(typeChange){ const T=TYPES[p.type]; Object.assign(S,{type:p.type,D:T.D,F:T.F,fp:T.fp||3,K:-1,tPx:0,tPy:0,tSx:0,tSy:0,acc:'none'}); }
+  Object.assign(S,p); constrain(); needFit=true; syncUI();
+  fullBuild(()=>{ if(!keepFocus && !('focus' in p)){ S.focus=best; schedule('normal'); } });
+}
+function openLesson(i){
+  lessonIdx=i; const l=LESSONS[i]; stopSweep(); const box=$('lesson'); box.hidden=false;
+  box.innerHTML=`<button class="x" aria-label="Fermer la leçon">×</button><div class="k">Leçon ${i+1} / ${LESSONS.length} · ${l.k}</div><h3>${l.t}</h3>${l.txt}<div class="foot">${(l.btn||[]).map((b,j)=>`<button class="btn accent" data-b="${j}">${b[0]}</button>`).join('')}${l.sweep?`<button class="btn" data-s="1">${'Relancer l’animation'}</button>`:''}<span style="flex:1"></span><button class="btn" data-n="-1" ${i===0?'disabled':''}>Précédente</button><button class="btn" data-n="1" ${i===LESSONS.length-1?'disabled':''}>Suivante</button></div>`;
+  box.querySelector('.x').onclick=()=>{ box.hidden=true; lessonIdx=-1; };
+  box.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>applyPatch(l.btn[+b.dataset.b][1]));
+  box.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>openLesson(i+(+b.dataset.n)));
+  const s=box.querySelector('[data-s]'); if(s) s.onclick=()=>startSweep(l.sweep);
+  const p=Object.assign({focus:undefined},l.p); delete p.focus;
+  const typeChange=l.p.type!==S.type; const T=TYPES[l.p.type];
+  Object.assign(S,{type:l.p.type,D:T.D,F:T.F,fp:T.fp||3,K:-1,tPx:0,tPy:0,tSx:0,tSy:0,acc:'none',field:0,target:'single',mono:false,rgb:true,fronts:false,nRays:11,fan:'m'});
+  Object.assign(S,l.p); constrain(); needFit=true; syncUI();
+  fullBuild(()=>{ S.focus=best; build(); setView(l.view||'side'); if(l.sweep) setTimeout(()=>startSweep(l.sweep),500); });
+}
+function randomTilt(){ const r=()=>(Math.random()*2-1); S.tPx=Math.round(r()*8*2)/2; S.tPy=Math.round(r()*8*2)/2;
+  if(TYPES[S.type].family!=='refr'){ S.tSx=Math.round(r()*10*2)/2; S.tSy=Math.round(r()*10*2)/2; }
+  // image légèrement défocalisée, comme pour un test sur étoile réel
+  syncUI(); schedule('normal'); }
+function selectType(t){ stopSweep(); const T=TYPES[t]; Object.assign(S,{type:t,D:T.D,F:T.F,fp:T.fp||3,K:-1,tPx:0,tPy:0,tSx:0,tSy:0,field:0}); if(S.acc==='reducer'&&TYPES[t].family==='newton') S.acc='none';
+  constrain(); needFit=true; syncUI(); fullBuild(()=>{ S.focus=best; build(); setView(S.view==='focus'||S.view==='eye'?S.view:'side',false); }); }
+function closeModal(){ $('modal').hidden=true; }
+
+/* ================= Aide contextuelle (boutons « ? ») ================= */
+const pop=document.createElement('div'); pop.className='pop'; pop.hidden=true; pop.setAttribute('role','dialog'); document.body.appendChild(pop);
+let popBtn=null;
+function qBtn(key){ const h=HELP[key]; return h?`<button type="button" class="q" data-q="${key}" aria-label="Aide : ${h.t}" aria-expanded="false">?</button>`:''; }
+function initHelp(){ document.querySelectorAll('[data-help]').forEach(el=>el.insertAdjacentHTML('beforeend',qBtn(el.dataset.help))); }
+function openPop(b){
+  closePop(); const h=HELP[b.dataset.q]; if(!h) return;
+  pop.innerHTML=`<b class="t">${h.t}</b>${h.h}`; pop.hidden=false; popBtn=b; b.setAttribute('aria-expanded','true');
+  const r=b.getBoundingClientRect(), w=pop.offsetWidth, ht=pop.offsetHeight;
+  const x=clamp(r.left+r.width/2-w/2,8,window.innerWidth-w-8); let y=r.bottom+8;
+  if(y+ht>window.innerHeight-8) y=Math.max(8,r.top-ht-8);
+  pop.style.left=x+'px'; pop.style.top=y+'px';
+}
+function closePop(){ if(pop.hidden) return; pop.hidden=true; if(popBtn) popBtn.setAttribute('aria-expanded','false'); popBtn=null; }
+// phase de capture : le clic sur « ? » ne replie pas la section et ne coche pas la case qui le contient
+document.addEventListener('click',e=>{ const b=e.target.closest('.q');
+  if(b){ e.preventDefault(); e.stopPropagation(); if(popBtn===b) closePop(); else openPop(b); return; }
+  if(!pop.contains(e.target)) closePop(); },true);
+window.addEventListener('scroll',closePop,true); window.addEventListener('resize',closePop);
+
+/* ================= Événements ================= */
+bindRange('cD','D',null,{quick:true,fit:true});
+bindRange('cF','F',null,{quick:true,fit:true});
+bindRange('cFp','fp',null,{quick:true});
+for(const [id,k] of [['nD','D'],['nF','F']]){ const el=$(id);
+  el.addEventListener('change',()=>{ const v=parseFloat(el.value); if(!isFinite(v)) { syncUI(); return; } stopSweep(); S[k]=v; constrain(); needFit=true; syncUI(); fullBuild(()=>{ S.focus=best; build(); }); });
+  el.addEventListener('keydown',e=>{ if(e.key==='Enter') el.blur(); }); }
+bindRange('cK','K');
+['cPx','cPy','cSx','cSy'].forEach(id=>bindRange(id,'t'+id.slice(1)));
+$('cFoc').addEventListener('input',()=>{ S.focus=parseFloat($('cFoc').value); syncFocusUI(); schedule('normal'); });
+const nudge=m=>{ S.focus+=m*focusStep(); const r=focusRange(); S.focus=clamp(S.focus,-r,r); schedule('normal'); };
+$('fM2').onclick=()=>nudge(-10); $('fM1').onclick=()=>nudge(-1); $('fP1').onclick=()=>nudge(1); $('fP2').onclick=()=>nudge(10);
+const autoF=()=>{ S.focus=best; schedule('normal'); };
+$('fAuto').onclick=autoF;
+document.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{ S.K=parseFloat(b.dataset.k); syncUI(); schedule('normal'); });
+$('colOk').onclick=()=>{ S.tPx=S.tPy=S.tSx=S.tSy=0; syncUI(); schedule('normal'); };
+$('colRnd').onclick=randomTilt;
+$('oEye').onclick=()=>{ S.out='eye'; needFit=true; syncUI(); schedule('normal'); };
+$('oCam').onclick=()=>{ S.out='cam'; needFit=true; syncUI(); schedule('normal'); };
+$('cAfov').onchange=()=>{ S.afov=+$('cAfov').value; syncUI(); schedule('normal'); };
+bindRange('cEp','eyePupil');
+{ const sel=$('cSensor'); for(const k in SENSORS){ const o=document.createElement('option'); o.value=k; o.textContent=SENSORS[k].name; sel.appendChild(o); } sel.onchange=()=>{ S.sensor=sel.value; syncUI(); schedule('normal'); }; }
+bindRange('cSt','sT');
+bindRange('cField','field');
+$('lWhite').onclick=()=>{ S.mono=false; syncUI(); schedule('normal'); }; $('lMono').onclick=()=>{ S.mono=true; syncUI(); schedule('normal'); };
+$('tSingle').onclick=()=>{ S.target='single'; syncUI(); analysisFlag=true; }; $('tDouble').onclick=()=>{ S.target='double'; syncUI(); analysisFlag=true; };
+$('cSep').addEventListener('input',()=>{ S.sep=+$('cSep').value; syncUI(); analysisFlag=true; });
+$('cSee').addEventListener('input',()=>{ S.seeing=+$('cSee').value; syncUI(); analysisFlag=true; });
+$('cRays').addEventListener('input',()=>{ S.nRays=+$('cRays').value; syncUI(); buildRays(); });
+$('fanM').onclick=()=>{ S.fan='m'; syncUI(); buildRays(); }; $('fan3').onclick=()=>{ S.fan='3'; syncUI(); buildRays(); };
+$('xPhot').onchange=e=>{ S.photons=e.target.checked; updateHUD(); };
+$('xFront').onchange=e=>{ S.fronts=e.target.checked; if(S.fronts&&S.fan!=='m'){ S.fan='m'; syncUI(); buildRays(); } };
+$('xCut').onchange=e=>{ S.cut=e.target.checked; setClip(); if(gSec) gSec.visible=S.cut; };
+$('xLab').onchange=e=>{ S.labels=e.target.checked; buildLabels(); };
+$('xExt').onchange=e=>{ S.extend=e.target.checked; buildRays(); };
+$('xRGB').onchange=e=>{ S.rgb=e.target.checked; buildRays(); updateHUD(); };
+$('xGam').onchange=e=>{ S.gam=e.target.checked; analysisFlag=true; };
+$('cSpeed').addEventListener('input',()=>{ S.speed=+$('cSpeed').value; syncUI(); });
+$('imPsf').onclick=()=>{ S.imgMode='psf'; syncUI(); drawImagePanel(); }; $('imSpot').onclick=()=>{ S.imgMode='spot'; syncUI(); drawImagePanel(); };
+$('zIn').onclick=()=>{ S.W=Math.max(2,S.W/1.6); analysisFlag=true; }; $('zOut').onclick=()=>{ S.W=Math.min(60000,S.W*1.6); analysisFlag=true; }; $('zFit').onclick=()=>{ needFit=true; analysisFlag=true; };
+$('cvImg').addEventListener('wheel',e=>{ e.preventDefault(); S.W=clamp(S.W*Math.exp(e.deltaY*0.0015),2,60000); analysisFlag=true; },{passive:false});
+document.querySelectorAll('#views [data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$('bOrtho').onclick=()=>{ S.ortho=!S.ortho; syncUI(); applyCam(); };
+$('sweepPlay').onclick=()=>{ if(sweep.on) stopSweep(); else startSweep($('sweepParam').value); };
+$('sweepParam').onchange=()=>{ const on=sweep.on; stopSweep(); sweep.param=$('sweepParam').value; if(on) startSweep(); };
+$('bLessons').onclick=()=>{ $('modal').hidden=false; };
+$('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
+$('bNight').onclick=()=>{ const n=$('night'); n.hidden=!n.hidden; $('bNight').classList.toggle('on',!n.hidden); };
+$('bReset').onclick=()=>{ const keep={out:S.out,sensor:S.sensor,fe:S.fe}; S=Object.assign({},DEF,keep,{type:S.type}); selectType(S.type); };
+document.querySelectorAll('.sec>h2').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('closed')));
+window.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'&&e.target.type!=='range'||e.target.tagName==='SELECT') return;
+  if(e.key==='Escape'){ closeModal(); closePop(); return; }
+  if(e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter')) return;
+  if(e.target.tagName==='INPUT'&&e.target.type==='range'&&e.key.startsWith('Arrow')) return;
+  if(e.key===' '){ e.preventDefault(); if(sweep.on) stopSweep(); else startSweep($('sweepParam').value); }
+  else if(e.key==='f'||e.key==='F') autoF();
+  else if(e.key==='n'||e.key==='N') $('bNight').click();
+  else if(e.key==='l'||e.key==='L') $('modal').hidden=!$('modal').hidden;
+  else if('12345'.includes(e.key)) setView(['side','iso','front','focus','eye'][+e.key-1]);
+});
+window.addEventListener('resize',()=>{ drawImagePanel(); drawSky(); });
+
+/* ================= Boucle principale ================= */
+let lastT=performance.now();
+function loop(t){
+  requestAnimationFrame(loop);
+  const dt=Math.min(0.1,(t-lastT)/1000); lastT=t;
+  stepSweep(dt); stepCam(dt);
+  if(needBuild){ build(); if(!sweep.on) syncFocusUI(); }
+  if(!reduceMotion||sweep.on) updatePhotons(dt); else updatePhotons(0);
+  renderer.render(scene,activeCam());
+  updateLabels();
+  if(analysisFlag && res && t-lastAn>(sweep.on?70:25)){ analysisFlag=false; lastAn=t; runAnalysis(); }
+}
+// démarrage
+initHelp(); buildTypePicker(); buildLessons(); syncUI(); resize();
+buildMode='full'; build(); S.focus=best; build(); setView('side',true);
+requestAnimationFrame(loop);
+})();
+
+</script>
+</html>
